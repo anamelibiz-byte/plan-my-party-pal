@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { themes } from './data/themes';
 import { getActivitiesForAge, getAgeGroup } from './data/activities';
-import { venueCategories, getVenuesByType, getAllVenuesWithinRadius } from './data/venueTypes';
+import { venueCategories, getVenuesByType, getAllVenuesWithinRadius, searchNearbyVenues } from './data/venueTypes';
 import { getAmazonSearchUrl, getSuppliesForActivity, bakeryLinks } from './data/shoppingLinks';
 import { partyZones } from './data/partyZones';
 
@@ -100,6 +100,36 @@ export default function PartyPlanner() {
   });
   const { checkFeature, requireFeature } = useTier();
 
+  // ─── Live Venue Search ──────────────────────────────────────────────────────
+  const [liveVenues, setLiveVenues] = useState([]);
+  const [venueLoading, setVenueLoading] = useState(false);
+  const [venueLocation, setVenueLocation] = useState('');
+  const [venueError, setVenueError] = useState('');
+
+  const searchVenues = async (venueType) => {
+    const loc = partyData.location;
+    if (!loc || !venueType || venueType === 'Home') {
+      setLiveVenues([]);
+      return;
+    }
+    setVenueLoading(true);
+    setVenueError('');
+    try {
+      const data = await searchNearbyVenues(loc, venueType);
+      if (data.results && data.results.length > 0) {
+        setLiveVenues(data.results);
+        setVenueLocation(data.location || loc);
+      } else {
+        setLiveVenues([]);
+        setVenueError(data.error || 'No venues found. Try a different location or category.');
+      }
+    } catch {
+      setLiveVenues([]);
+      setVenueError('Search failed. Showing sample results.');
+    }
+    setVenueLoading(false);
+  };
+
   // Map generated checklist categories → party zone IDs
   const CATEGORY_TO_ZONE = {
     'Invitations': 'arrival',
@@ -147,11 +177,14 @@ export default function PartyPlanner() {
   }, [partyData.age]);
 
   const matchingVenues = useMemo(() => {
+    // Prefer live Google Places results if available
+    if (liveVenues.length > 0) return liveVenues;
+    // Fallback to sample data
     if (partyData.venueType && partyData.venueType !== 'Home') {
       return getVenuesByType(partyData.venueType);
     }
     return getAllVenuesWithinRadius(10);
-  }, [partyData.venueType]);
+  }, [partyData.venueType, liveVenues]);
 
   // ─── AI / Checklist Generation ──────────────────────────────────────────────
   const generateChecklist = async () => {
@@ -513,7 +546,7 @@ export default function PartyPlanner() {
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
               {venueCategories.map(type => (
-                <button key={type} onClick={() => updateField('venueType', type)}
+                <button key={type} onClick={() => { updateField('venueType', type); searchVenues(type); }}
                   className={`p-3 rounded-xl font-bold text-sm transition-all border-2 ${partyData.venueType === type ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white border-rose-600 shadow-xl scale-105' : 'bg-white border-pink-200 text-gray-700 hover:border-rose-400 hover:shadow-lg'}`}>
                   {type}
                 </button>
@@ -524,28 +557,67 @@ export default function PartyPlanner() {
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Search className="text-blue-500" size={20} />
-                  <h3 className="text-xl font-bold text-gray-800">Nearby Options (within 10 miles)</h3>
+                  <h3 className="text-xl font-bold text-gray-800">
+                    {venueLocation ? `Near ${venueLocation}` : 'Nearby Options (within 10 miles)'}
+                  </h3>
                 </div>
-                {matchingVenues.length > 0 ? (
+
+                {!partyData.location && (
+                  <div className="p-4 bg-amber-50 border-2 border-amber-200 rounded-xl mb-4">
+                    <p className="text-amber-700 font-semibold">💡 Enter your City/State or ZIP on Step 1 to see real venues near you!</p>
+                    <button onClick={() => setStep(1)} className="mt-2 text-sm text-rose-500 underline font-bold">← Go back and add location</button>
+                  </div>
+                )}
+
+                {venueLoading ? (
+                  <div className="flex items-center justify-center py-8 gap-3">
+                    <div className="w-6 h-6 border-3 border-pink-500 border-t-transparent rounded-full animate-spin" />
+                    <span className="text-gray-600 font-semibold">Searching real venues near you...</span>
+                  </div>
+                ) : matchingVenues.length > 0 ? (
                   <div className="grid gap-3">
                     {matchingVenues.map((v, i) => (
                       <div key={i} className="p-4 border-2 border-blue-200 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 hover:shadow-lg transition-all">
                         <div className="flex justify-between items-start">
-                          <div>
+                          <div className="flex-1">
                             <h4 className="font-bold text-gray-800 text-lg">{v.name}</h4>
-                            <p className="text-sm text-gray-600">{v.type} &bull; {v.distance} away</p>
-                            <div className="flex items-center gap-3 mt-2 text-sm">
-                              <span className="flex items-center gap-1 text-amber-600"><Star size={14} fill="currentColor" /> {v.rating}</span>
-                              <span className="flex items-center gap-1 text-gray-500"><Phone size={14} /> {v.phone}</span>
+                            {v.address && <p className="text-sm text-gray-500 mt-0.5">{v.address}</p>}
+                            <p className="text-sm text-gray-600 mt-1">{v.type} &bull; {v.distance} away</p>
+                            <div className="flex items-center gap-3 mt-2 text-sm flex-wrap">
+                              {v.rating > 0 && (
+                                <span className="flex items-center gap-1 text-amber-600">
+                                  <Star size={14} fill="currentColor" /> {v.rating}
+                                  {v.totalRatings > 0 && <span className="text-gray-400">({v.totalRatings})</span>}
+                                </span>
+                              )}
+                              {v.phone && <span className="flex items-center gap-1 text-gray-500"><Phone size={14} /> {v.phone}</span>}
+                              {v.isOpen !== null && (
+                                <span className={`font-semibold ${v.isOpen ? 'text-green-600' : 'text-red-500'}`}>
+                                  {v.isOpen ? '● Open now' : '● Closed'}
+                                </span>
+                              )}
                             </div>
+                            {v.placeId && (
+                              <a href={`https://www.google.com/maps/place/?q=place_id:${v.placeId}`} target="_blank" rel="noopener noreferrer"
+                                className="inline-block mt-2 text-sm text-blue-600 hover:text-blue-800 font-semibold underline">
+                                View on Google Maps →
+                              </a>
+                            )}
                           </div>
-                          <span className={`text-sm font-bold px-3 py-1 rounded-lg ${v.priceRange === 'Free' || v.priceRange === '$' ? 'bg-green-100 text-green-700' : v.priceRange === '$$' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>{v.priceRange}</span>
+                          <span className={`text-sm font-bold px-3 py-1 rounded-lg whitespace-nowrap ${v.priceRange === 'Free' || v.priceRange === '$' ? 'bg-green-100 text-green-700' : v.priceRange === '$$' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>{v.priceRange}</span>
                         </div>
                       </div>
                     ))}
                   </div>
-                ) : <p className="text-gray-500 italic">No matching venues found. Try a different category.</p>}
-                <p className="text-xs text-gray-400 mt-3 italic">Sample data shown. Real venues near your location coming soon.</p>
+                ) : (
+                  <p className="text-gray-500 italic">{venueError || 'No matching venues found. Try a different category.'}</p>
+                )}
+                {liveVenues.length > 0 && (
+                  <p className="text-xs text-green-600 mt-3 font-semibold">✅ Showing real venues from Google Places</p>
+                )}
+                {liveVenues.length === 0 && matchingVenues.length > 0 && (
+                  <p className="text-xs text-gray-400 mt-3 italic">Sample data shown — add your location on Step 1 for real results!</p>
+                )}
               </div>
             )}
 
