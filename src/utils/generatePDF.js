@@ -1,9 +1,13 @@
 import jsPDF from 'jspdf';
+import { sumChecklistCosts, getCostBreakdown, formatCurrency } from './parseCost';
 
 const PINK = [236, 72, 153];
 const GRAY = [107, 114, 128];
 const WHITE = [255, 255, 255];
 const DARK = [31, 41, 55];
+const GREEN = [22, 163, 74];
+const RED = [220, 38, 38];
+const AMBER = [217, 119, 6];
 
 function addHeader(doc, title, pageNum, totalPages) {
   doc.setFillColor(...PINK);
@@ -25,8 +29,13 @@ function addFooter(doc) {
 
 export function generatePartyPDF(partyData, checklist, mergedZones, excludedItems, zoneChecks, timeline) {
   const doc = new jsPDF();
-  const totalPages = 4;
+  const totalPages = 5;
   let y = 0;
+
+  // Read actual costs from localStorage
+  let actualCosts = {};
+  try { actualCosts = JSON.parse(localStorage.getItem('pp_actual_costs')) || {}; } catch { /* empty */ }
+  const hasActualData = Object.values(actualCosts).some(v => v !== '' && v !== undefined && v !== null);
 
   // PAGE 1 — Cover
   addHeader(doc, `${partyData.childName}'s ${partyData.theme} Party`, 1, totalPages);
@@ -47,11 +56,13 @@ export function generatePartyPDF(partyData, checklist, mergedZones, excludedItem
     ['Birthday Star', partyData.childName],
     ['Age', partyData.age],
     ['Date', partyData.date || 'TBD'],
-    ['Venue', partyData.venueType || 'TBD'],
+    ['Time', partyData.partyTime || 'TBD'],
+    ['Venue', partyData.venueName || partyData.venueType || 'TBD'],
+    ['Location', partyData.venueAddress || partyData.location || ''],
     ['Guests', partyData.guestCount],
     ['Budget', `$${partyData.budget}`],
     ['Activities', (partyData.selectedActivities || []).join(', ') || 'TBD'],
-  ];
+  ].filter(([, val]) => val); // skip empty
   info.forEach(([label, val]) => {
     doc.setFont('helvetica', 'bold');
     doc.text(`${label}:`, 40, y);
@@ -126,13 +137,154 @@ export function generatePartyPDF(partyData, checklist, mergedZones, excludedItem
     y += 8;
   });
 
-  // PAGE 4 — Notes
+  // PAGE 4 — Budget Tracker
   doc.addPage();
-  addHeader(doc, 'Notes & Reminders', 4, totalPages);
+  addHeader(doc, 'Budget Tracker', 4, totalPages);
+  addFooter(doc);
+  y = 40;
+
+  const budgetNum = Number(partyData.budget) || 0;
+  const { totalLow, totalHigh, totalMid } = sumChecklistCosts(checklist);
+  const breakdown = getCostBreakdown(checklist);
+  const totalActual = Object.values(actualCosts).reduce((sum, v) => sum + (Number(v) || 0), 0);
+  const displayTotal = hasActualData ? totalActual : totalMid;
+
+  // Budget overview box
+  doc.setFillColor(240, 253, 244); // light green bg
+  doc.roundedRect(14, y - 5, 182, 30, 4, 4, 'F');
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...DARK);
+  doc.text('Party Budget', 20, y + 3);
+  doc.setTextColor(...GREEN);
+  doc.text(formatCurrency(budgetNum), 190, y + 3, { align: 'right' });
+  y += 10;
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...DARK);
+  if (hasActualData) {
+    doc.text('Total Spent:', 20, y + 5);
+    const spentColor = totalActual > budgetNum ? RED : GREEN;
+    doc.setTextColor(...spentColor);
+    doc.setFont('helvetica', 'bold');
+    doc.text(formatCurrency(totalActual), 190, y + 5, { align: 'right' });
+  } else {
+    doc.text('Estimated Total:', 20, y + 5);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${formatCurrency(totalLow)} – ${formatCurrency(totalHigh)}`, 190, y + 5, { align: 'right' });
+  }
+  doc.setTextColor(...DARK);
+  y += 30;
+
+  // Progress bar visual
+  if (budgetNum > 0) {
+    const pct = Math.min(Math.round((displayTotal / budgetNum) * 100), 100);
+    const barWidth = 170;
+    doc.setFillColor(229, 231, 235);
+    doc.roundedRect(20, y, barWidth, 6, 3, 3, 'F');
+    const isOver = displayTotal > budgetNum;
+    if (isOver) doc.setFillColor(...RED);
+    else if (pct >= 80) doc.setFillColor(...AMBER);
+    else doc.setFillColor(...GREEN);
+    doc.roundedRect(20, y, barWidth * (pct / 100), 6, 3, 3, 'F');
+    doc.setFontSize(8);
+    doc.setTextColor(...GRAY);
+    doc.text(`${pct}% of budget`, 105, y + 12, { align: 'center' });
+    y += 20;
+
+    if (isOver) {
+      doc.setTextColor(...RED);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Over budget by ${formatCurrency(displayTotal - budgetNum)}`, 105, y, { align: 'center' });
+      y += 10;
+    } else {
+      doc.setTextColor(...GREEN);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`${formatCurrency(budgetNum - displayTotal)} remaining`, 105, y, { align: 'center' });
+      y += 10;
+    }
+  }
+  y += 5;
+
+  // Category breakdown table
+  doc.setTextColor(...DARK);
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Category Breakdown', 14, y);
+  y += 8;
+
+  // Table header
+  doc.setFillColor(249, 250, 251);
+  doc.rect(14, y - 4, 182, 8, 'F');
+  doc.setFontSize(8);
+  doc.setTextColor(...GRAY);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Category', 20, y);
+  doc.text('Estimated', 120, y);
+  if (hasActualData) doc.text('Actual', 165, y, { align: 'right' });
+  y += 8;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(...DARK);
+
+  const CATEGORY_HEX = {
+    'Invitations': [59, 130, 246],
+    'Decorations': [236, 72, 153],
+    'Food & Cake': [245, 158, 11],
+    'Dessert Table': [249, 115, 22],
+    'Drinks': [6, 182, 212],
+    'Activity Supplies': [139, 92, 246],
+    'Rentals': [20, 184, 166],
+    'Party Favors': [244, 63, 94],
+    'Supplies & Cleanup': [107, 114, 128],
+    'Entertainment & Hire': [168, 85, 247],
+  };
+
+  breakdown.forEach(cat => {
+    if (y > 265) { doc.addPage(); addHeader(doc, 'Budget Tracker (cont.)', 4, totalPages); addFooter(doc); y = 36; }
+
+    const color = CATEGORY_HEX[cat.category] || GRAY;
+    doc.setFillColor(...color);
+    doc.circle(18, y - 1.5, 1.5, 'F');
+    doc.setTextColor(...DARK);
+    doc.text(cat.category, 24, y);
+    doc.text(`${formatCurrency(cat.low)} – ${formatCurrency(cat.high)}`, 120, y);
+    if (hasActualData) {
+      const actual = actualCosts[cat.category];
+      doc.setFont('helvetica', 'bold');
+      doc.text(actual ? formatCurrency(Number(actual)) : '—', 165, y, { align: 'right' });
+      doc.setFont('helvetica', 'normal');
+    }
+    y += 7;
+  });
+
+  // Total row
+  y += 3;
+  doc.setDrawColor(200, 200, 200);
+  doc.line(14, y, 196, y);
+  y += 6;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.text(hasActualData ? 'Total Spent' : 'Estimated Total', 24, y);
+  if (hasActualData) {
+    const color = totalActual > budgetNum ? RED : GREEN;
+    doc.setTextColor(...color);
+    doc.text(formatCurrency(totalActual), 165, y, { align: 'right' });
+  } else {
+    doc.text(`${formatCurrency(totalLow)} – ${formatCurrency(totalHigh)}`, 120, y);
+  }
+
+  // PAGE 5 — Notes
+  doc.addPage();
+  addHeader(doc, 'Notes & Reminders', 5, totalPages);
   addFooter(doc);
   y = 40;
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...DARK);
   for (let i = 0; i < 25; i++) {
     doc.setDrawColor(200, 200, 200);
     doc.line(14, y, 196, y);
@@ -149,39 +301,39 @@ export function downloadPartyPDF(partyData, checklist, mergedZones, excludedItem
 
 export function generateSamplePDF() {
   const sampleData = {
-    childName: 'Vinny',
-    age: '8',
-    date: '2025-03-15',
-    budget: '400',
-    guestCount: '15',
+    childName: 'Sample',
+    age: '7',
+    date: '2025-06-15',
+    budget: '350',
+    guestCount: '12',
     location: 'Orlando, FL',
-    theme: 'Star Wars',
-    venueType: 'Backyard',
-    selectedActivities: ['Nerf Gun Battle', 'Obstacle Course', 'Freeze Dance'],
+    theme: 'Dinosaur Dig',
+    venueType: 'Park/Outdoor',
+    venueName: 'Sunset Park',
+    partyTime: '14:00',
+    selectedActivities: ['Fossil Dig', 'Dino Egg Hunt', 'Freeze Dance'],
   };
 
   const sampleChecklist = [
-    { category: 'Decorations', task: 'Star Wars balloons and banner', priority: 'high', estimatedCost: '$15-25', completed: false },
-    { category: 'Decorations', task: 'Lightsaber centerpieces', priority: 'medium', estimatedCost: '$10-20', completed: false },
-    { category: 'Activity Supplies', task: 'Nerf guns (15 count)', priority: 'high', estimatedCost: '$40-60', completed: false },
-    { category: 'Activity Supplies', task: 'Nerf darts bulk pack', priority: 'high', estimatedCost: '$15-20', completed: false },
-    { category: 'Activity Supplies', task: 'Safety goggles (15 count)', priority: 'high', estimatedCost: '$20-30', completed: false },
-    { category: 'Food & Cake', task: 'Star Wars themed cake', priority: 'high', estimatedCost: '$35-50', completed: false },
-    { category: 'Food & Cake', task: 'Pizza and snacks for 15', priority: 'high', estimatedCost: '$40-60', completed: false },
-    { category: 'Party Favors', task: 'Mini lightsaber goodie bags', priority: 'medium', estimatedCost: '$20-30', completed: false },
+    { category: 'Decorations', task: 'Dinosaur balloons and banner', priority: 'high', estimatedCost: '$15-25', completed: false },
+    { category: 'Decorations', task: 'Dino egg centerpieces', priority: 'medium', estimatedCost: '$10-20', completed: false },
+    { category: 'Activity Supplies', task: 'Fossil dig kit', priority: 'high', estimatedCost: '$20-30', completed: false },
+    { category: 'Food & Cake', task: 'Dinosaur themed cake', priority: 'high', estimatedCost: '$30-50', completed: false },
+    { category: 'Food & Cake', task: 'Pizza and snacks for 12', priority: 'high', estimatedCost: '$35-50', completed: false },
+    { category: 'Party Favors', task: 'Mini dino toy goodie bags', priority: 'medium', estimatedCost: '$15-25', completed: false },
   ];
 
   const sampleTimeline = [
-    { time: '2:00 PM', event: 'Jedi Padawans Arrive', duration: '30 min' },
-    { time: '2:30 PM', event: 'Nerf Gun Battle Royale', duration: '45 min' },
-    { time: '3:15 PM', event: 'Obstacle Course Challenge', duration: '20 min' },
-    { time: '3:35 PM', event: 'Freeze Dance (Star Wars Music)', duration: '15 min' },
-    { time: '3:50 PM', event: 'Refuel at the Cantina (Snacks)', duration: '15 min' },
-    { time: '4:05 PM', event: 'Birthday Cake & Song', duration: '15 min' },
-    { time: '4:20 PM', event: 'Open Presents', duration: '20 min' },
-    { time: '4:40 PM', event: 'Party Favors & Farewell', duration: '20 min' },
+    { time: '2:00 PM', event: 'Dino Explorers Arrive', duration: '30 min' },
+    { time: '2:30 PM', event: 'Fossil Dig Activity', duration: '30 min' },
+    { time: '3:00 PM', event: 'Dino Egg Hunt', duration: '20 min' },
+    { time: '3:20 PM', event: 'Freeze Dance', duration: '15 min' },
+    { time: '3:35 PM', event: 'Snack Time', duration: '15 min' },
+    { time: '3:50 PM', event: 'Cake & Happy Birthday', duration: '15 min' },
+    { time: '4:05 PM', event: 'Open Presents', duration: '20 min' },
+    { time: '4:25 PM', event: 'Party Favors & Goodbye', duration: '15 min' },
   ];
 
   const doc = generatePartyPDF(sampleData, sampleChecklist, null, {}, {}, sampleTimeline);
-  doc.save('Vinnys-Star-Wars-Party-Kit.pdf');
+  doc.save('Sample-Party-Planning-Kit.pdf');
 }

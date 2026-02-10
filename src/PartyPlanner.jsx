@@ -1084,9 +1084,9 @@ export default function PartyPlanner() {
                                             className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-2 py-0.5 rounded text-xs font-bold hover:shadow-lg transition-all flex items-center gap-1">
                                             🎵 Spotify Kids Party Mix
                                           </a>
-                                          <a href="https://music.apple.com/us/artist/zoey-zest/1837222176" target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
-                                            className="bg-gradient-to-r from-pink-500 to-fuchsia-500 text-white px-2 py-0.5 rounded text-xs font-bold hover:shadow-lg transition-all flex items-center gap-1">
-                                            🎤 Zoey Zest
+                                          <a href="https://open.spotify.com/track/5c2GZ53Zogjm680BaGRTfD" target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
+                                            className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-2 py-0.5 rounded text-xs font-bold hover:shadow-lg transition-all flex items-center gap-1">
+                                            🎤 Zoey Zest on Spotify
                                           </a>
                                         </div>
                                       )}
@@ -1111,6 +1111,9 @@ export default function PartyPlanner() {
                   })}
                 </div>
 
+                {/* Budget Tracker — above exports so you can see your totals before downloading */}
+                <BudgetTracker checklist={checklist} budget={partyData.budget} />
+
                 {/* Export Buttons */}
                 <div className="flex flex-wrap gap-3 mt-6 no-print">
                   <button onClick={downloadChecklist} className="flex-1 min-w-[140px] bg-blue-500 text-white py-3 rounded-xl font-bold hover:bg-blue-600 transition-all flex items-center justify-center gap-2"><Download size={20} /> Download List</button>
@@ -1127,9 +1130,6 @@ export default function PartyPlanner() {
                 <div className="no-print">
                   <EmailCapture source="checklist" partyData={partyData} mergedZones={mergedZones} excludedItems={excludedItems} zoneChecks={zoneChecks} />
                 </div>
-
-                {/* Budget Tracker — at the bottom so it doesn't overwhelm */}
-                <BudgetTracker checklist={checklist} budget={partyData.budget} />
 
                 {/* Summary */}
                 <div className="mt-6 p-6 bg-gradient-to-r from-pink-100 to-rose-100 rounded-2xl border-2 border-pink-300">
