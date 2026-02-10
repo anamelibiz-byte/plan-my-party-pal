@@ -4,7 +4,7 @@
 //   'all_free'  → everything unlocked (give it all away free)
 //   'all_pro'   → everyone gets Party Pro features
 //   'all_plus'  → everyone gets Party Planner Plus features
-export const ADMIN_OVERRIDE = 'none';
+export const ADMIN_OVERRIDE = 'all_free';
 
 export const TIERS = {
   free: {
