@@ -1078,6 +1078,18 @@ export default function PartyPlanner() {
                                           <ShoppingCart size={10} /> Shop
                                         </a>
                                       )}
+                                      {item.spotifyLink && !isExcluded && (
+                                        <div className="flex items-center gap-1.5 flex-wrap no-print">
+                                          <a href="https://open.spotify.com/playlist/1P27ra5VqAizmkcUzVAvp2" target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
+                                            className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-2 py-0.5 rounded text-xs font-bold hover:shadow-lg transition-all flex items-center gap-1">
+                                            🎵 Spotify Kids Party Mix
+                                          </a>
+                                          <a href="https://music.apple.com/us/artist/zoey-zest/1837222176" target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
+                                            className="bg-gradient-to-r from-pink-500 to-fuchsia-500 text-white px-2 py-0.5 rounded text-xs font-bold hover:shadow-lg transition-all flex items-center gap-1">
+                                            🎤 Zoey Zest
+                                          </a>
+                                        </div>
+                                      )}
                                     </div>
                                   </div>
 
@@ -1113,7 +1125,7 @@ export default function PartyPlanner() {
 
                 {/* Email Capture */}
                 <div className="no-print">
-                  <EmailCapture source="checklist" partyData={partyData} />
+                  <EmailCapture source="checklist" partyData={partyData} mergedZones={mergedZones} excludedItems={excludedItems} zoneChecks={zoneChecks} />
                 </div>
 
                 {/* Budget Tracker — at the bottom so it doesn't overwhelm */}

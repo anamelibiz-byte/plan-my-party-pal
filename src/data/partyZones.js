@@ -299,7 +299,8 @@ export const partyZones = [
     name: 'Logistics, Tech & Safety',
     color: 'orange',
     items: [
-      { task: 'Bluetooth speaker and a curated, age-appropriate playlist', searchTerms: 'bluetooth speaker party', estimatedCost: '$15-40', priority: 'medium' },
+      { task: 'Portable Bluetooth speaker — JBL Clip, Bose, or similar (don\'t forget to charge it!)', searchTerms: 'portable bluetooth speaker party JBL', estimatedCost: '$20-50', priority: 'medium' },
+      { task: '🎵 Party playlist ready to go — hit play and set the vibe!', searchTerms: '', estimatedCost: 'Free', priority: 'high', spotifyLink: true },
       { task: 'Extension cords, power strips, and extra batteries (AA/AAA)', searchTerms: 'extension cord power strip batteries', estimatedCost: '$10-15', priority: 'medium' },
       { task: 'Lighting — string lights, LED uplights for color, or lanterns for evening', searchTerms: 'string lights LED party lanterns', estimatedCost: '$10-25', priority: 'low' },
       { task: 'Emergency party kit — scissors, clear tape, duct tape, and safety pins', searchTerms: 'scissors tape safety pins party kit', estimatedCost: '$8-12', priority: 'high' },
