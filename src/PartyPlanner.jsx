@@ -10,7 +10,7 @@ import { themes } from './data/themes';
 import { getActivitiesForAge, getAgeGroup } from './data/activities';
 import { venueCategories, getVenuesByType, getAllVenuesWithinRadius, searchNearbyVenues, searchCustomVenue } from './data/venueTypes';
 import { getAmazonSearchUrl, getSuppliesForActivity, bakeryLinks } from './data/shoppingLinks';
-import { partyZones } from './data/partyZones';
+import { partyZones, getThemedFoodName } from './data/partyZones';
 
 // New components
 import BudgetTracker from './components/BudgetTracker';
@@ -982,6 +982,7 @@ export default function PartyPlanner() {
 
                   {mergedZones.map(zone => {
                     const zoneColorMap = {
+                      rose: 'border-rose-200 bg-rose-50',
                       blue: 'border-blue-200 bg-blue-50',
                       amber: 'border-amber-200 bg-amber-50',
                       cyan: 'border-cyan-200 bg-cyan-50',
@@ -991,6 +992,7 @@ export default function PartyPlanner() {
                       gray: 'border-gray-200 bg-gray-50',
                     };
                     const zoneTextMap = {
+                      rose: 'text-rose-700',
                       blue: 'text-blue-700',
                       amber: 'text-amber-700',
                       cyan: 'text-cyan-700',
@@ -1059,7 +1061,7 @@ export default function PartyPlanner() {
                                   {/* Item content — full width, wraps properly */}
                                   <div className="flex-1 min-w-0">
                                     <p className={`text-sm break-words ${isExcluded ? 'line-through text-gray-300' : isChecked ? 'line-through text-gray-400' : 'text-gray-700'}`}>
-                                      {item.task}
+                                      {zone.id === 'foodmenu' && partyData.theme ? getThemedFoodName(item.task, partyData.theme) : item.task}
                                     </p>
                                     {/* Tags + cost + shop — all wrap on mobile */}
                                     <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
