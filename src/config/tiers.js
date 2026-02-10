@@ -44,7 +44,7 @@ export const TIERS = {
     price: 4.99,
     priceLabel: '$4.99 one-time',
     billing: 'one-time',
-    stripe_price_id: '',
+    stripe_price_id: 'price_1Sz4igIVX3wrRyGSNKMMcjLj',
     description: 'Everything you need for the perfect party',
     popular: true,
     features: {
@@ -76,7 +76,7 @@ export const TIERS = {
     price: 9.99,
     priceLabel: '$9.99/month',
     billing: 'monthly',
-    stripe_price_id: '',
+    stripe_price_id: 'price_1Sz4itIVX3wrRyGSXLnA5r00',
     description: 'The ultimate party planning toolkit',
     features: {
       basicWizard: true,
