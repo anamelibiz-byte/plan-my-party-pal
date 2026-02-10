@@ -13,7 +13,7 @@ export const venueCategories = [
   'Community Center',
 ];
 
-// Fallback sample data (used when no location entered or API unavailable)
+// Fallback sample data (used when no location entered or Google API unavailable)
 export const sampleVenues = [
   { name: 'Sky Zone Trampoline Park', type: 'Trampoline Park', distance: '3.2 mi', priceRange: '$$', rating: 4.5, phone: '(555) 123-4567' },
   { name: 'GameTruck Mobile Gaming', type: 'Gaming Truck', distance: '5.0 mi', priceRange: '$$$', rating: 4.8, phone: '(555) 234-5678' },
@@ -38,18 +38,108 @@ export function getAllVenuesWithinRadius(radiusMiles = 10) {
   return sampleVenues.filter(v => parseFloat(v.distance) <= radiusMiles);
 }
 
-// Live Google Places search
+// ─── Client-side Google Places Search ───────────────────────────────
+const typeKeywords = {
+  'Park/Outdoor': 'park playground birthday party',
+  'Trampoline Park': 'trampoline park',
+  'Gaming Truck': 'mobile gaming entertainment kids',
+  'Indoor Play Center': 'indoor playground kids play center',
+  'Bowling Alley': 'bowling alley',
+  'Skating Rink': 'skating rink roller skating ice skating',
+  'Laser Tag Arena': 'laser tag arena',
+  'Swimming Pool/Water Park': 'water park swimming pool',
+  'Art/Pottery Studio': 'art studio pottery painting kids',
+  'Petting Zoo': 'petting zoo farm animals kids',
+  'Community Center': 'community center recreation center',
+};
+
+function haversineDistance(lat1, lng1, lat2, lng2) {
+  const R = 3959; // Earth radius in miles
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
 export async function searchNearbyVenues(location, venueType) {
+  // Check if Google Maps API is loaded
+  if (typeof google === 'undefined' || !google.maps) {
+    return { results: [], error: 'Google Maps not loaded yet. Please try again.' };
+  }
+
   try {
-    const params = new URLSearchParams({
-      location,
-      type: venueType || '',
-      radius: '16093',
+    // Step 1: Geocode location text to lat/lng
+    const geocoder = new google.maps.Geocoder();
+    const geoResult = await new Promise((resolve, reject) => {
+      geocoder.geocode({ address: location }, (results, status) => {
+        if (status === 'OK' && results.length > 0) {
+          resolve(results[0]);
+        } else {
+          reject(new Error('Could not find that location'));
+        }
+      });
     });
-    const res = await fetch(`/api/places?${params}`);
-    const data = await res.json();
-    return data;
+
+    const center = geoResult.geometry.location;
+    const formattedAddress = geoResult.formatted_address;
+
+    // Step 2: Search for venues using PlacesService
+    const mapDiv = document.createElement('div');
+    const service = new google.maps.places.PlacesService(mapDiv);
+    const keyword = typeKeywords[venueType] || venueType || 'party venue kids entertainment';
+
+    const places = await new Promise((resolve, reject) => {
+      service.textSearch(
+        {
+          query: keyword,
+          location: center,
+          radius: 16093, // 10 miles in meters
+        },
+        (results, status) => {
+          if (status === google.maps.places.PlacesServiceStatus.OK) {
+            resolve(results);
+          } else if (status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
+            resolve([]);
+          } else {
+            reject(new Error('Places search failed: ' + status));
+          }
+        }
+      );
+    });
+
+    // Step 3: Format results
+    const priceMap = { 0: 'Free', 1: '$', 2: '$$', 3: '$$$', 4: '$$$$' };
+    const venues = places.slice(0, 10).map(place => {
+      const pLat = place.geometry.location.lat();
+      const pLng = place.geometry.location.lng();
+      const dist = haversineDistance(
+        center.lat(), center.lng(), pLat, pLng
+      );
+
+      return {
+        name: place.name,
+        address: place.formatted_address,
+        type: venueType || 'Venue',
+        distance: `${dist.toFixed(1)} mi`,
+        distanceMiles: dist,
+        priceRange: priceMap[place.price_level] ?? '$$',
+        rating: place.rating || 0,
+        totalRatings: place.user_ratings_total || 0,
+        isOpen: place.opening_hours?.isOpen?.() ?? null,
+        placeId: place.place_id,
+      };
+    });
+
+    venues.sort((a, b) => a.distanceMiles - b.distanceMiles);
+
+    return {
+      results: venues,
+      location: formattedAddress,
+    };
   } catch (error) {
-    return { results: [], error: 'Search failed' };
+    console.error('Venue search error:', error);
+    return { results: [], error: error.message || 'Search failed' };
   }
 }

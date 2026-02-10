@@ -21,6 +21,8 @@ import DietaryTracker from './components/DietaryTracker';
 import WeatherAlert from './components/WeatherAlert';
 import ShareButton from './components/ShareButton';
 import TierGate from './components/TierGate';
+import InviteCard from './components/InviteCard';
+import GuestList from './components/GuestList';
 import { useTier } from './context/TierContext';
 import { downloadPartyPDF, generateSamplePDF } from './utils/generatePDF';
 
@@ -812,40 +814,23 @@ export default function PartyPlanner() {
                 </div>
                 <p className="text-sm text-gray-600 font-semibold">{totalZoneCompleted} of {totalZoneItems} items completed {Object.values(excludedItems).filter(Boolean).length > 0 && <span className="text-gray-400">({Object.values(excludedItems).filter(Boolean).length} excluded)</span>}</p>
 
-                {/* Budget Tracker */}
-                <BudgetTracker checklist={checklist} budget={partyData.budget} />
-
                 {/* Weather Alert (outdoor venues) */}
                 <WeatherAlert date={partyData.date} location={partyData.location} venueType={partyData.venueType} />
+
+                {/* Digital Invite Card — screenshot/download and send */}
+                <InviteCard partyData={partyData} />
+
+                {/* Guest Invite List — track who you're inviting */}
+                <GuestList partyData={partyData} />
 
                 {/* Timeline Builder (Pro+) */}
                 <TierGate feature="timelineBuilder">
                   <TimelineBuilder timeline={timeline} onTimelineChange={setTimeline} partyData={partyData} />
                 </TierGate>
 
-                {/* RSVP Manager (Plus) */}
-                <TierGate feature="rsvpSystem">
-                  <RSVPManager partyData={partyData} rsvpId={rsvpId} onSetRsvpId={(id) => { setRsvpId(id); localStorage.setItem('pp_rsvp_id', JSON.stringify(id)); }} />
-                </TierGate>
-
-                {/* Dietary Tracker (Plus) */}
-                <TierGate feature="dietaryTracker">
-                  <DietaryTracker rsvpResponses={rsvpResponses} />
-                </TierGate>
-
-                {/* Digital Invites CTA */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 no-print">
-                  <button onClick={() => setComingSoonModal('invites')} className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl hover:shadow-lg hover:border-blue-400 transition-all text-left group">
-                    <div className="flex items-center gap-3">
-                      <Mail className="text-blue-500" size={28} />
-                      <div>
-                        <h4 className="font-bold text-blue-700 group-hover:text-blue-600">Create Digital Invites</h4>
-                        <p className="text-sm text-gray-600">Design & send themed invitations</p>
-                      </div>
-                      <ChevronRight className="text-blue-300 ml-auto" size={20} />
-                    </div>
-                  </button>
-                  <button onClick={() => setComingSoonModal('labels')} className="p-4 bg-gradient-to-r from-orange-50 to-amber-50 border-2 border-orange-200 rounded-2xl hover:shadow-lg hover:border-orange-400 transition-all text-left group">
+                {/* Food & Drink Labels CTA */}
+                <div className="no-print">
+                  <button onClick={() => setComingSoonModal('labels')} className="w-full p-4 bg-gradient-to-r from-orange-50 to-amber-50 border-2 border-orange-200 rounded-2xl hover:shadow-lg hover:border-orange-400 transition-all text-left group">
                     <div className="flex items-center gap-3">
                       <Tag className="text-orange-500" size={28} />
                       <div>
@@ -968,45 +953,46 @@ export default function PartyPlanner() {
                             const priorityColor = item.priority === 'high' ? 'bg-red-100 text-red-600' : item.priority === 'medium' ? 'bg-amber-100 text-amber-600' : item.priority === 'low' ? 'bg-blue-100 text-blue-600' : '';
 
                             return (
-                              <div key={`${zone.id}-${idx}`} className={`flex items-start gap-2 p-3 rounded-lg border transition-all ${
+                              <div key={`${zone.id}-${idx}`} className={`p-2.5 sm:p-3 rounded-lg border transition-all ${
                                 isExcluded ? 'bg-gray-50 border-gray-100 opacity-40' :
                                 isChecked ? 'bg-green-50 border-green-200 opacity-70' :
                                 'bg-white border-gray-100 hover:border-gray-300'
                               }`}>
-                                {/* Check/uncheck button */}
-                                <button onClick={handleToggleCheck} className="mt-0.5 flex-shrink-0" disabled={isExcluded}>
-                                  {isExcluded ? <Circle className="text-gray-200" size={20} /> :
-                                   isChecked ? <CheckCircle2 className="text-green-500" size={20} /> :
-                                   <Circle className="text-gray-300 hover:text-emerald-400" size={20} />}
-                                </button>
+                                <div className="flex items-start gap-2">
+                                  {/* Check/uncheck button */}
+                                  <button onClick={handleToggleCheck} className="mt-0.5 flex-shrink-0" disabled={isExcluded}>
+                                    {isExcluded ? <Circle className="text-gray-200" size={20} /> :
+                                     isChecked ? <CheckCircle2 className="text-green-500" size={20} /> :
+                                     <Circle className="text-gray-300 hover:text-emerald-400" size={20} />}
+                                  </button>
 
-                                {/* Item content */}
-                                <div className="flex-1 min-w-0">
-                                  <p className={`text-sm ${isExcluded ? 'line-through text-gray-300' : isChecked ? 'line-through text-gray-400' : 'text-gray-700'}`}>
-                                    {item.task}
-                                  </p>
-                                  <div className="flex items-center gap-2 mt-1 flex-wrap">
-                                    {isChecklistItem && item.category && (
-                                      <span className={`text-xs font-bold px-2 py-0.5 rounded ${categoryColors[item.category] || 'text-gray-600 bg-gray-100'}`}>{item.category}</span>
-                                    )}
-                                    {isChecklistItem && item.priority && (
-                                      <span className={`text-xs font-bold px-2 py-0.5 rounded ${priorityColor}`}>{item.priority}</span>
-                                    )}
+                                  {/* Item content — full width, wraps properly */}
+                                  <div className="flex-1 min-w-0">
+                                    <p className={`text-sm break-words ${isExcluded ? 'line-through text-gray-300' : isChecked ? 'line-through text-gray-400' : 'text-gray-700'}`}>
+                                      {item.task}
+                                    </p>
+                                    {/* Tags + cost + shop — all wrap on mobile */}
+                                    <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                                      {item.priority && (
+                                        <span className={`text-xs font-bold px-2 py-0.5 rounded ${priorityColor}`}>{item.priority}</span>
+                                      )}
+                                      {isChecklistItem && item.category && (
+                                        <span className={`text-xs font-bold px-2 py-0.5 rounded ${categoryColors[item.category] || 'text-gray-600 bg-gray-100'}`}>{item.category}</span>
+                                      )}
+                                      {cost && !isExcluded && <span className="text-xs text-green-700 bg-green-50 px-2 py-0.5 rounded font-semibold">{cost}</span>}
+                                      {searchTerms && !isExcluded && (
+                                        <a href={getAmazonSearchUrl(searchTerms)} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
+                                          className="bg-gradient-to-r from-amber-400 to-orange-400 text-white px-2 py-0.5 rounded text-xs font-bold hover:shadow-lg transition-all flex items-center gap-1 no-print">
+                                          <ShoppingCart size={10} /> Shop
+                                        </a>
+                                      )}
+                                    </div>
                                   </div>
-                                </div>
 
-                                {/* Cost + Shop + Exclude toggle */}
-                                <div className="flex items-center gap-2 flex-shrink-0">
-                                  {cost && !isExcluded && <span className="text-xs text-green-700 bg-green-50 px-2 py-0.5 rounded font-semibold">{cost}</span>}
-                                  {searchTerms && !isExcluded && (
-                                    <a href={getAmazonSearchUrl(searchTerms)} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
-                                      className="bg-gradient-to-r from-amber-400 to-orange-400 text-white px-2 py-1 rounded text-xs font-bold hover:shadow-lg transition-all flex items-center gap-1 no-print">
-                                      <ShoppingCart size={12} /> Shop
-                                    </a>
-                                  )}
+                                  {/* Exclude toggle — stays right-aligned */}
                                   <button
                                     onClick={() => toggleExcludeItem(itemKey)}
-                                    className="no-print p-1 rounded-md hover:bg-gray-200 transition-colors"
+                                    className="no-print p-1 rounded-md hover:bg-gray-200 transition-colors flex-shrink-0"
                                     title={isExcluded ? 'Include this item' : 'Exclude this item — I don\'t need it'}
                                   >
                                     {isExcluded ? <Eye size={16} className="text-gray-400 hover:text-emerald-500" /> : <EyeOff size={16} className="text-gray-300 hover:text-red-400" />}
@@ -1048,6 +1034,9 @@ export default function PartyPlanner() {
                     <button onClick={generateSamplePDF} className="bg-gradient-to-r from-purple-500 to-violet-500 text-white px-4 py-2 rounded-xl font-bold hover:shadow-xl transition-all flex items-center gap-2 text-sm"><FileDown size={16} /> Download Sample</button>
                   </div>
                 </div>
+
+                {/* Budget Tracker — at the bottom so it doesn't overwhelm */}
+                <BudgetTracker checklist={checklist} budget={partyData.budget} />
 
                 {/* Summary */}
                 <div className="mt-6 p-6 bg-gradient-to-r from-pink-100 to-rose-100 rounded-2xl border-2 border-pink-300">
