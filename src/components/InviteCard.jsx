@@ -13,15 +13,36 @@ const THEME_COLORS = {
   'Mermaid': { bg: 'from-teal-400 via-cyan-400 to-blue-500', accent: 'text-teal-100', border: 'border-teal-300' },
   'Safari': { bg: 'from-amber-400 via-orange-400 to-yellow-500', accent: 'text-amber-100', border: 'border-amber-300' },
   'Space': { bg: 'from-indigo-600 via-purple-700 to-black', accent: 'text-indigo-200', border: 'border-indigo-400' },
+  'Minecraft': { bg: 'from-green-600 via-emerald-700 to-green-800', accent: 'text-green-200', border: 'border-green-400' },
+  'Godzilla': { bg: 'from-gray-700 via-slate-800 to-gray-900', accent: 'text-emerald-300', border: 'border-emerald-500' },
+  'King Kong': { bg: 'from-gray-700 via-slate-800 to-gray-900', accent: 'text-emerald-300', border: 'border-emerald-500' },
+  'Ninja': { bg: 'from-gray-800 via-red-900 to-black', accent: 'text-red-300', border: 'border-red-500' },
+  'Mario': { bg: 'from-red-500 via-red-600 to-blue-500', accent: 'text-yellow-200', border: 'border-yellow-400' },
+  'Pokemon': { bg: 'from-yellow-400 via-red-500 to-blue-500', accent: 'text-yellow-100', border: 'border-yellow-300' },
+  'Carnival': { bg: 'from-red-500 via-yellow-400 to-blue-500', accent: 'text-yellow-100', border: 'border-yellow-300' },
+  'LEGO': { bg: 'from-red-500 via-yellow-400 to-green-500', accent: 'text-yellow-100', border: 'border-yellow-300' },
+  'Pirate': { bg: 'from-amber-700 via-amber-800 to-gray-900', accent: 'text-amber-200', border: 'border-amber-400' },
 };
 
 function getThemeStyle(theme) {
-  // Check for partial matches
   const lower = (theme || '').toLowerCase();
   for (const [key, val] of Object.entries(THEME_COLORS)) {
-    if (lower.includes(key.toLowerCase())) return val;
+    if (key !== 'default' && lower.includes(key.toLowerCase())) return val;
   }
   return THEME_COLORS.default;
+}
+
+function formatTime(timeStr) {
+  if (!timeStr) return '';
+  try {
+    const [h, m] = timeStr.split(':');
+    const hour = parseInt(h);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const h12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+    return `${h12}:${m} ${ampm}`;
+  } catch {
+    return timeStr;
+  }
 }
 
 export default function InviteCard({ partyData }) {
@@ -72,7 +93,6 @@ export default function InviteCard({ partyData }) {
             files: [file],
           });
         } else {
-          // Fallback: download
           handleDownload();
         }
       }, 'image/png');
@@ -81,9 +101,13 @@ export default function InviteCard({ partyData }) {
     }
   };
 
+  // Build the venue display string
+  const venueDisplay = partyData.venueName || (partyData.venueType === 'Home' ? 'At Our Home' : partyData.venueType || '');
+  const timeDisplay = formatTime(partyData.partyTime);
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center gap-2 mb-2 flex-wrap">
         <Sparkles className="text-pink-500" size={22} />
         <h3 className="text-lg font-bold text-gray-800">Digital Party Invite</h3>
         <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">Screenshot or Download</span>
@@ -96,25 +120,25 @@ export default function InviteCard({ partyData }) {
         <h2 className="text-3xl sm:text-4xl font-black mb-1 drop-shadow-lg">
           {partyData.childName || 'Your Child'}'s
         </h2>
-        {partyData.theme && (
-          <p className="text-xl sm:text-2xl font-bold mb-4 drop-shadow">{partyData.theme} Party 🎉</p>
-        )}
-        {!partyData.theme && (
-          <p className="text-xl sm:text-2xl font-bold mb-4 drop-shadow">Birthday Party 🎉</p>
-        )}
+        <p className="text-xl sm:text-2xl font-bold mb-4 drop-shadow">
+          {partyData.theme ? `${partyData.theme} Party` : 'Birthday Party'} 🎉
+        </p>
 
-        <div className={`border-t ${style.border} border-b ${style.border} border-opacity-40 py-4 my-4 space-y-2`}>
+        <div className={`border-t ${style.border} border-b ${style.border} border-opacity-40 py-4 my-4 space-y-2.5`}>
           {partyData.age && (
             <p className="text-lg font-bold">🎂 Turning {partyData.age}!</p>
           )}
-          <p className="text-lg font-semibold">📅 {formatDate(partyData.date)}</p>
-          {partyData.venueType && partyData.venueType !== 'Home' && (
-            <p className="text-lg font-semibold">📍 {partyData.venueType}</p>
+          <p className="text-lg font-semibold">
+            📅 {formatDate(partyData.date)}
+            {timeDisplay && ` at ${timeDisplay}`}
+          </p>
+          {venueDisplay && (
+            <p className="text-lg font-semibold">📍 {venueDisplay}</p>
           )}
-          {partyData.venueType === 'Home' && (
-            <p className="text-lg font-semibold">📍 At Our Home</p>
+          {partyData.venueAddress && (
+            <p className="text-base opacity-90">{partyData.venueAddress}</p>
           )}
-          {partyData.location && (
+          {!partyData.venueAddress && partyData.location && (
             <p className="text-base opacity-90">{partyData.location}</p>
           )}
         </div>
@@ -122,6 +146,16 @@ export default function InviteCard({ partyData }) {
         <p className={`text-sm mt-3 ${style.accent}`}>Please RSVP by text or reply</p>
         <p className="text-xs mt-2 opacity-60">Made with PlanMyPartyPal.com</p>
       </div>
+
+      {/* Missing info warnings */}
+      {(!partyData.partyTime || !partyData.venueName) && (
+        <div className="max-w-md mx-auto p-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-700">
+          💡 Your invite is missing:
+          {!partyData.partyTime && <span className="font-bold"> Party Time (add on Step 1)</span>}
+          {!partyData.partyTime && !partyData.venueName && <span>,</span>}
+          {!partyData.venueName && <span className="font-bold"> Venue Name (choose on Step 2)</span>}
+        </div>
+      )}
 
       {/* Action buttons */}
       <div className="flex gap-3 max-w-md mx-auto">

@@ -66,5 +66,8 @@ export const themes = {
     { name: 'Sonic the Hedgehog', description: 'Speed-themed races, ring collecting, and blue color scheme everywhere', ageRange: '4-10', costTier: '$$', isCharacter: true },
     { name: 'Disney Princesses', description: 'Royal ball with multiple princess themes, crown making, and castle decor', ageRange: '3-8', costTier: '$$', isCharacter: true },
     { name: 'Teenage Mutant Ninja Turtles', description: 'Pizza party, ninja training obstacle course, and turtle mask making', ageRange: '4-10', costTier: '$$', isCharacter: true },
+    { name: 'Star Wars', description: 'Lightsaber duels, Jedi training academy, Death Star piñata, and galactic decor', ageRange: '4-12', costTier: '$$', isCharacter: true },
+    { name: 'King Kong vs Godzilla', description: 'Monster battle arena, city skyline backdrop, roaring contests, and epic smash cake', ageRange: '4-12', costTier: '$$', isCharacter: true },
+    { name: 'Minecraft', description: 'Pixelated world with block-building challenges, creeper piñata, and TNT treats', ageRange: '5-12', costTier: '$$', isCharacter: true },
   ],
 };

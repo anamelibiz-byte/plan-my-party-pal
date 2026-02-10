@@ -79,9 +79,12 @@ export default function PartyPlanner() {
     budget: '',
     guestCount: '',
     location: '',
+    partyTime: '',
     genderCategory: '', // optional — for theme filtering
     theme: '',
     venueType: '',
+    venueName: '',
+    venueAddress: '',
     selectedActivities: [],
   });
   const [suggestions, setSuggestions] = useState([]);
@@ -511,6 +514,11 @@ export default function PartyPlanner() {
                 </div>
               </div>
 
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">Party Time</label>
+                <input type="time" value={partyData.partyTime} onChange={e => updateField('partyTime', e.target.value)} className="w-full px-4 py-3 border-2 border-pink-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-lg" />
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">Guest Count</label>
@@ -599,14 +607,20 @@ export default function PartyPlanner() {
                                 </span>
                               )}
                             </div>
-                            {v.placeId && (
-                              <a href={`https://www.google.com/maps/place/?q=place_id:${v.placeId}`} target="_blank" rel="noopener noreferrer"
-                                className="inline-block mt-2 text-sm text-blue-600 hover:text-blue-800 font-semibold underline">
-                                View on Google Maps →
-                              </a>
-                            )}
+                            <div className="flex items-center gap-2 mt-2 flex-wrap">
+                              {v.placeId && (
+                                <a href={`https://www.google.com/maps/place/?q=place_id:${v.placeId}`} target="_blank" rel="noopener noreferrer"
+                                  className="text-sm text-blue-600 hover:text-blue-800 font-semibold underline">
+                                  View on Maps →
+                                </a>
+                              )}
+                              <button onClick={() => { updateField('venueName', v.name); updateField('venueAddress', v.address || ''); }}
+                                className={`text-sm font-bold px-3 py-1 rounded-lg transition-all ${partyData.venueName === v.name ? 'bg-green-500 text-white' : 'bg-rose-500 text-white hover:bg-rose-600'}`}>
+                                {partyData.venueName === v.name ? '✓ Selected' : 'Choose This Venue'}
+                              </button>
+                            </div>
                           </div>
-                          <span className={`text-sm font-bold px-3 py-1 rounded-lg whitespace-nowrap ${v.priceRange === 'Free' || v.priceRange === '$' ? 'bg-green-100 text-green-700' : v.priceRange === '$$' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>{v.priceRange}</span>
+                          <span className={`text-sm font-bold px-3 py-1 rounded-lg whitespace-nowrap self-start ${v.priceRange === 'Free' || v.priceRange === '$' ? 'bg-green-100 text-green-700' : v.priceRange === '$$' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>{v.priceRange}</span>
                         </div>
                       </div>
                     ))}
@@ -619,6 +633,22 @@ export default function PartyPlanner() {
                 )}
                 {liveVenues.length === 0 && matchingVenues.length > 0 && (
                   <p className="text-xs text-gray-400 mt-3 italic">Sample data shown — add your location on Step 1 for real results!</p>
+                )}
+              </div>
+            )}
+
+            {/* Selected venue display / manual entry */}
+            {partyData.venueType && (
+              <div className="mb-6 p-4 bg-green-50 border-2 border-green-200 rounded-xl">
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  {partyData.venueType === 'Home' ? '📍 Your Address (for the invite)' : '📍 Venue Name (for the invite)'}
+                </label>
+                <input type="text" value={partyData.venueName}
+                  onChange={e => updateField('venueName', e.target.value)}
+                  placeholder={partyData.venueType === 'Home' ? '123 Main St, Your City' : 'Type or select a venue above'}
+                  className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none transition-all text-lg" />
+                {partyData.venueName && (
+                  <p className="text-sm text-green-700 mt-2 font-semibold">✅ This will appear on your invite: {partyData.venueName}</p>
                 )}
               </div>
             )}
@@ -828,18 +858,19 @@ export default function PartyPlanner() {
                   <TimelineBuilder timeline={timeline} onTimelineChange={setTimeline} partyData={partyData} />
                 </TierGate>
 
-                {/* Food & Drink Labels CTA */}
+                {/* Food & Drink Labels — Etsy */}
                 <div className="no-print">
-                  <button onClick={() => setComingSoonModal('labels')} className="w-full p-4 bg-gradient-to-r from-orange-50 to-amber-50 border-2 border-orange-200 rounded-2xl hover:shadow-lg hover:border-orange-400 transition-all text-left group">
+                  <a href={`https://www.etsy.com/search?q=${encodeURIComponent((partyData.theme || 'birthday') + ' party food labels printable')}`} target="_blank" rel="noopener noreferrer"
+                    className="block w-full p-4 bg-gradient-to-r from-orange-50 to-amber-50 border-2 border-orange-200 rounded-2xl hover:shadow-lg hover:border-orange-400 transition-all text-left group">
                     <div className="flex items-center gap-3">
                       <Tag className="text-orange-500" size={28} />
                       <div>
-                        <h4 className="font-bold text-orange-700 group-hover:text-orange-600">Create Food & Drink Labels</h4>
-                        <p className="text-sm text-gray-600">Custom themed labels for your table</p>
+                        <h4 className="font-bold text-orange-700 group-hover:text-orange-600">Shop Food & Drink Labels on Etsy</h4>
+                        <p className="text-sm text-gray-600">Printable themed labels for your party table</p>
                       </div>
-                      <ChevronRight className="text-orange-300 ml-auto" size={20} />
+                      <ExternalLink className="text-orange-300 ml-auto flex-shrink-0" size={20} />
                     </div>
-                  </button>
+                  </a>
                 </div>
 
                 {/* Cake Ordering */}
@@ -868,6 +899,7 @@ export default function PartyPlanner() {
                     {[
                       { label: 'Face Painter', search: 'face painter for birthday party near me' },
                       { label: 'Balloon Artist', search: 'balloon artist birthday party near me' },
+                      { label: 'Bounce House / Slide', search: 'bounce house rental birthday party near me' },
                       { label: 'Party Helper', search: 'party assistant helper near me' },
                       { label: 'DJ / Music', search: 'kids party DJ near me' },
                       ...(hireCharacter ? [{ label: `${partyData.theme} Character`, search: `hire ${partyData.theme} character performer near me` }] : []),
@@ -1022,17 +1054,6 @@ export default function PartyPlanner() {
                 {/* Email Capture */}
                 <div className="no-print">
                   <EmailCapture source="checklist" partyData={partyData} />
-                </div>
-
-                {/* Sample PDF Generator (demo) */}
-                <div className="no-print p-4 bg-gradient-to-r from-purple-50 to-violet-50 border-2 border-purple-200 rounded-2xl">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-bold text-purple-700">Sample: Vinny's Star Wars Party Kit</h4>
-                      <p className="text-sm text-gray-500">See what a full PDF Party Kit looks like</p>
-                    </div>
-                    <button onClick={generateSamplePDF} className="bg-gradient-to-r from-purple-500 to-violet-500 text-white px-4 py-2 rounded-xl font-bold hover:shadow-xl transition-all flex items-center gap-2 text-sm"><FileDown size={16} /> Download Sample</button>
-                  </div>
                 </div>
 
                 {/* Budget Tracker — at the bottom so it doesn't overwhelm */}
