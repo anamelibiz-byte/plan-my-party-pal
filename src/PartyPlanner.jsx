@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { themes } from './data/themes';
 import { getActivitiesForAge, getAgeGroup } from './data/activities';
-import { venueCategories, getVenuesByType, getAllVenuesWithinRadius, searchNearbyVenues } from './data/venueTypes';
+import { venueCategories, getVenuesByType, getAllVenuesWithinRadius, searchNearbyVenues, searchCustomVenue } from './data/venueTypes';
 import { getAmazonSearchUrl, getSuppliesForActivity, bakeryLinks } from './data/shoppingLinks';
 import { partyZones } from './data/partyZones';
 
@@ -110,9 +110,12 @@ export default function PartyPlanner() {
   const [venueLoading, setVenueLoading] = useState(false);
   const [venueLocation, setVenueLocation] = useState('');
   const [venueError, setVenueError] = useState('');
+  const [venueRadius, setVenueRadius] = useState(10); // 5 or 10 miles
+  const [customVenueSearch, setCustomVenueSearch] = useState('');
 
-  const searchVenues = async (venueType) => {
+  const searchVenues = async (venueType, radius) => {
     const loc = partyData.location;
+    const r = radius ?? venueRadius;
     if (!loc || !venueType || venueType === 'Home') {
       setLiveVenues([]);
       return;
@@ -120,7 +123,7 @@ export default function PartyPlanner() {
     setVenueLoading(true);
     setVenueError('');
     try {
-      const data = await searchNearbyVenues(loc, venueType);
+      const data = await searchNearbyVenues(loc, venueType, r);
       if (data.results && data.results.length > 0) {
         setLiveVenues(data.results);
         setVenueLocation(data.location || loc);
@@ -131,6 +134,28 @@ export default function PartyPlanner() {
     } catch {
       setLiveVenues([]);
       setVenueError('Search failed. Showing sample results.');
+    }
+    setVenueLoading(false);
+  };
+
+  const handleCustomVenueSearch = async () => {
+    const loc = partyData.location;
+    const q = customVenueSearch.trim();
+    if (!loc || !q) return;
+    setVenueLoading(true);
+    setVenueError('');
+    try {
+      const data = await searchCustomVenue(loc, q, venueRadius);
+      if (data.results && data.results.length > 0) {
+        setLiveVenues(data.results);
+        setVenueLocation(data.location || loc);
+      } else {
+        setLiveVenues([]);
+        setVenueError('No results found. Try a different search term.');
+      }
+    } catch {
+      setLiveVenues([]);
+      setVenueError('Search failed. Try again.');
     }
     setVenueLoading(false);
   };
@@ -556,19 +581,52 @@ export default function PartyPlanner() {
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
               {venueCategories.map(type => (
-                <button key={type} onClick={() => { updateField('venueType', type); searchVenues(type); }}
+                <button key={type} onClick={() => { updateField('venueType', type); setCustomVenueSearch(''); searchVenues(type); }}
                   className={`p-3 rounded-xl font-bold text-sm transition-all border-2 ${partyData.venueType === type ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white border-rose-600 shadow-xl scale-105' : 'bg-white border-pink-200 text-gray-700 hover:border-rose-400 hover:shadow-lg'}`}>
                   {type}
                 </button>
               ))}
             </div>
 
+            {/* Custom Venue Search Bar */}
+            <div className="mb-6 p-4 bg-blue-50 border-2 border-blue-200 rounded-xl">
+              <label className="block text-sm font-bold text-blue-700 mb-2">🔍 Search for a specific venue</label>
+              <div className="flex gap-2">
+                <input type="text" value={customVenueSearch} onChange={e => setCustomVenueSearch(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleCustomVenueSearch()}
+                  placeholder="e.g., Chuck E. Cheese, Sky Zone, Central Park..."
+                  className="flex-1 min-w-0 px-4 py-3 border-2 border-blue-200 rounded-xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-base" />
+                <button onClick={handleCustomVenueSearch} disabled={!customVenueSearch.trim() || !partyData.location || venueLoading}
+                  className="px-5 py-3 bg-blue-500 text-white rounded-xl font-bold hover:bg-blue-600 transition-all disabled:opacity-40 flex items-center gap-1 flex-shrink-0">
+                  <Search size={18} /> Search
+                </button>
+              </div>
+              {!partyData.location && (
+                <p className="text-xs text-amber-600 mt-2 font-semibold">⚠️ Add your location on Step 1 first to search venues near you</p>
+              )}
+            </div>
+
+            {/* Radius Selector */}
+            {partyData.venueType && partyData.venueType !== 'Home' && (
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-sm font-bold text-gray-600">Search within:</span>
+                <div className="flex gap-2">
+                  {[5, 10].map(r => (
+                    <button key={r} onClick={() => { setVenueRadius(r); if (partyData.venueType && partyData.venueType !== 'Home') searchVenues(partyData.venueType, r); }}
+                      className={`px-4 py-2 rounded-lg font-bold text-sm transition-all border-2 ${venueRadius === r ? 'bg-blue-500 text-white border-blue-600' : 'bg-white border-gray-200 text-gray-600 hover:border-blue-300'}`}>
+                      {r} miles
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {partyData.venueType && partyData.venueType !== 'Home' && (
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Search className="text-blue-500" size={20} />
                   <h3 className="text-xl font-bold text-gray-800">
-                    {venueLocation ? `Near ${venueLocation}` : 'Nearby Options (within 10 miles)'}
+                    {venueLocation ? `Near ${venueLocation}` : `Nearby Options (within ${venueRadius} miles)`}
                   </h3>
                 </div>
 
@@ -629,7 +687,7 @@ export default function PartyPlanner() {
                   <p className="text-gray-500 italic">{venueError || 'No matching venues found. Try a different category.'}</p>
                 )}
                 {liveVenues.length > 0 && (
-                  <p className="text-xs text-green-600 mt-3 font-semibold">✅ Showing real venues from Google Places</p>
+                  <p className="text-xs text-green-600 mt-3 font-semibold">✅ Showing real venues from Google Places (within {venueRadius} mi)</p>
                 )}
                 {liveVenues.length === 0 && matchingVenues.length > 0 && (
                   <p className="text-xs text-gray-400 mt-3 italic">Sample data shown — add your location on Step 1 for real results!</p>
@@ -860,7 +918,7 @@ export default function PartyPlanner() {
 
                 {/* Food & Drink Labels — Etsy */}
                 <div className="no-print">
-                  <a href="https://www.etsy.com/gotinatravels" target="_blank" rel="noopener noreferrer"
+                  <a href="https://www.etsy.com/shop/gotinatravels" target="_blank" rel="noopener noreferrer"
                     className="block w-full p-4 bg-gradient-to-r from-orange-50 to-amber-50 border-2 border-orange-200 rounded-2xl hover:shadow-lg hover:border-orange-400 transition-all text-left group">
                     <div className="flex items-center gap-3">
                       <Tag className="text-orange-500" size={28} />
