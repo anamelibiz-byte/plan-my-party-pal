@@ -860,7 +860,7 @@ export default function PartyPlanner() {
 
                 {/* Food & Drink Labels — Etsy */}
                 <div className="no-print">
-                  <a href={`https://www.etsy.com/search?q=${encodeURIComponent((partyData.theme || 'birthday') + ' party food labels printable')}`} target="_blank" rel="noopener noreferrer"
+                  <a href="https://www.etsy.com/gotinatravels" target="_blank" rel="noopener noreferrer"
                     className="block w-full p-4 bg-gradient-to-r from-orange-50 to-amber-50 border-2 border-orange-200 rounded-2xl hover:shadow-lg hover:border-orange-400 transition-all text-left group">
                     <div className="flex items-center gap-3">
                       <Tag className="text-orange-500" size={28} />
