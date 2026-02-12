@@ -64,8 +64,9 @@ export default function UpgradeModal() {
         return;
       } else if (data.error) {
         // API returned a specific error message
-        console.error('❌ Stripe API error:', data.error, data.stripeError);
-        setCheckoutError(data.error);
+        console.error('❌ Stripe API error:', data.error, data.stripeError, data.stripeDetail);
+        const debugInfo = data.stripeDetail ? `\n\nDebug: ${data.stripeDetail}` : '';
+        setCheckoutError(data.error + debugInfo);
       } else if (data.message) {
         console.log('⚠️ Stripe not configured, upgrading locally:', data.message);
         setUserTier(tierId);
@@ -107,7 +108,7 @@ export default function UpgradeModal() {
           <div className="mx-6 mt-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
             <span className="text-red-500 text-lg flex-shrink-0">⚠️</span>
             <div>
-              <p className="text-red-700 text-sm font-medium">{checkoutError}</p>
+              <p className="text-red-700 text-sm font-medium whitespace-pre-wrap">{checkoutError}</p>
               <button
                 onClick={() => setCheckoutError(null)}
                 className="text-red-500 text-xs underline mt-1 hover:text-red-700"

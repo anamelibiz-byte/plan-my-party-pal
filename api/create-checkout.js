@@ -66,6 +66,11 @@ export default async function handler(req, res) {
       userMessage = 'Could not connect to payment processor. Please check your internet and try again.';
     }
 
-    return res.status(500).json({ error: userMessage, stripeError: error.type || 'unknown' });
+    return res.status(500).json({
+      error: userMessage,
+      stripeError: error.type || 'unknown',
+      stripeDetail: error.message || 'No details available',
+      stripeCode: error.code || null,
+    });
   }
 }
