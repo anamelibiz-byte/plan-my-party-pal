@@ -548,22 +548,12 @@ export default function PartyPlanner() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Guest Count {maxGuests && <span className="text-xs text-gray-500">(max {maxGuests} on Free plan)</span>}
-                  </label>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">Guest Count</label>
                   <input
                     type="number"
                     value={partyData.guestCount}
-                    onChange={e => {
-                      const val = e.target.value;
-                      if (maxGuests && parseInt(val) > maxGuests) {
-                        requireFeature('maxGuests');
-                        return;
-                      }
-                      updateField('guestCount', val);
-                    }}
+                    onChange={e => updateField('guestCount', e.target.value)}
                     placeholder="15"
-                    max={maxGuests || undefined}
                     className="w-full px-4 py-3 border-2 border-pink-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-lg"
                   />
                 </div>

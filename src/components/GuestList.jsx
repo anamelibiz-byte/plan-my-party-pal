@@ -20,12 +20,7 @@ export default function GuestList({ partyData }) {
     const name = newName.trim();
     if (!name) return;
 
-    // Check guest limit for free tier
-    if (maxGuests && guests.length >= maxGuests) {
-      requireFeature('maxGuests');
-      return;
-    }
-
+    // No guest limit - everyone can add unlimited guests
     setGuests(prev => [...prev, { name, rsvp: 'pending' }]);
     setNewName('');
   };
@@ -72,18 +67,9 @@ export default function GuestList({ partyData }) {
         <Users className="text-indigo-500" size={22} />
         <h3 className="text-lg font-bold text-indigo-800">Guest Invite List</h3>
         <span className="ml-auto text-sm text-gray-500 font-semibold">
-          {guests.length} {maxGuests ? `/ ${maxGuests}` : ''} invited
+          {guests.length} invited
         </span>
       </div>
-
-      {maxGuests && isAtLimit && (
-        <div className="mb-3 p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2">
-          <Crown className="text-amber-500 flex-shrink-0" size={18} />
-          <p className="text-sm text-amber-700">
-            <strong>Free plan limit reached.</strong> Upgrade to Pro for unlimited guests!
-          </p>
-        </div>
-      )}
 
       {guests.length > 0 && (
         <div className="grid grid-cols-3 gap-2 mb-4">
