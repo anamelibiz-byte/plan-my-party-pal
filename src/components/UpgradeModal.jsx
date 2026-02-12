@@ -24,22 +24,42 @@ export default function UpgradeModal() {
   if (!showUpgradeModal) return null;
 
   const handleCheckout = async (tierId) => {
+    console.log('🔵 Upgrade button clicked!', { tierId });
     const tier = TIERS[tierId];
+
     if (!tier.stripe_price_id) {
+      console.log('⚠️ No Stripe price ID configured - upgrading locally');
       // No Stripe configured — just upgrade locally (for dev/demo)
       setUserTier(tierId);
       closeUpgradeModal();
       return;
     }
+
+    console.log('🔵 Calling Stripe checkout...', { priceId: tier.stripe_price_id, tier: tierId });
+
     try {
       const res = await fetch('/api/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ priceId: tier.stripe_price_id, tier: tierId }),
       });
-      const { url } = await res.json();
-      if (url) window.location.href = url;
-    } catch {
+
+      const data = await res.json();
+      console.log('🔵 Checkout response:', data);
+
+      if (data.url) {
+        console.log('✅ Redirecting to Stripe checkout:', data.url);
+        window.location.href = data.url;
+      } else if (data.message) {
+        console.log('⚠️ Stripe not configured, upgrading locally:', data.message);
+        setUserTier(tierId);
+        closeUpgradeModal();
+      } else {
+        console.error('❌ No URL in response:', data);
+        alert('Payment setup error. Please try again or contact support.');
+      }
+    } catch (error) {
+      console.error('❌ Checkout error:', error);
       // Fallback: upgrade locally
       setUserTier(tierId);
       closeUpgradeModal();
