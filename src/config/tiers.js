@@ -47,8 +47,8 @@ export const TIERS = {
     priceYearly: 29.99,
     priceYearlyLabel: '$29.99/year',
     billing: 'monthly',
-    stripe_price_id: 'price_1Sz4igIVX3wrRyGSNKMMcjLj',
-    stripe_price_id_yearly: 'price_1Sz4igIVX3wrRyGSNKMMcjLj_YEARLY',
+    stripe_price_id: 'price_1Sz4iglVX3wrRyGSNKMMcjLj',
+    stripe_price_id_yearly: 'price_1T031QIVX3wrRyGS8kY6iCcZ',
     description: 'Everything you need + more',
     popular: true,
     features: {
