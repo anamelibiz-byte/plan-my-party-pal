@@ -43,41 +43,71 @@ export default async function handler(req, res) {
     const keyword = typeKeywords[type] || type || 'party venue kids entertainment';
     const searchRadius = parseInt(radius) || 16093; // default 10 miles in meters
 
-    // Step 3: Search Google Places (Text Search for better results)
-    const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(keyword)}&location=${lat},${lng}&radius=${searchRadius}&key=${apiKey}`;
-    const placesRes = await fetch(searchUrl);
+    // Step 3: Use NEW Google Places API (Places API New) - Text Search
+    // https://developers.google.com/maps/documentation/places/web-service/text-search
+    const searchUrl = `https://places.googleapis.com/v1/places:searchText`;
+
+    const placesRes = await fetch(searchUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': apiKey,
+        'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.location,places.rating,places.userRatingCount,places.priceLevel,places.currentOpeningHours,places.photos,places.id'
+      },
+      body: JSON.stringify({
+        textQuery: keyword,
+        locationBias: {
+          circle: {
+            center: {
+              latitude: lat,
+              longitude: lng
+            },
+            radius: searchRadius
+          }
+        },
+        maxResultCount: 10,
+        rankPreference: 'DISTANCE'
+      })
+    });
+
     const placesData = await placesRes.json();
 
-    if (!placesData.results) {
+    if (!placesData.places || placesData.places.length === 0) {
       return res.status(200).json({ results: [], location: formattedAddress });
     }
 
     // Step 4: Format results
-    const venues = placesData.results.slice(0, 10).map(place => {
+    const venues = placesData.places.map(place => {
       // Calculate distance from search center
-      const pLat = place.geometry.location.lat;
-      const pLng = place.geometry.location.lng;
+      const pLat = place.location.latitude;
+      const pLng = place.location.longitude;
       const R = 3959; // Earth radius in miles
       const dLat = (pLat - lat) * Math.PI / 180;
       const dLng = (pLng - lng) * Math.PI / 180;
       const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat * Math.PI / 180) * Math.cos(pLat * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
       const dist = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-      // Map price_level to price range
-      const priceMap = { 0: 'Free', 1: '$', 2: '$$', 3: '$$$', 4: '$$$$' };
+      // Map price_level to price range (new API uses different format)
+      const priceLevelMap = {
+        'PRICE_LEVEL_FREE': 'Free',
+        'PRICE_LEVEL_INEXPENSIVE': '$',
+        'PRICE_LEVEL_MODERATE': '$$',
+        'PRICE_LEVEL_EXPENSIVE': '$$$',
+        'PRICE_LEVEL_VERY_EXPENSIVE': '$$$$'
+      };
 
       return {
-        name: place.name,
-        address: place.formatted_address,
+        name: place.displayName?.text || place.displayName || 'Unnamed Venue',
+        address: place.formattedAddress || '',
         type: type || 'Venue',
         distance: `${dist.toFixed(1)} mi`,
         distanceMiles: dist,
-        priceRange: priceMap[place.price_level] || '$$',
+        priceRange: priceLevelMap[place.priceLevel] || '$$',
         rating: place.rating || 0,
-        totalRatings: place.user_ratings_total || 0,
-        isOpen: place.opening_hours?.open_now ?? null,
-        placeId: place.place_id,
-        photoRef: place.photos?.[0]?.photo_reference || null,
+        totalRatings: place.userRatingCount || 0,
+        isOpen: place.currentOpeningHours?.openNow ?? null,
+        placeId: place.id,
+        photoRef: place.photos?.[0]?.name || null,
       };
     });
 
