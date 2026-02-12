@@ -13,6 +13,8 @@ export default function LandingPage() {
     setIsUpgrading(true);
     const tier = TIERS.pro;
 
+    console.log('🔵 Starting upgrade to Pro...', { priceId: tier.stripe_price_id });
+
     try {
       const res = await fetch('/api/create-checkout', {
         method: 'POST',
@@ -24,18 +26,30 @@ export default function LandingPage() {
       });
 
       const data = await res.json();
+      console.log('🔵 Checkout API response:', data);
 
       if (data.url) {
         // Redirect to Stripe checkout
+        console.log('✅ Redirecting to Stripe:', data.url);
         window.location.href = data.url;
+      } else if (data.message) {
+        // Stripe not configured - go to app
+        console.log('⚠️ Stripe not configured:', data.message);
+        alert('Payment system not configured yet. Try the free version instead!');
+        navigate('/app');
+      } else if (data.error) {
+        // Error occurred
+        console.error('❌ Checkout error:', data.error);
+        alert(`Error: ${data.error}\n\nPlease try the free version for now.`);
+        navigate('/app');
       } else {
-        // Stripe not configured or error - go to app
-        console.log('Stripe not configured, redirecting to app');
+        // Unknown response
+        console.error('❌ Unexpected response:', data);
         navigate('/app');
       }
     } catch (error) {
-      console.error('Checkout error:', error);
-      // Fallback: go to app
+      console.error('❌ Network error:', error);
+      alert('Network error. Redirecting to free version...');
       navigate('/app');
     } finally {
       setIsUpgrading(false);
