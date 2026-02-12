@@ -35,7 +35,7 @@ export default async function handler(req, res) {
 
   // Check 4: Is the monthly price ID valid?
   try {
-    const price = await stripe.prices.retrieve('price_1Sz4iglVX3wrRyGSNKMMcjLj');
+    const price = await stripe.prices.retrieve('price_1T07BaIVX3wrRyGSVSqVAyVu');
     results.checks.monthlyPrice = 'OK - $' + (price.unit_amount / 100) + '/' + (price.recurring ? price.recurring.interval : 'one-time') + ' active=' + price.active;
   } catch (e) {
     results.checks.monthlyPrice = 'FAILED - ' + (e.type || '') + ' ' + e.message;
@@ -53,7 +53,7 @@ export default async function handler(req, res) {
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      line_items: [{ price: 'price_1Sz4iglVX3wrRyGSNKMMcjLj', quantity: 1 }],
+      line_items: [{ price: 'price_1T07BaIVX3wrRyGSVSqVAyVu', quantity: 1 }],
       mode: 'subscription',
       success_url: 'https://www.planmypartypal.com/app?upgraded=pro',
       cancel_url: 'https://www.planmypartypal.com/app',
