@@ -3,19 +3,19 @@ import { X, Check, Crown, Sparkles, Star } from 'lucide-react';
 import { useTier } from '../context/TierContext';
 import { TIERS, FEATURE_LABELS, getMinTierForFeature } from '../config/tiers';
 
-const TIER_ICONS = { free: Star, pro: Crown, plus: Sparkles };
+const TIER_ICONS = { free: Star, pro: Crown };
 const TIER_COLORS = {
   free: { bg: 'from-gray-100 to-gray-200', border: 'border-gray-300', text: 'text-gray-700', btn: 'from-gray-400 to-gray-500' },
-  pro: { bg: 'from-amber-50 to-orange-50', border: 'border-amber-300', text: 'text-amber-700', btn: 'from-amber-400 to-orange-500' },
-  plus: { bg: 'from-purple-50 to-violet-50', border: 'border-purple-300', text: 'text-purple-700', btn: 'from-purple-500 to-violet-500' },
+  pro: { bg: 'from-pink-50 to-rose-50', border: 'border-pink-300', text: 'text-pink-700', btn: 'from-pink-500 to-rose-500' },
 };
 
 // Display features for each tier card
 const DISPLAY_FEATURES = [
-  'allThemes', 'characterThemes', 'allActivities', 'budgetTrackerFull',
-  'downloadPDF', 'saveExport', 'emailPartyPlan', 'partyZonesFull',
-  'timelineBuilder', 'weatherAlert', 'shareChecklist', 'aiSuggestions',
-  'rsvpSystem', 'dietaryTracker',
+  'maxParties', 'maxGuests', 'allThemes', 'characterThemes', 'allActivities',
+  'budgetTrackerFull', 'budgetAnalytics', 'downloadPDF', 'saveExport',
+  'emailPartyPlan', 'partyZonesFull', 'timelineBuilder', 'weatherAlert',
+  'shareChecklist', 'aiSuggestions', 'rsvpSystem', 'dietaryTracker',
+  'vendorRecommendations', 'prioritySupport',
 ];
 
 export default function UpgradeModal() {
@@ -66,13 +66,13 @@ export default function UpgradeModal() {
           </button>
         </div>
 
-        <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-          {['free', 'pro', 'plus'].map(tierId => {
+        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {['free', 'pro'].map(tierId => {
             const tier = TIERS[tierId];
             const colors = TIER_COLORS[tierId];
             const Icon = TIER_ICONS[tierId];
             const isCurrent = userTier === tierId;
-            const isRecommended = tierId === (minTier === 'pro' ? 'pro' : minTier === 'plus' ? 'plus' : 'pro');
+            const isRecommended = tierId === 'pro';
 
             return (
               <div
@@ -88,6 +88,9 @@ export default function UpgradeModal() {
                   <Icon className={colors.text} size={32} />
                   <h3 className={`text-xl font-bold mt-2 ${colors.text}`}>{tier.name}</h3>
                   <p className="text-2xl font-bold text-gray-800 mt-1">{tier.priceLabel}</p>
+                  {tier.priceYearlyLabel && (
+                    <p className="text-xs text-gray-600 mt-1">or {tier.priceYearlyLabel} (save $30!)</p>
+                  )}
                   {tier.billing && <p className="text-xs text-gray-500">{tier.billing}</p>}
                 </div>
 
@@ -122,7 +125,7 @@ export default function UpgradeModal() {
                     onClick={() => handleCheckout(tierId)}
                     className={`w-full py-3 bg-gradient-to-r ${colors.btn} text-white rounded-xl font-bold hover:shadow-xl hover:scale-[1.02] transition-all`}
                   >
-                    {tier.billing === 'one-time' ? 'Buy Now' : 'Subscribe'}
+                    Upgrade to Pro
                   </button>
                 )}
               </div>

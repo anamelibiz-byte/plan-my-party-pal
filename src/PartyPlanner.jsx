@@ -25,6 +25,7 @@ import InviteCard from './components/InviteCard';
 import GuestList from './components/GuestList';
 import { useTier } from './context/TierContext';
 import { downloadPartyPDF, generateSamplePDF } from './utils/generatePDF';
+import { getMaxGuests } from './config/tiers';
 
 // ─── Sprinkles Background ────────────────────────────────────────────────────
 const SPRINKLE_COLORS = ['#FF6B9D','#C084FC','#FCD34D','#60A5FA','#34D399','#F87171','#FB923C'];
@@ -103,7 +104,8 @@ export default function PartyPlanner() {
   const [rsvpResponses, setRsvpResponses] = useState(() => {
     try { return JSON.parse(localStorage.getItem('pp_rsvp_responses')) || []; } catch { return []; }
   });
-  const { checkFeature, requireFeature } = useTier();
+  const { checkFeature, requireFeature, userTier } = useTier();
+  const maxGuests = getMaxGuests(userTier);
 
   // ─── Live Venue Search ──────────────────────────────────────────────────────
   const [liveVenues, setLiveVenues] = useState([]);
@@ -546,8 +548,24 @@ export default function PartyPlanner() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Guest Count</label>
-                  <input type="number" value={partyData.guestCount} onChange={e => updateField('guestCount', e.target.value)} placeholder="15" className="w-full px-4 py-3 border-2 border-pink-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-lg" />
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    Guest Count {maxGuests && <span className="text-xs text-gray-500">(max {maxGuests} on Free plan)</span>}
+                  </label>
+                  <input
+                    type="number"
+                    value={partyData.guestCount}
+                    onChange={e => {
+                      const val = e.target.value;
+                      if (maxGuests && parseInt(val) > maxGuests) {
+                        requireFeature('maxGuests');
+                        return;
+                      }
+                      updateField('guestCount', val);
+                    }}
+                    placeholder="15"
+                    max={maxGuests || undefined}
+                    className="w-full px-4 py-3 border-2 border-pink-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-lg"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">Budget ($)</label>
