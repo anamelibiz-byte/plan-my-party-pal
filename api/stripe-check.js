@@ -1,3 +1,5 @@
+import Stripe from 'stripe';
+
 export default async function handler(req, res) {
   const results = {
     timestamp: new Date().toISOString(),
@@ -15,7 +17,7 @@ export default async function handler(req, res) {
   // Check 2: Can we load the stripe module?
   let stripe;
   try {
-    stripe = require('stripe')(stripeKey);
+    stripe = new Stripe(stripeKey);
     results.checks.stripeModule = 'OK - stripe module loaded';
   } catch (e) {
     results.checks.stripeModule = 'FAILED - ' + e.message;

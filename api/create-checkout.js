@@ -1,3 +1,5 @@
+import Stripe from 'stripe';
+
 export default async function handler(req, res) {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -22,7 +24,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const stripe = require('stripe')(stripeKey);
+    const stripe = new Stripe(stripeKey);
 
     // Determine base URL for redirects
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || req.headers.origin || 'https://planmypartypal.com';
