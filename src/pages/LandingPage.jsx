@@ -1,10 +1,46 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { PartyPopper, CheckCircle2, Clock, Sparkles, Heart, Calendar, Users, DollarSign } from 'lucide-react';
 import EmailCapture from '../components/EmailCapture';
+import { TIERS } from '../config/tiers';
 
 export default function LandingPage() {
   const [showChecklistPreview, setShowChecklistPreview] = useState(false);
+  const [isUpgrading, setIsUpgrading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleUpgradeToPro = async () => {
+    setIsUpgrading(true);
+    const tier = TIERS.pro;
+
+    try {
+      const res = await fetch('/api/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          priceId: tier.stripe_price_id,
+          tier: 'pro'
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.url) {
+        // Redirect to Stripe checkout
+        window.location.href = data.url;
+      } else {
+        // Stripe not configured or error - go to app
+        console.log('Stripe not configured, redirecting to app');
+        navigate('/app');
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      // Fallback: go to app
+      navigate('/app');
+    } finally {
+      setIsUpgrading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-purple-50">
@@ -227,12 +263,13 @@ export default function LandingPage() {
                 ))}
               </ul>
 
-              <Link
-                to="/app?upgrade=pro"
-                className="block w-full bg-white text-pink-600 text-center py-3 rounded-xl font-bold hover:shadow-2xl transition-all"
+              <button
+                onClick={handleUpgradeToPro}
+                disabled={isUpgrading}
+                className="w-full bg-white text-pink-600 text-center py-3 rounded-xl font-bold hover:shadow-2xl transition-all disabled:opacity-50"
               >
-                Upgrade to Pro
-              </Link>
+                {isUpgrading ? 'Loading...' : 'Upgrade to Pro'}
+              </button>
             </div>
           </div>
         </div>
