@@ -5,6 +5,7 @@ import LandingPage from './pages/LandingPage';
 import PartyPlanner from './PartyPlanner';
 import RSVPPage from './pages/RSVPPage';
 import UpgradeModal from './components/UpgradeModal';
+import UpgradeSuccessBanner from './components/UpgradeSuccessBanner';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/rsvp/:partyId" element={<RSVPPage />} />
           </Routes>
           <UpgradeModal />
+          <UpgradeSuccessBanner />
         </PartyProvider>
       </TierProvider>
     </BrowserRouter>

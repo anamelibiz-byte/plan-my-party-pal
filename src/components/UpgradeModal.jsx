@@ -1,5 +1,5 @@
-import React from 'react';
-import { X, Check, Crown, Sparkles, Star } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Check, Crown, Sparkles, Star, Loader2 } from 'lucide-react';
 import { useTier } from '../context/TierContext';
 import { TIERS, FEATURE_LABELS, getMinTierForFeature } from '../config/tiers';
 
@@ -20,28 +20,38 @@ const DISPLAY_FEATURES = [
 
 export default function UpgradeModal() {
   const { showUpgradeModal, upgradeFeature, closeUpgradeModal, userTier, setUserTier } = useTier();
+  const [billingCycle, setBillingCycle] = useState('monthly'); // 'monthly' or 'yearly'
+  const [isLoading, setIsLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState(null);
 
   if (!showUpgradeModal) return null;
 
   const handleCheckout = async (tierId) => {
-    console.log('🔵 Upgrade button clicked!', { tierId });
+    console.log('🔵 Upgrade button clicked!', { tierId, billingCycle });
+    setCheckoutError(null);
+    setIsLoading(true);
+
     const tier = TIERS[tierId];
 
-    if (!tier.stripe_price_id) {
+    // Pick the right price ID based on billing cycle
+    const priceId = billingCycle === 'yearly' ? tier.stripe_price_id_yearly : tier.stripe_price_id;
+
+    if (!priceId) {
       console.log('⚠️ No Stripe price ID configured - upgrading locally');
       // No Stripe configured — just upgrade locally (for dev/demo)
       setUserTier(tierId);
       closeUpgradeModal();
+      setIsLoading(false);
       return;
     }
 
-    console.log('🔵 Calling Stripe checkout...', { priceId: tier.stripe_price_id, tier: tierId });
+    console.log('🔵 Calling Stripe checkout...', { priceId, tier: tierId, billingCycle });
 
     try {
       const res = await fetch('/api/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId: tier.stripe_price_id, tier: tierId }),
+        body: JSON.stringify({ priceId, tier: tierId }),
       });
 
       const data = await res.json();
@@ -50,20 +60,26 @@ export default function UpgradeModal() {
       if (data.url) {
         console.log('✅ Redirecting to Stripe checkout:', data.url);
         window.location.href = data.url;
+        // Don't set isLoading to false — we're navigating away
+        return;
+      } else if (data.error) {
+        // API returned a specific error message
+        console.error('❌ Stripe API error:', data.error, data.stripeError);
+        setCheckoutError(data.error);
       } else if (data.message) {
         console.log('⚠️ Stripe not configured, upgrading locally:', data.message);
         setUserTier(tierId);
         closeUpgradeModal();
       } else {
-        console.error('❌ No URL in response:', data);
-        alert('Payment setup error. Please try again or contact support.');
+        console.error('❌ Unexpected response format:', data);
+        setCheckoutError('Something went wrong. Please try again or contact support.');
       }
     } catch (error) {
-      console.error('❌ Checkout error:', error);
-      // Fallback: upgrade locally
-      setUserTier(tierId);
-      closeUpgradeModal();
+      console.error('❌ Checkout network error:', error);
+      setCheckoutError('Could not connect to payment server. Please check your internet connection and try again.');
     }
+
+    setIsLoading(false);
   };
 
   const highlightFeature = upgradeFeature;
@@ -86,6 +102,22 @@ export default function UpgradeModal() {
           </button>
         </div>
 
+        {/* Error banner */}
+        {checkoutError && (
+          <div className="mx-6 mt-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
+            <span className="text-red-500 text-lg flex-shrink-0">⚠️</span>
+            <div>
+              <p className="text-red-700 text-sm font-medium">{checkoutError}</p>
+              <button
+                onClick={() => setCheckoutError(null)}
+                className="text-red-500 text-xs underline mt-1 hover:text-red-700"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           {['free', 'pro'].map(tierId => {
             const tier = TIERS[tierId];
@@ -107,11 +139,38 @@ export default function UpgradeModal() {
                 <div className="text-center mb-4 pt-2">
                   <Icon className={colors.text} size={32} />
                   <h3 className={`text-xl font-bold mt-2 ${colors.text}`}>{tier.name}</h3>
-                  <p className="text-2xl font-bold text-gray-800 mt-1">{tier.priceLabel}</p>
-                  {tier.priceYearlyLabel && (
-                    <p className="text-xs text-gray-600 mt-1">or {tier.priceYearlyLabel} (save $30!)</p>
+
+                  {/* Billing cycle toggle — only for paid tiers */}
+                  {tier.priceYearlyLabel ? (
+                    <div className="mt-2">
+                      <div className="inline-flex bg-gray-200 rounded-full p-0.5 text-xs font-medium">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setBillingCycle('monthly'); }}
+                          className={`px-3 py-1 rounded-full transition-all ${billingCycle === 'monthly' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500'}`}
+                        >
+                          Monthly
+                        </button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setBillingCycle('yearly'); }}
+                          className={`px-3 py-1 rounded-full transition-all ${billingCycle === 'yearly' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500'}`}
+                        >
+                          Yearly
+                        </button>
+                      </div>
+                      <p className="text-2xl font-bold text-gray-800 mt-2">
+                        {billingCycle === 'yearly' ? tier.priceYearlyLabel : tier.priceLabel}
+                      </p>
+                      {billingCycle === 'yearly' && (
+                        <p className="text-xs text-green-600 font-semibold mt-0.5">Save $30/year!</p>
+                      )}
+                      {billingCycle === 'monthly' && (
+                        <p className="text-xs text-gray-500 mt-0.5">or {tier.priceYearlyLabel} yearly</p>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-2xl font-bold text-gray-800 mt-1">{tier.priceLabel}</p>
                   )}
-                  {tier.billing && <p className="text-xs text-gray-500">{tier.billing}</p>}
+                  {tier.billing && <p className="text-xs text-gray-500">{billingCycle === 'yearly' ? 'billed annually' : tier.billing}</p>}
                 </div>
 
                 <div className="space-y-2 mb-5">
@@ -143,9 +202,17 @@ export default function UpgradeModal() {
                 ) : tierId === 'free' ? null : (
                   <button
                     onClick={() => handleCheckout(tierId)}
-                    className={`w-full py-3 bg-gradient-to-r ${colors.btn} text-white rounded-xl font-bold hover:shadow-xl hover:scale-[1.02] transition-all`}
+                    disabled={isLoading}
+                    className={`w-full py-3 bg-gradient-to-r ${colors.btn} text-white rounded-xl font-bold hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2`}
                   >
-                    Upgrade to Pro
+                    {isLoading ? (
+                      <>
+                        <Loader2 size={18} className="animate-spin" />
+                        Setting up checkout...
+                      </>
+                    ) : (
+                      `Upgrade to Pro${billingCycle === 'yearly' ? ' (Yearly)' : ''}`
+                    )}
                   </button>
                 )}
               </div>
