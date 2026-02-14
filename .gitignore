@@ -27,6 +27,11 @@ dist-ssr
 .env
 .env.local
 .env.production
+
+# Vercel
+.vercel
+
+# Temporary files
 _write_files.py
 s.b64
 .claude/

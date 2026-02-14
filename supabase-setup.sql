@@ -64,7 +64,42 @@ CREATE POLICY "Allow public reads on rsvp_responses"
   USING (true);
 
 
+-- ─── 3. Party Plans Table (Cross-Device Sync) ─────────────────────
+CREATE TABLE IF NOT EXISTS party_plans (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_email TEXT NOT NULL,
+  party_data JSONB NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Index for fast email lookups
+CREATE INDEX IF NOT EXISTS idx_party_plans_email ON party_plans(user_email);
+CREATE INDEX IF NOT EXISTS idx_party_plans_updated ON party_plans(updated_at DESC);
+
+-- Allow anyone to create and update their party plans
+ALTER TABLE party_plans ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public inserts on party_plans"
+  ON party_plans
+  FOR INSERT
+  TO anon
+  WITH CHECK (true);
+
+CREATE POLICY "Allow public updates on party_plans"
+  ON party_plans
+  FOR UPDATE
+  TO anon
+  USING (true);
+
+CREATE POLICY "Allow public reads on party_plans"
+  ON party_plans
+  FOR SELECT
+  TO anon
+  USING (true);
+
+
 -- ═══════════════════════════════════════════════════════════════════
--- ✅ Done! Both tables are ready.
+-- ✅ Done! All three tables are ready.
 -- The app will automatically start using them.
 -- ═══════════════════════════════════════════════════════════════════

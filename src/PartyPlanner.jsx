@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Cake, MapPin, Sparkles, CheckCircle2, Circle, Users, Heart,
   ChevronRight, ChevronLeft, X, Star, Phone, ExternalLink,
@@ -15,6 +15,7 @@ import { partyZones, getThemedFoodName } from './data/partyZones';
 // New components
 import BudgetTracker from './components/BudgetTracker';
 import EmailCapture from './components/EmailCapture';
+import EmailGate from './components/EmailGate';
 import RSVPManager from './components/RSVPManager';
 import TimelineBuilder from './components/TimelineBuilder';
 import DietaryTracker from './components/DietaryTracker';
@@ -26,6 +27,7 @@ import GuestList from './components/GuestList';
 import { useTier } from './context/TierContext';
 import { downloadPartyPDF, generateSamplePDF } from './utils/generatePDF';
 import { getMaxGuests } from './config/tiers';
+import { savePartyToDatabase, loadPartyFromDatabase, mergePartyData } from './utils/partySync';
 
 // ─── Sprinkles Background ────────────────────────────────────────────────────
 const SPRINKLE_COLORS = ['#FF6B9D','#C084FC','#FCD34D','#60A5FA','#34D399','#F87171','#FB923C'];
@@ -68,7 +70,7 @@ function Sprinkles() {
 }
 
 // ─── Step Config ─────────────────────────────────────────────────────────────
-const STEP_LABELS = ['Basics', 'Venue', 'Theme', 'Activities', 'Checklist'];
+const STEP_LABELS = ['Basics', 'Email', 'Venue', 'Theme', 'Activities', 'Checklist'];
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function PartyPlanner() {
@@ -104,8 +106,89 @@ export default function PartyPlanner() {
   const [rsvpResponses, setRsvpResponses] = useState(() => {
     try { return JSON.parse(localStorage.getItem('pp_rsvp_responses')) || []; } catch { return []; }
   });
+  const [userEmail, setUserEmail] = useState(() => {
+    return localStorage.getItem('pp_user_email') || '';
+  });
+  const [guestMode, setGuestMode] = useState(() => {
+    return localStorage.getItem('pp_guest_mode') === 'true';
+  });
   const { checkFeature, requireFeature, userTier } = useTier();
   const maxGuests = getMaxGuests(userTier);
+
+  // ─── Auto-Restore from Database ──────────────────────────────────────────────
+  useEffect(() => {
+    const restorePartyData = async () => {
+      // Check for email parameter in URL (deep link from email)
+      const params = new URLSearchParams(window.location.search);
+      const emailParam = params.get('email');
+
+      if (emailParam) {
+        // User clicked email link - load their data from database
+        console.log('📧 Loading party data for:', emailParam);
+        const dbData = await loadPartyFromDatabase(emailParam);
+
+        if (dbData) {
+          const localData = JSON.parse(localStorage.getItem('pp_party_data') || '{}');
+          const mergedData = mergePartyData(dbData, localData);
+
+          // Restore all state
+          setPartyData(mergedData);
+          setStep(mergedData.step || 1);
+          if (mergedData.checklist) setChecklist(mergedData.checklist);
+          if (mergedData.selectedActivities) {
+            // Activities are already in partyData, just log
+            console.log('✅ Restored activities:', mergedData.selectedActivities.length);
+          }
+
+          // Save credentials to localStorage
+          localStorage.setItem('pp_user_email', emailParam);
+          localStorage.setItem('pp_plan_id', dbData.id);
+          setUserEmail(emailParam);
+          setGuestMode(false);
+
+          console.log('✅ Party data restored from database');
+        }
+      } else if (userEmail && userEmail !== '') {
+        // User has email but no URL param - try loading their latest plan
+        console.log('🔄 Auto-loading saved plan for:', userEmail);
+        const dbData = await loadPartyFromDatabase(userEmail);
+
+        if (dbData) {
+          const localData = JSON.parse(localStorage.getItem('pp_party_data') || '{}');
+          const mergedData = mergePartyData(dbData, localData);
+
+          // Only restore if database has more progress
+          if ((dbData.party_data.step || 1) > step) {
+            setPartyData(mergedData);
+            setStep(mergedData.step || 1);
+            if (mergedData.checklist) setChecklist(mergedData.checklist);
+            console.log('✅ Restored more recent data from database');
+          }
+        }
+      }
+    };
+
+    restorePartyData();
+  }, []); // Run once on mount
+
+  // ─── Auto-Save to Database ───────────────────────────────────────────────────
+  useEffect(() => {
+    // Only auto-save if user has email (not in guest mode)
+    if (userEmail && userEmail !== '' && !guestMode && partyData.childName) {
+      const planId = localStorage.getItem('pp_plan_id');
+
+      // Build complete party state
+      const completePartyData = {
+        ...partyData,
+        step,
+        checklist,
+        hireCharacter,
+      };
+
+      // Save to database (debounced)
+      savePartyToDatabase(userEmail, completePartyData, planId);
+    }
+  }, [partyData, step, checklist, hireCharacter, userEmail, guestMode]);
 
   // ─── Live Venue Search ──────────────────────────────────────────────────────
   const [liveVenues, setLiveVenues] = useState([]);
@@ -570,21 +653,38 @@ export default function PartyPlanner() {
 
               <button onClick={() => setStep(2)} disabled={!partyData.childName || !partyData.age || !partyData.budget || !partyData.guestCount}
                 className="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2">
-                Continue to Venue Selection <ChevronRight size={24} />
+                Continue <ChevronRight size={24} />
               </button>
             </div>
           </div>
         )}
 
-        {/* ═══════ STEP 2: VENUE ═══════ */}
+        {/* ═══════ STEP 2: EMAIL GATE ═══════ */}
         {step === 2 && (
+          <EmailGate
+            partyData={partyData}
+            onContinue={(email) => {
+              setUserEmail(email);
+              setGuestMode(false);
+              setStep(3);
+            }}
+            onGuestContinue={() => {
+              setGuestMode(true);
+              setUserEmail('');
+              setStep(3);
+            }}
+          />
+        )}
+
+        {/* ═══════ STEP 3: VENUE ═══════ */}
+        {step === 3 && (
           <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-8 border-4 border-pink-200 relative z-10">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <MapPin className="text-blue-500" size={32} />
                 <h2 className="text-3xl font-bold text-gray-800">Pick Your Venue</h2>
               </div>
-              <button onClick={() => setStep(1)} className="text-gray-400 hover:text-gray-600 flex items-center gap-1 text-sm font-semibold"><ChevronLeft size={18} /> Back</button>
+              <button onClick={() => setStep(2)} className="text-gray-400 hover:text-gray-600 flex items-center gap-1 text-sm font-semibold"><ChevronLeft size={18} /> Back</button>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
@@ -641,7 +741,7 @@ export default function PartyPlanner() {
                 {!partyData.location && (
                   <div className="p-4 bg-amber-50 border-2 border-amber-200 rounded-xl mb-4">
                     <p className="text-amber-700 font-semibold">💡 Enter your City/State or ZIP on Step 1 to see real venues near you!</p>
-                    <button onClick={() => setStep(1)} className="mt-2 text-sm text-rose-500 underline font-bold">← Go back and add location</button>
+                    <button onClick={() => setStep(1)} className="mt-2 text-sm text-rose-500 underline font-bold">← Go back to basics and add location</button>
                   </div>
                 )}
 
@@ -719,22 +819,22 @@ export default function PartyPlanner() {
               </div>
             )}
 
-            <button onClick={() => setStep(3)} disabled={!partyData.venueType}
+            <button onClick={() => setStep(4)} disabled={!partyData.venueType}
               className="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2">
               Continue to Theme Selection <ChevronRight size={24} />
             </button>
           </div>
         )}
 
-        {/* ═══════ STEP 3: THEME ═══════ */}
-        {step === 3 && (
+        {/* ═══════ STEP 4: THEME ═══════ */}
+        {step === 4 && (
           <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-8 border-4 border-pink-200 relative z-10">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <Sparkles className="text-amber-500" size={32} />
                 <h2 className="text-3xl font-bold text-gray-800">Choose a Theme</h2>
               </div>
-              <button onClick={() => setStep(2)} className="text-gray-400 hover:text-gray-600 flex items-center gap-1 text-sm font-semibold"><ChevronLeft size={18} /> Back</button>
+              <button onClick={() => setStep(3)} className="text-gray-400 hover:text-gray-600 flex items-center gap-1 text-sm font-semibold"><ChevronLeft size={18} /> Back</button>
             </div>
 
             {/* AI suggestions */}
@@ -748,7 +848,7 @@ export default function PartyPlanner() {
                 <h3 className="text-lg font-bold text-amber-600 mb-3">AI Suggestions</h3>
                 <div className="grid gap-3">
                   {suggestions.map((t, i) => (
-                    <button key={`ai-${i}`} onClick={() => { updateField('theme', t.name); setStep(4); }}
+                    <button key={`ai-${i}`} onClick={() => { updateField('theme', t.name); setStep(5); }}
                       className="text-left p-5 rounded-2xl transition-all border-2 hover:shadow-xl group border-amber-200 hover:border-amber-400 bg-gradient-to-r from-amber-50 to-orange-50">
                       <div className="flex justify-between items-start">
                         <div><h4 className="text-lg font-bold text-gray-800 group-hover:text-amber-600">{t.name}</h4><p className="text-gray-600 text-sm mt-1">{t.description}</p></div>
@@ -764,7 +864,7 @@ export default function PartyPlanner() {
             <h3 className="text-lg font-bold text-purple-600 mb-3 flex items-center gap-2"><Star size={18} /> Character Themes</h3>
             <div className="grid gap-3 mb-6 max-h-[350px] overflow-y-auto pr-2">
               {characterThemes.map((t, i) => (
-                <button key={`char-${i}`} onClick={() => { updateField('theme', t.name); setStep(4); }}
+                <button key={`char-${i}`} onClick={() => { updateField('theme', t.name); setStep(5); }}
                   className={`text-left p-4 rounded-2xl transition-all border-2 hover:shadow-xl group ${partyData.theme === t.name ? 'border-purple-400 bg-purple-50 shadow-lg' : 'border-purple-200 hover:border-purple-400 bg-gradient-to-r from-purple-50 to-violet-50'}`}>
                   <div className="flex justify-between items-start">
                     <div><h4 className="text-lg font-bold text-gray-800 group-hover:text-purple-600">{t.name}</h4><p className="text-gray-600 text-sm mt-1">{t.description}</p></div>
@@ -781,7 +881,7 @@ export default function PartyPlanner() {
             <h3 className="text-lg font-bold text-gray-700 mb-3">Classic Themes</h3>
             <div className="grid gap-3 max-h-[400px] overflow-y-auto pr-2">
               {filteredThemes.map((t, i) => (
-                <button key={i} onClick={() => { updateField('theme', t.name); setStep(4); }}
+                <button key={i} onClick={() => { updateField('theme', t.name); setStep(5); }}
                   className={`text-left p-4 rounded-2xl transition-all border-2 hover:shadow-xl group ${partyData.theme === t.name ? 'border-rose-400 bg-rose-50 shadow-lg' : 'border-pink-200 hover:border-rose-400 bg-gradient-to-r from-pink-50 to-rose-50'}`}>
                   <div className="flex justify-between items-start">
                     <div><h4 className="text-lg font-bold text-gray-800 group-hover:text-rose-600">{t.name}</h4><p className="text-gray-600 text-sm mt-1">{t.description}</p></div>
@@ -799,7 +899,7 @@ export default function PartyPlanner() {
               <label className="block text-sm font-bold text-gray-700 mb-2">Or enter your own theme</label>
               <div className="flex gap-2">
                 <input type="text" value={partyData.theme} onChange={e => updateField('theme', e.target.value)} placeholder="e.g., Unicorn Magic, Superhero Academy" className="flex-1 px-4 py-3 border-2 border-pink-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-lg" />
-                <button onClick={() => setStep(4)} disabled={!partyData.theme}
+                <button onClick={() => setStep(5)} disabled={!partyData.theme}
                   className="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-6 py-3 rounded-xl font-bold hover:shadow-xl transition-all disabled:opacity-50">Next</button>
               </div>
 
@@ -819,8 +919,8 @@ export default function PartyPlanner() {
           </div>
         )}
 
-        {/* ═══════ STEP 4: ACTIVITIES ═══════ */}
-        {step === 4 && (
+        {/* ═══════ STEP 5: ACTIVITIES ═══════ */}
+        {step === 5 && (
           <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-8 border-4 border-pink-200 relative z-10">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
@@ -832,7 +932,7 @@ export default function PartyPlanner() {
                   </p>
                 </div>
               </div>
-              <button onClick={() => setStep(3)} className="text-gray-400 hover:text-gray-600 flex items-center gap-1 text-sm font-semibold"><ChevronLeft size={18} /> Back</button>
+              <button onClick={() => setStep(4)} className="text-gray-400 hover:text-gray-600 flex items-center gap-1 text-sm font-semibold"><ChevronLeft size={18} /> Back</button>
             </div>
 
             {partyData.selectedActivities.length > 0 && (
@@ -873,15 +973,15 @@ export default function PartyPlanner() {
               })}
             </div>
 
-            <button onClick={() => { generateChecklist(); setStep(5); }}
+            <button onClick={() => { generateChecklist(); setStep(6); }}
               className="w-full mt-6 bg-gradient-to-r from-pink-500 to-rose-500 text-white py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
               Generate My Party Checklist & Shopping List <ChevronRight size={24} />
             </button>
           </div>
         )}
 
-        {/* ═══════ STEP 5: CHECKLIST ═══════ */}
-        {step === 5 && (
+        {/* ═══════ STEP 6: CHECKLIST ═══════ */}
+        {step === 6 && (
           <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-8 border-4 border-pink-200 relative z-10">
             <div className="flex items-center justify-between mb-6">
               <div className="flex-1">
@@ -892,7 +992,7 @@ export default function PartyPlanner() {
                 <p className="text-gray-600">{partyData.childName}'s {partyData.theme} Party &bull; {partyData.guestCount} guests &bull; ${partyData.budget} budget</p>
                 {partyData.selectedActivities.length > 0 && <p className="text-sm text-violet-600 mt-1">Activities: {partyData.selectedActivities.join(', ')}</p>}
               </div>
-              <button onClick={() => setStep(4)} className="text-gray-400 hover:text-gray-600 flex items-center gap-1 text-sm font-semibold no-print"><ChevronLeft size={18} /> Back</button>
+              <button onClick={() => setStep(5)} className="text-gray-400 hover:text-gray-600 flex items-center gap-1 text-sm font-semibold no-print"><ChevronLeft size={18} /> Back</button>
             </div>
 
             {loading && (

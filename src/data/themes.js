@@ -15,6 +15,7 @@ export const themes = {
     { name: 'Construction Zone', description: 'Hard hats, building challenges, dump truck rides, and tool belt decorating', ageRange: '3-7', costTier: '$' },
     { name: 'Zombie Apocalypse', description: 'Spooky survival games, zombie face paint, and a nerf battle showdown', ageRange: '8-14', costTier: '$$' },
     { name: 'Secret Agent Spy', description: 'Decode missions, laser maze, fingerprint station, and spy gadget making', ageRange: '6-12', costTier: '$$' },
+    { name: 'Fortnite Battle Royale', description: 'Victory Royale celebration with llama piñata, building challenges, and supply drop prizes', ageRange: '7-14', costTier: '$$' },
   ],
   girl: [
     { name: 'Princess Royal Ball', description: 'Tiaras, gowns, royal etiquette, carriage rides, and a grand ball dance', ageRange: '3-8', costTier: '$$' },
@@ -69,5 +70,6 @@ export const themes = {
     { name: 'Star Wars', description: 'Lightsaber duels, Jedi training academy, Death Star piñata, and galactic decor', ageRange: '4-12', costTier: '$$', isCharacter: true },
     { name: 'King Kong vs Godzilla', description: 'Monster battle arena, city skyline backdrop, roaring contests, and epic smash cake', ageRange: '4-12', costTier: '$$', isCharacter: true },
     { name: 'Minecraft', description: 'Pixelated world with block-building challenges, creeper piñata, and TNT treats', ageRange: '5-12', costTier: '$$', isCharacter: true },
+    { name: 'Fortnite', description: 'Battle Royale showdown with llama piñata, building challenges, and Victory Royale cake', ageRange: '7-14', costTier: '$$', isCharacter: true },
   ],
 };
