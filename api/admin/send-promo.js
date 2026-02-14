@@ -15,10 +15,10 @@ export default async function handler(req, res) {
 
   // Initialize services
   const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_ANON_KEY;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const resendKey = process.env.RESEND_API_KEY;
 
-  if (!supabaseUrl || !supabaseKey) {
+  if (!supabaseUrl || !supabaseServiceKey) {
     return res.status(500).json({
       success: false,
       error: 'Database not configured'
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
     });
   }
 
-  const supabase = createClient(supabaseUrl, supabaseKey);
+  const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
   try {
     // Fetch all subscribers
