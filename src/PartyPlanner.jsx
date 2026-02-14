@@ -82,6 +82,7 @@ export default function PartyPlanner() {
     budget: '',
     guestCount: '',
     location: '',
+    phone: '', // optional — for contact
     partyTime: '',
     genderCategory: '', // optional — for theme filtering
     theme: '',
@@ -649,6 +650,13 @@ export default function PartyPlanner() {
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">Your Location</label>
                 <input type="text" value={partyData.location} onChange={e => updateField('location', e.target.value)} placeholder="City, State or ZIP" className="w-full px-4 py-3 border-2 border-pink-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-lg" />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Phone Number <span className="text-gray-400 font-normal">(optional)</span>
+                </label>
+                <input type="tel" value={partyData.phone} onChange={e => updateField('phone', e.target.value)} placeholder="(555) 123-4567" className="w-full px-4 py-3 border-2 border-pink-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-lg" />
               </div>
 
               <button onClick={() => setStep(2)} disabled={!partyData.childName || !partyData.age || !partyData.budget || !partyData.guestCount}

@@ -4,6 +4,7 @@ import { PartyProvider } from './context/PartyContext';
 import LandingPage from './pages/LandingPage';
 import PartyPlanner from './PartyPlanner';
 import RSVPPage from './pages/RSVPPage';
+import AdminPage from './pages/AdminPage';
 import UpgradeModal from './components/UpgradeModal';
 import UpgradeSuccessBanner from './components/UpgradeSuccessBanner';
 
@@ -16,6 +17,7 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/app" element={<PartyPlanner />} />
             <Route path="/rsvp/:partyId" element={<RSVPPage />} />
+            <Route path="/admin" element={<AdminPage />} />
           </Routes>
           <UpgradeModal />
           <UpgradeSuccessBanner />

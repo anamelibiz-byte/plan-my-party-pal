@@ -54,6 +54,7 @@ export default function EmailGate({ partyData, onContinue, onGuestContinue }) {
             date: partyData.date,
             guestCount: partyData.guestCount,
             theme: partyData.theme,
+            phone: partyData.phone,
           },
         }),
       });

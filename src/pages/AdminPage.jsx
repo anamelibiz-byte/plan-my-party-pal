@@ -2,10 +2,26 @@ import React, { useState } from 'react';
 import { Send, Mail, Users, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 export default function AdminPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return sessionStorage.getItem('admin_authenticated') === 'true';
+  });
+  const [password, setPassword] = useState('');
+  const [authError, setAuthError] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState(null);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (password === import.meta.env.VITE_ADMIN_PASSWORD) {
+      sessionStorage.setItem('admin_authenticated', 'true');
+      setIsAuthenticated(true);
+      setAuthError('');
+    } else {
+      setAuthError('Incorrect password');
+    }
+  };
 
   const handleSendPromo = async (e) => {
     e.preventDefault();
@@ -40,6 +56,39 @@ export default function AdminPage() {
       setSending(false);
     }
   };
+
+  // Show login form if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 flex items-center justify-center p-6">
+        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="bg-gradient-to-r from-pink-500 to-purple-500 p-3 rounded-xl">
+              <Mail className="text-white" size={24} />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-800">Admin Login</h1>
+          </div>
+          <form onSubmit={handleLogin}>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter admin password"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg mb-4 focus:border-pink-500 focus:ring-4 focus:ring-pink-100 transition-all"
+              autoFocus
+            />
+            {authError && <p className="text-red-600 text-sm mb-4 font-semibold">{authError}</p>}
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold py-3 rounded-lg hover:shadow-xl transition-all"
+            >
+              Login
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 p-6">
