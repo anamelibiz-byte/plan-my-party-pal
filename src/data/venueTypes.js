@@ -140,8 +140,8 @@ export async function searchNearbyVenues(location, venueType, radiusMiles = 15) 
         };
       })
       .filter(v => {
-        // Filter by radius
-        if (v.distanceMiles > radiusMiles) {
+        // Filter by radius (add 0.5 mile buffer for rounding tolerance)
+        if (v.distanceMiles > radiusMiles + 0.5) {
           console.log(`Filtered out ${v.name}: ${v.distanceMiles.toFixed(1)} mi > ${radiusMiles} mi`);
           return false;
         }

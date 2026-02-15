@@ -963,10 +963,10 @@ export default function PartyPlanner() {
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-sm font-bold text-gray-600">Search within:</span>
                 <div className="flex gap-2">
-                  {[5, 10].map(r => (
+                  {[5, 10, 15, 20].map(r => (
                     <button key={r} onClick={() => { setVenueRadius(r); if (partyData.venueType && partyData.venueType !== 'Home') searchVenues(partyData.venueType, r); }}
                       className={`px-4 py-2 rounded-lg font-bold text-sm transition-all border-2 ${venueRadius === r ? 'bg-blue-500 text-white border-blue-600' : 'bg-white border-gray-200 text-gray-600 hover:border-blue-300'}`}>
-                      {r} miles
+                      {r} mi
                     </button>
                   ))}
                 </div>
