@@ -1586,7 +1586,7 @@ export default function PartyPlanner() {
                 </div>
 
                 {/* Budget Tracker — above exports so you can see your totals before downloading */}
-                <BudgetTracker checklist={checklist} budget={partyData.budget} />
+                <BudgetTracker checklist={checklist} budget={partyData.budget} userTier={userTier} partyData={partyData} />
 
                 {/* Pro Features Section */}
                 <TierGate feature="downloadPDF">
