@@ -1575,11 +1575,15 @@ export default function PartyPlanner() {
 
                 {/* Export Buttons */}
                 <div className="flex flex-wrap gap-3 mt-6 no-print">
-                  <button onClick={downloadChecklist} className="flex-1 min-w-[140px] bg-blue-500 text-white py-3 rounded-xl font-bold hover:bg-blue-600 transition-all flex items-center justify-center gap-2"><Download size={20} /> Download List</button>
+                  <TierGate feature="downloadChecklist" inline>
+                    <button onClick={downloadChecklist} className="flex-1 min-w-[140px] bg-blue-500 text-white py-3 rounded-xl font-bold hover:bg-blue-600 transition-all flex items-center justify-center gap-2"><Download size={20} /> Download List</button>
+                  </TierGate>
                   <TierGate feature="downloadPDF" inline>
                     <button onClick={() => downloadPartyPDF(partyData, checklist, mergedZones, excludedItems, zoneChecks, timeline)} className="flex-1 min-w-[140px] bg-purple-500 text-white py-3 rounded-xl font-bold hover:bg-purple-600 transition-all flex items-center justify-center gap-2"><FileDown size={20} /> PDF Party Kit</button>
                   </TierGate>
-                  <button onClick={() => window.print()} className="flex-1 min-w-[140px] bg-gray-500 text-white py-3 rounded-xl font-bold hover:bg-gray-600 transition-all flex items-center justify-center gap-2"><Printer size={20} /> Print</button>
+                  <TierGate feature="printChecklist" inline>
+                    <button onClick={() => window.print()} className="flex-1 min-w-[140px] bg-gray-500 text-white py-3 rounded-xl font-bold hover:bg-gray-600 transition-all flex items-center justify-center gap-2"><Printer size={20} /> Print</button>
+                  </TierGate>
                   <TierGate feature="shareChecklist" inline>
                     <ShareButton partyData={partyData} checklist={checklist} />
                   </TierGate>

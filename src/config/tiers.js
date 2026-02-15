@@ -38,6 +38,8 @@ export const TIERS = {
       dietaryTracker: false,
       weatherAlert: false,
       shareChecklist: false,
+      downloadChecklist: false,
+      printChecklist: false,
     },
   },
   pro: {
@@ -78,6 +80,8 @@ export const TIERS = {
       dietaryTracker: true,
       weatherAlert: true,
       shareChecklist: true,
+      downloadChecklist: true,
+      printChecklist: true,
       prioritySupport: true, // NEW: Priority support
     },
   },
@@ -109,6 +113,8 @@ export const FEATURE_LABELS = {
   dietaryTracker: 'Dietary & Allergy Tracker',
   weatherAlert: 'Weather Alerts',
   shareChecklist: 'Printable/Shareable Party Plans',
+  downloadChecklist: 'Download Checklist as TXT',
+  printChecklist: 'Print Checklist',
   prioritySupport: 'Priority Support',
 };
 
