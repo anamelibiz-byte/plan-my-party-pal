@@ -127,18 +127,6 @@ export default function PartyPlanner() {
   const [showTimeline, setShowTimeline] = useState(true);
   const [openZones, setOpenZones] = useState({});
 
-  // Initialize all zones as open when mergedZones changes
-  useEffect(() => {
-    if (mergedZones.length > 0 && Object.keys(openZones).length === 0) {
-      const initialOpenZones = {};
-      mergedZones.forEach(zone => {
-        initialOpenZones[zone.id] = true;
-      });
-      setOpenZones(initialOpenZones);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mergedZones]);
-
   // ─── Auto-Restore from Database ──────────────────────────────────────────────
   useEffect(() => {
     const restorePartyData = async () => {
@@ -467,6 +455,18 @@ export default function PartyPlanner() {
       ],
     }));
   }, [checklist]);
+
+  // Initialize all zones as open when mergedZones changes
+  useEffect(() => {
+    if (mergedZones.length > 0 && Object.keys(openZones).length === 0) {
+      const initialOpenZones = {};
+      mergedZones.forEach(zone => {
+        initialOpenZones[zone.id] = true;
+      });
+      setOpenZones(initialOpenZones);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mergedZones]);
 
   // Total active items across zones (for progress bar)
   const totalZoneItems = mergedZones.reduce((sum, zone) => {
