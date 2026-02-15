@@ -1,6 +1,9 @@
 import React, { useRef, useState, useMemo } from 'react';
-import { Download, Share2, Sparkles, Loader2 } from 'lucide-react';
+import { Download, Share2, Sparkles, Loader2, FileText, Lock } from 'lucide-react';
 import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import { useTier } from '../context/TierContext';
+import { hasFeature } from '../config/tiers';
 
 // Sprinkle colors for each theme
 const THEME_SPRINKLES = {
@@ -52,11 +55,14 @@ function formatTime(timeStr) {
   }
 }
 
-export default function InviteCard({ partyData }) {
+export default function InviteCard({ partyData, userTier = 'free' }) {
   const cardRef = useRef(null);
   const sprinkleColors = getThemeSprinkles(partyData.theme);
   const [downloading, setDownloading] = useState(false);
   const [sharing, setSharing] = useState(false);
+  const [printingPDF, setPrintingPDF] = useState(false);
+  const { requireFeature } = useTier();
+  const canPrint = hasFeature(userTier, 'printChecklist');
 
   // Generate sprinkles for the invite card
   const sprinkles = useMemo(() =>
@@ -177,6 +183,68 @@ export default function InviteCard({ partyData }) {
       }
     }
     setSharing(false);
+  };
+
+  const handlePrintPDF = async () => {
+    setPrintingPDF(true);
+    try {
+      const canvas = await captureCard();
+      if (!canvas) {
+        alert('Could not generate invite image. Please try again.');
+        setPrintingPDF(false);
+        return;
+      }
+
+      // Create PDF with 4 invitations on 8.5" x 11" page
+      const pdf = new jsPDF('p', 'in', 'letter'); // Portrait, inches, letter size
+
+      // Convert canvas to image data
+      const imgData = canvas.toDataURL('image/png');
+
+      // Calculate dimensions for 2x2 grid on 8.5" x 11" page
+      // Leave 0.5" margins, giving us 7.5" x 10" usable space
+      const pageWidth = 8.5;
+      const pageHeight = 11;
+      const margin = 0.5;
+      const usableWidth = pageWidth - (2 * margin);
+      const usableHeight = pageHeight - (2 * margin);
+
+      // Each invite gets 1/2 of width and height (minus small gap)
+      const gap = 0.25; // Gap between invites
+      const inviteWidth = (usableWidth - gap) / 2;
+      const inviteHeight = (usableHeight - gap) / 2;
+
+      // Place 4 invitations in 2x2 grid
+      const positions = [
+        { x: margin, y: margin }, // Top left
+        { x: margin + inviteWidth + gap, y: margin }, // Top right
+        { x: margin, y: margin + inviteHeight + gap }, // Bottom left
+        { x: margin + inviteWidth + gap, y: margin + inviteHeight + gap }, // Bottom right
+      ];
+
+      // Add each invite 4 times
+      positions.forEach(pos => {
+        pdf.addImage(imgData, 'PNG', pos.x, pos.y, inviteWidth, inviteHeight);
+      });
+
+      // Add subtle cut lines between invites (light gray dashed)
+      pdf.setDrawColor(200, 200, 200);
+      pdf.setLineDash([0.05, 0.05], 0);
+      pdf.setLineWidth(0.01);
+
+      // Vertical center line
+      pdf.line(pageWidth / 2, margin, pageWidth / 2, pageHeight - margin);
+      // Horizontal center line
+      pdf.line(margin, pageHeight / 2, pageWidth - margin, pageHeight / 2);
+
+      // Save the PDF
+      pdf.save(`${partyData.childName || 'party'}-invites-4up.pdf`);
+
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      alert('Failed to generate PDF. Please try again or use the Download button for individual invites.');
+    }
+    setPrintingPDF(false);
   };
 
   // Build the venue display string
@@ -320,18 +388,37 @@ export default function InviteCard({ partyData }) {
       )}
 
       {/* Action buttons */}
-      <div className="flex gap-3 max-w-md mx-auto">
-        <button onClick={handleDownload} disabled={downloading}
-          className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white py-3 rounded-xl font-bold hover:shadow-xl transition-all text-sm disabled:opacity-60">
-          {downloading ? <><Loader2 size={18} className="animate-spin" /> Saving...</> : <><Download size={18} /> Download Invite</>}
-        </button>
-        <button onClick={handleShare} disabled={sharing}
-          className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-3 rounded-xl font-bold hover:shadow-xl transition-all text-sm disabled:opacity-60">
-          {sharing ? <><Loader2 size={18} className="animate-spin" /> Sharing...</> : <><Share2 size={18} /> Share</>}
-        </button>
+      <div className="flex flex-col gap-3 max-w-md mx-auto">
+        <div className="flex gap-3">
+          <button onClick={handleDownload} disabled={downloading}
+            className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white py-3 rounded-xl font-bold hover:shadow-xl transition-all text-sm disabled:opacity-60">
+            {downloading ? <><Loader2 size={18} className="animate-spin" /> Saving...</> : <><Download size={18} /> Download</>}
+          </button>
+          <button onClick={handleShare} disabled={sharing}
+            className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-3 rounded-xl font-bold hover:shadow-xl transition-all text-sm disabled:opacity-60">
+            {sharing ? <><Loader2 size={18} className="animate-spin" /> Sharing...</> : <><Share2 size={18} /> Share</>}
+          </button>
+        </div>
+
+        {/* Pro: Print 4-Up PDF */}
+        {canPrint ? (
+          <button onClick={handlePrintPDF} disabled={printingPDF}
+            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-violet-500 text-white py-3 rounded-xl font-bold hover:shadow-xl transition-all text-sm disabled:opacity-60">
+            {printingPDF ? <><Loader2 size={18} className="animate-spin" /> Creating PDF...</> : <><FileText size={18} /> Print 4-Up PDF</>}
+          </button>
+        ) : (
+          <button onClick={() => requireFeature('printChecklist')}
+            className="w-full flex items-center justify-center gap-2 text-purple-600 border-2 border-purple-300 bg-purple-50 py-3 rounded-xl font-bold hover:bg-purple-100 transition-all text-sm">
+            <Lock size={16} />
+            <span className="hidden sm:inline">Print 4 invites per page? </span>
+            <span className="underline">Unlock Pro</span>
+          </button>
+        )}
       </div>
 
-      <p className="text-xs text-gray-400 text-center">Download this invite and send it via text, WhatsApp, email, or social media!</p>
+      <p className="text-xs text-gray-400 text-center">
+        {canPrint ? '4-Up PDF prints 4 invitations on one 8.5" x 11" page!' : 'Download this invite and send it via text, WhatsApp, email, or social media!'}
+      </p>
     </div>
   );
 }

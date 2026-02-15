@@ -1315,7 +1315,7 @@ export default function PartyPlanner() {
                 <WeatherAlert date={partyData.date} location={partyData.location} venueType={partyData.venueType} />
 
                 {/* Digital Invite Card — screenshot/download and send */}
-                <InviteCard partyData={partyData} />
+                <InviteCard partyData={partyData} userTier={userTier} />
 
                 {/* Guest Invite List — track who you're inviting */}
                 <GuestList partyData={partyData} />
