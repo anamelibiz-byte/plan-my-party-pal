@@ -291,8 +291,18 @@ export default function InviteCard({ partyData }) {
             color: sprinkleColors[0],
             fontWeight: 600,
           }}>
-            Please RSVP by text or reply
+            Please RSVP{partyData.phone ? ' to:' : ' by text or reply'}
           </p>
+          {partyData.phone && (
+            <p style={{
+              fontSize: '17px',
+              fontWeight: 700,
+              marginTop: '4px',
+              color: '#1F2937',
+            }}>
+              📱 {partyData.phone}
+            </p>
+          )}
           <p style={{ fontSize: '11px', marginTop: '8px', color: '#9CA3AF' }}>
             Made with PlanMyPartyPal.com
           </p>
