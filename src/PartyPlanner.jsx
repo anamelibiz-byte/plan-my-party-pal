@@ -4,7 +4,7 @@ import {
   ChevronRight, ChevronLeft, X, Star, Phone, ExternalLink,
   ShoppingCart, PartyPopper, Search, Download, Printer,
   UserPlus, Mail, Tag, EyeOff, Eye, FileDown, RotateCcw,
-  Crown, Lock, Gift,
+  Crown, Lock, Gift, ChevronUp, ChevronDown, Clock,
 } from 'lucide-react';
 import { themes } from './data/themes';
 import { getActivitiesForAge, getAgeGroup } from './data/activities';
@@ -122,6 +122,22 @@ export default function PartyPlanner() {
   const [giftTypeFilter, setGiftTypeFilter] = useState('all');
   const [giftPriceFilter, setGiftPriceFilter] = useState('All');
   const [showGiftIdeas, setShowGiftIdeas] = useState(false);
+
+  // Collapsible sections state
+  const [showTimeline, setShowTimeline] = useState(true);
+  const [openZones, setOpenZones] = useState({});
+
+  // Initialize all zones as open when mergedZones changes
+  useEffect(() => {
+    if (mergedZones.length > 0 && Object.keys(openZones).length === 0) {
+      const initialOpenZones = {};
+      mergedZones.forEach(zone => {
+        initialOpenZones[zone.id] = true;
+      });
+      setOpenZones(initialOpenZones);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mergedZones]);
 
   // ─── Auto-Restore from Database ──────────────────────────────────────────────
   useEffect(() => {
@@ -426,6 +442,10 @@ export default function PartyPlanner() {
   const toggleZoneCheck = (zoneId, itemIdx) => {
     const key = `${zoneId}-${itemIdx}`;
     setZoneChecks(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const toggleZoneCollapse = (zoneId) => {
+    setOpenZones(prev => ({ ...prev, [zoneId]: !prev[zoneId] }));
   };
 
   // ─── Merge Checklist into Party Zones ────────────────────────────────────────
@@ -1248,9 +1268,29 @@ export default function PartyPlanner() {
                 {/* Guest Invite List — track who you're inviting */}
                 <GuestList partyData={partyData} />
 
-                {/* Timeline Builder (Pro+) */}
+                {/* Timeline Builder (Pro+) - Collapsible */}
                 <TierGate feature="timelineBuilder">
-                  <TimelineBuilder timeline={timeline} onTimelineChange={setTimeline} partyData={partyData} />
+                  <div className="bg-white rounded-2xl border-2 border-purple-200 overflow-hidden no-print">
+                    <button
+                      onClick={() => setShowTimeline(!showTimeline)}
+                      className="w-full p-4 flex items-center justify-between hover:bg-purple-50 transition-all"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Clock className="text-purple-500" size={24} />
+                        <h3 className="text-xl font-bold text-purple-800">Day of Timeline</h3>
+                      </div>
+                      {showTimeline ? (
+                        <ChevronUp className="text-purple-500" size={24} />
+                      ) : (
+                        <ChevronDown className="text-purple-500" size={24} />
+                      )}
+                    </button>
+                    {showTimeline && (
+                      <div className="p-6 border-t-2 border-purple-200">
+                        <TimelineBuilder timeline={timeline} onTimelineChange={setTimeline} partyData={partyData} />
+                      </div>
+                    )}
+                  </div>
                 </TierGate>
 
                 {/* Food & Drink Labels — Etsy */}
@@ -1376,16 +1416,40 @@ export default function PartyPlanner() {
                       return item.completed || false;
                     }).length;
 
-                    return (
-                      <div key={zone.id} className={`rounded-xl border-2 ${zoneColorMap[zone.color] || 'border-gray-200 bg-gray-50'} p-4`}>
-                        <div className="flex items-center justify-between mb-3">
-                          <h4 className={`font-bold text-lg flex items-center gap-2 ${zoneTextMap[zone.color] || 'text-gray-700'}`}>
-                            <span className="text-xl">{zone.emoji}</span> {zone.name}
-                          </h4>
-                          <span className="text-xs text-gray-500 font-semibold">{zoneCompleted}/{activeItems.length} done{excludedCount > 0 && ` · ${excludedCount} hidden`}</span>
-                        </div>
+                    const isZoneOpen = openZones[zone.id] !== false; // default to true
+                    const allCompleted = activeItems.length > 0 && zoneCompleted === activeItems.length;
 
-                        <div className="space-y-2">
+                    return (
+                      <div key={zone.id} className={`rounded-xl border-2 ${zoneColorMap[zone.color] || 'border-gray-200 bg-gray-50'} overflow-hidden mb-4`}>
+                        <button
+                          onClick={() => toggleZoneCollapse(zone.id)}
+                          className={`w-full p-4 flex items-center justify-between transition-all ${zoneColorMap[zone.color] || 'bg-gray-50'} hover:opacity-80`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="text-2xl">{zone.emoji}</span>
+                            <div className="text-left">
+                              <h4 className={`font-bold text-lg ${zoneTextMap[zone.color] || 'text-gray-700'}`}>
+                                {zone.name}
+                              </h4>
+                              <p className="text-sm text-gray-500">
+                                {zoneCompleted} of {activeItems.length} completed{excludedCount > 0 && ` · ${excludedCount} hidden`}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {allCompleted && (
+                              <CheckCircle2 className="text-green-500" size={20} />
+                            )}
+                            {isZoneOpen ? (
+                              <ChevronUp className="text-gray-500" size={24} />
+                            ) : (
+                              <ChevronDown className="text-gray-500" size={24} />
+                            )}
+                          </div>
+                        </button>
+
+                        {isZoneOpen && (
+                          <div className={`p-4 border-t-2 ${zoneColorMap[zone.color] || 'border-gray-200'} space-y-2`}>
                           {zone.allItems.map((item, idx) => {
                             const itemKey = item._type === 'zone' ? item._zoneKey : `checklist-${item._checklistIdx}`;
                             const isExcluded = excludedItems[itemKey] || false;
@@ -1469,7 +1533,8 @@ export default function PartyPlanner() {
                               </div>
                             );
                           })}
-                        </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}

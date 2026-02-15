@@ -124,20 +124,30 @@ export default function InviteCard({ partyData }) {
     try {
       const canvas = await captureCard();
       if (!canvas) {
-        handleDownload();
+        alert('Could not generate image. Try taking a screenshot instead!');
         setSharing(false);
         return;
       }
       const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-      if (navigator.share && blob) {
+
+      // Check if Web Share API supports files (mobile/Safari only)
+      const canShareFiles = navigator.canShare && navigator.canShare({ files: [new File([], 'test.png')] });
+
+      if (canShareFiles && blob) {
+        // Mobile/Safari: use Web Share API with file
         const file = new File([blob], `${partyData.childName || 'party'}-invite.png`, { type: 'image/png' });
         await navigator.share({
           title: `${partyData.childName}'s Birthday Party`,
           text: `You're invited to ${partyData.childName}'s ${partyData.theme || ''} Birthday Party!`,
           files: [file],
         });
-      } else if (blob) {
-        // Fallback: download
+      } else if (navigator.share) {
+        // Desktop: share text only with helpful message
+        await navigator.share({
+          title: `${partyData.childName}'s Birthday Party`,
+          text: `You're invited to ${partyData.childName}'s ${partyData.theme || ''} Birthday Party! ${partyData.date ? formatDate(partyData.date) : ''} ${partyData.venueName ? 'at ' + partyData.venueName : ''}`,
+        });
+        // After sharing text, download the image
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.download = `${partyData.childName || 'party'}-invite.png`;
@@ -146,11 +156,24 @@ export default function InviteCard({ partyData }) {
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
+        alert('Party details shared! The invite image has been downloaded to your device. You can now attach it to your message.');
+      } else {
+        // No share support: just download
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = `${partyData.childName || 'party'}-invite.png`;
+        link.href = url;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        alert('Invite downloaded! You can now share it via text, email, or social media.');
       }
     } catch (err) {
       // User cancelled share or error
       if (err.name !== 'AbortError') {
         console.error('Share failed:', err);
+        alert('Share cancelled or failed. Use the Download button to save the invite.');
       }
     }
     setSharing(false);
