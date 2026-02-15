@@ -335,15 +335,15 @@ export default function PartyPlanner() {
         // Price filter
         const priceMatch = giftPriceFilter === 'All' || gift.priceRange === giftPriceFilter;
         // Gender filter
-        const genderMatch = genderCategory === 'all' ||
+        const genderMatch = partyData.genderCategory === 'all' ||
                            gift.gender === 'unisex' ||
-                           gift.gender === genderCategory;
+                           gift.gender === partyData.genderCategory;
         return typeMatch && priceMatch && genderMatch;
       })
       .sort((a, b) => {
         // Sort by gender match first (exact match > unisex > non-match)
-        const aGenderScore = a.gender === genderCategory ? 2 : a.gender === 'unisex' ? 1 : 0;
-        const bGenderScore = b.gender === genderCategory ? 2 : b.gender === 'unisex' ? 1 : 0;
+        const aGenderScore = a.gender === partyData.genderCategory ? 2 : a.gender === 'unisex' ? 1 : 0;
+        const bGenderScore = b.gender === partyData.genderCategory ? 2 : b.gender === 'unisex' ? 1 : 0;
 
         if (aGenderScore !== bGenderScore) {
           return bGenderScore - aGenderScore; // Higher score first
@@ -353,7 +353,7 @@ export default function PartyPlanner() {
         const priceOrder = { '$': 1, '$$': 2, '$$$': 3 };
         return (priceOrder[a.priceRange] || 2) - (priceOrder[b.priceRange] || 2);
       });
-  }, [partyData.age, giftTypeFilter, giftPriceFilter, genderCategory, aiGeneratedGifts]);
+  }, [partyData.age, giftTypeFilter, giftPriceFilter, partyData.genderCategory, aiGeneratedGifts]);
 
   // ─── AI / Checklist Generation ──────────────────────────────────────────────
   const generateChecklist = async () => {
@@ -581,7 +581,7 @@ export default function PartyPlanner() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           age: partyData.age,
-          genderCategory,
+          genderCategory: partyData.genderCategory,
           giftTypeFilter,
           giftPriceFilter
         })
@@ -721,9 +721,9 @@ export default function PartyPlanner() {
                         {['all', 'boy', 'girl', 'unisex'].map(gender => (
                           <button
                             key={gender}
-                            onClick={() => setGenderCategory(gender)}
+                            onClick={() => updateField('genderCategory', gender)}
                             className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-                              genderCategory === gender
+                              partyData.genderCategory === gender
                                 ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg'
                                 : 'bg-white text-gray-700 border-2 border-blue-200 hover:border-blue-400'
                             }`}
