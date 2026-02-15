@@ -29,7 +29,7 @@ export default async function handler(req, res) {
     const typeKeywords = {
       'Park/Outdoor': 'park playground nature park picnic area pavilion recreation area outdoor park city park county park state park greenway trail park',
       'Trampoline Park': 'trampoline park',
-      'Gaming Truck': 'mobile gaming entertainment',
+      'Gaming Truck': 'mobile gaming truck game truck video game truck gaming entertainment party truck kids',
       'Indoor Play Center': 'indoor playground kids play center',
       'Bowling Alley': 'bowling alley',
       'Skating Rink': 'skating rink roller skating ice skating',
