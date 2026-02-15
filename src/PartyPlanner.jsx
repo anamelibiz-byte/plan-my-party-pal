@@ -123,6 +123,8 @@ export default function PartyPlanner() {
   const [giftTypeFilter, setGiftTypeFilter] = useState('all');
   const [giftPriceFilter, setGiftPriceFilter] = useState('All');
   const [showGiftIdeas, setShowGiftIdeas] = useState(false);
+  const [aiGiftLoading, setAIGiftLoading] = useState(false);
+  const [aiGeneratedGifts, setAIGeneratedGifts] = useState([]);
 
   // Collapsible sections state
   const [showTimeline, setShowTimeline] = useState(false);
@@ -321,16 +323,37 @@ export default function PartyPlanner() {
     if (!partyData.age) return [];
 
     const ageGroup = getGiftAgeGroup(partyData.age);
-    const ageGifts = giftIdeas[ageGroup]?.gifts || [];
+    const staticGifts = giftIdeas[ageGroup]?.gifts || [];
 
-    return ageGifts.filter(gift => {
-      // Type filter
-      const typeMatch = giftTypeFilter === 'all' || gift.type === giftTypeFilter;
-      // Price filter
-      const priceMatch = giftPriceFilter === 'All' || gift.priceRange === giftPriceFilter;
-      return typeMatch && priceMatch;
-    });
-  }, [partyData.age, giftTypeFilter, giftPriceFilter]);
+    // Combine static + AI-generated gifts
+    const allGifts = [...staticGifts, ...aiGeneratedGifts];
+
+    return allGifts
+      .filter(gift => {
+        // Type filter
+        const typeMatch = giftTypeFilter === 'all' || gift.type === giftTypeFilter;
+        // Price filter
+        const priceMatch = giftPriceFilter === 'All' || gift.priceRange === giftPriceFilter;
+        // Gender filter
+        const genderMatch = genderCategory === 'all' ||
+                           gift.gender === 'unisex' ||
+                           gift.gender === genderCategory;
+        return typeMatch && priceMatch && genderMatch;
+      })
+      .sort((a, b) => {
+        // Sort by gender match first (exact match > unisex > non-match)
+        const aGenderScore = a.gender === genderCategory ? 2 : a.gender === 'unisex' ? 1 : 0;
+        const bGenderScore = b.gender === genderCategory ? 2 : b.gender === 'unisex' ? 1 : 0;
+
+        if (aGenderScore !== bGenderScore) {
+          return bGenderScore - aGenderScore; // Higher score first
+        }
+
+        // Then sort by price (lower price first)
+        const priceOrder = { '$': 1, '$$': 2, '$$$': 3 };
+        return (priceOrder[a.priceRange] || 2) - (priceOrder[b.priceRange] || 2);
+      });
+  }, [partyData.age, giftTypeFilter, giftPriceFilter, genderCategory, aiGeneratedGifts]);
 
   // ─── AI / Checklist Generation ──────────────────────────────────────────────
   const generateChecklist = async () => {
@@ -550,6 +573,33 @@ export default function PartyPlanner() {
     URL.revokeObjectURL(url);
   };
 
+  const generateAIGifts = async () => {
+    setAIGiftLoading(true);
+    try {
+      const response = await fetch('/api/ai-gift-suggestions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          age: partyData.age,
+          genderCategory,
+          giftTypeFilter,
+          giftPriceFilter
+        })
+      });
+
+      const data = await response.json();
+      if (data.gifts) {
+        setAIGeneratedGifts(data.gifts);
+      } else {
+        console.error('AI gift generation failed:', data.error);
+      }
+    } catch (error) {
+      console.error('AI gift generation failed:', error);
+    } finally {
+      setAIGiftLoading(false);
+    }
+  };
+
   // ─── Checklist Categories ────────────────────────────────────────────────────
   const CHECKLIST_CATEGORIES = [
     'Invitations', 'Decorations', 'Food & Cake', 'Dessert Table', 'Drinks',
@@ -630,8 +680,8 @@ export default function PartyPlanner() {
                             onClick={() => setGiftTypeFilter(type.toLowerCase())}
                             className={`px-4 py-2 rounded-lg font-semibold transition-all ${
                               giftTypeFilter === type.toLowerCase()
-                                ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg'
-                                : 'bg-white text-gray-700 border-2 border-pink-200 hover:border-pink-400'
+                                ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg'
+                                : 'bg-white text-gray-700 border-2 border-orange-200 hover:border-orange-400'
                             }`}
                           >
                             {type}
@@ -661,7 +711,54 @@ export default function PartyPlanner() {
                         ))}
                       </div>
                     </div>
+
+                    {/* Gender Filter */}
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-2">
+                        Filter by Gender:
+                      </label>
+                      <div className="flex gap-2 flex-wrap">
+                        {['all', 'boy', 'girl', 'unisex'].map(gender => (
+                          <button
+                            key={gender}
+                            onClick={() => setGenderCategory(gender)}
+                            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                              genderCategory === gender
+                                ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg'
+                                : 'bg-white text-gray-700 border-2 border-blue-200 hover:border-blue-400'
+                            }`}
+                          >
+                            {gender.charAt(0).toUpperCase() + gender.slice(1)}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
+                </div>
+
+                {/* AI Gift Generation Button */}
+                <div className="mb-6">
+                  <button
+                    onClick={generateAIGifts}
+                    disabled={aiGiftLoading || !partyData.age}
+                    className="w-full bg-gradient-to-r from-purple-500 to-violet-500 text-white py-4 px-6 rounded-xl font-bold hover:shadow-lg hover:scale-[1.02] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {aiGiftLoading ? (
+                      <>
+                        <div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin" />
+                        Generating Personalized Gifts...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles size={20} /> Get AI Gift Suggestions
+                      </>
+                    )}
+                  </button>
+                  {aiGeneratedGifts.length > 0 && (
+                    <p className="text-sm text-green-600 mt-2 text-center font-semibold">
+                      ✨ {aiGeneratedGifts.length} AI-generated gifts added!
+                    </p>
+                  )}
                 </div>
 
                 {/* Selected Gifts Display */}
@@ -778,10 +875,10 @@ export default function PartyPlanner() {
               </div>
 
               {/* Footer with Close Button */}
-              <div className="sticky bottom-0 bg-white border-t-2 border-pink-200 p-6 flex justify-end">
+              <div className="sticky bottom-0 bg-white border-t-2 border-orange-200 p-6 flex justify-end">
                 <button
                   onClick={() => setShowGiftIdeas(false)}
-                  className="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-8 py-3 rounded-xl font-bold hover:shadow-lg hover:scale-[1.02] transition-all"
+                  className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-8 py-3 rounded-xl font-bold hover:shadow-lg hover:scale-[1.02] transition-all"
                 >
                   Done Browsing
                 </button>
@@ -1296,7 +1393,7 @@ export default function PartyPlanner() {
                           </p>
                           <button
                             onClick={() => setShowGiftIdeas(true)}
-                            className="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-6 py-3 rounded-xl font-bold hover:shadow-lg hover:scale-[1.02] transition-all flex items-center gap-2"
+                            className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-3 rounded-xl font-bold hover:shadow-lg hover:scale-[1.02] transition-all flex items-center gap-2"
                           >
                             Browse Gift Ideas <ChevronRight size={20} />
                           </button>
