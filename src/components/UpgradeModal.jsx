@@ -11,11 +11,21 @@ const TIER_COLORS = {
 
 // Display features for each tier card
 const DISPLAY_FEATURES = [
-  'maxParties', 'maxGuests', 'allThemes', 'characterThemes', 'allActivities',
-  'budgetTrackerFull', 'budgetAnalytics', 'downloadPDF', 'saveExport',
-  'emailPartyPlan', 'partyZonesFull', 'timelineBuilder', 'weatherAlert',
-  'shareChecklist', 'aiSuggestions', 'rsvpSystem', 'dietaryTracker',
-  'vendorRecommendations', 'prioritySupport',
+  'maxParties',           // Free: 1 party, Pro: unlimited
+  'maxGuests',            // Free: 15 guests, Pro: unlimited
+  'allThemes',            // Both have access to all themes
+  'allActivities',        // Both have access to all activities
+  'rsvpSystem',           // Both have RSVP tracking
+  'budgetTrackerFull',    // Free: basic, Pro: full with charts
+  'timelineBuilder',      // Pro only
+  'downloadPDF',          // Pro only
+  'saveExport',           // Pro only (download as TXT)
+  'emailPartyPlan',       // Pro only
+  'smsPartyPlan',         // Pro only
+  'shareChecklist',       // Pro only
+  'printChecklist',       // Pro only
+  'partyZonesFull',       // Free: preview, Pro: full
+  'dietaryTracker',       // Pro only (future feature)
 ];
 
 export default function UpgradeModal() {
