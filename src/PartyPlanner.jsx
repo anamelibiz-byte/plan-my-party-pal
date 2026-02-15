@@ -1585,58 +1585,64 @@ export default function PartyPlanner() {
                   })}
                 </div>
 
-                {/* Timeline Builder (Pro+) - Collapsible */}
-                <TierGate feature="timelineBuilder">
-                  <div className="bg-white rounded-2xl border-2 border-purple-200 overflow-hidden no-print">
-                    <button
-                      onClick={() => setShowTimeline(!showTimeline)}
-                      className="w-full p-4 flex items-center justify-between hover:bg-purple-50 transition-all"
-                    >
-                      <div className="flex items-center gap-3">
-                        <Clock className="text-purple-500" size={24} />
-                        <h3 className="text-xl font-bold text-purple-800">Day of Timeline</h3>
-                      </div>
-                      {showTimeline ? (
-                        <ChevronUp className="text-purple-500" size={24} />
-                      ) : (
-                        <ChevronDown className="text-purple-500" size={24} />
-                      )}
-                    </button>
-                    {showTimeline && (
-                      <div className="p-6 border-t-2 border-purple-200">
-                        <TimelineBuilder timeline={timeline} onTimelineChange={setTimeline} partyData={partyData} />
-                      </div>
-                    )}
-                  </div>
-                </TierGate>
-
                 {/* Budget Tracker — above exports so you can see your totals before downloading */}
                 <BudgetTracker checklist={checklist} budget={partyData.budget} />
 
-                {/* Export Buttons */}
-                <div className="flex flex-wrap gap-3 mt-6 no-print">
-                  <TierGate feature="downloadChecklist" inline>
-                    <button onClick={downloadChecklist} className="flex-1 min-w-[140px] bg-blue-500 text-white py-3 rounded-xl font-bold hover:bg-blue-600 transition-all flex items-center justify-center gap-2"><Download size={20} /> Download List</button>
-                  </TierGate>
-                  <TierGate feature="downloadPDF" inline>
-                    <button onClick={() => downloadPartyPDF(partyData, checklist, mergedZones, excludedItems, zoneChecks, timeline)} className="flex-1 min-w-[140px] bg-purple-500 text-white py-3 rounded-xl font-bold hover:bg-purple-600 transition-all flex items-center justify-center gap-2"><FileDown size={20} /> PDF Party Kit</button>
-                  </TierGate>
-                  <TierGate feature="printChecklist" inline>
-                    <button onClick={() => window.print()} className="flex-1 min-w-[140px] bg-gray-500 text-white py-3 rounded-xl font-bold hover:bg-gray-600 transition-all flex items-center justify-center gap-2"><Printer size={20} /> Print</button>
-                  </TierGate>
-                  <TierGate feature="shareChecklist" inline>
-                    <ShareButton partyData={partyData} checklist={checklist} />
-                  </TierGate>
-                </div>
+                {/* Pro Features Section */}
+                <TierGate feature="downloadPDF">
+                  <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl border-2 border-purple-200 p-6 mt-6 no-print">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <Crown className="text-purple-600" size={28} />
+                        <h3 className="text-2xl font-bold text-purple-900">Pro Features</h3>
+                      </div>
+                      <span className="bg-gradient-to-r from-purple-500 to-violet-500 text-white px-4 py-1 rounded-full text-sm font-bold">PRO</span>
+                    </div>
 
-                {/* Email & SMS Capture */}
-                <div className="no-print space-y-4">
-                  <EmailCapture source="checklist" partyData={partyData} mergedZones={mergedZones} excludedItems={excludedItems} zoneChecks={zoneChecks} />
+                    {/* Timeline Builder */}
+                    <div className="bg-white rounded-xl border-2 border-purple-200 overflow-hidden mb-4">
+                      <button
+                        onClick={() => setShowTimeline(!showTimeline)}
+                        className="w-full p-4 flex items-center justify-between hover:bg-purple-50 transition-all"
+                      >
+                        <div className="flex items-center gap-3">
+                          <Clock className="text-purple-500" size={20} />
+                          <h4 className="text-lg font-bold text-purple-800">Day-of Timeline Builder</h4>
+                        </div>
+                        {showTimeline ? (
+                          <ChevronUp className="text-purple-500" size={20} />
+                        ) : (
+                          <ChevronDown className="text-purple-500" size={20} />
+                        )}
+                      </button>
+                      {showTimeline && (
+                        <div className="p-4 border-t-2 border-purple-200">
+                          <TimelineBuilder timeline={timeline} onTimelineChange={setTimeline} partyData={partyData} />
+                        </div>
+                      )}
+                    </div>
 
-                  <TierGate feature="smsPartyPlan" inline>
-                    <SMSCapture source="checklist" partyData={partyData} mergedZones={mergedZones} excludedItems={excludedItems} zoneChecks={zoneChecks} onPhoneUpdate={(phone) => updateField('phone', phone)} />
-                  </TierGate>
-                </div>
+                    {/* Export Buttons */}
+                    <div className="flex flex-wrap gap-3 mb-4">
+                      <button onClick={downloadChecklist} className="flex-1 min-w-[140px] bg-blue-500 text-white py-3 rounded-xl font-bold hover:bg-blue-600 transition-all flex items-center justify-center gap-2">
+                        <Download size={20} /> Download List
+                      </button>
+                      <button onClick={() => downloadPartyPDF(partyData, checklist, mergedZones, excludedItems, zoneChecks, timeline)} className="flex-1 min-w-[140px] bg-purple-500 text-white py-3 rounded-xl font-bold hover:bg-purple-600 transition-all flex items-center justify-center gap-2">
+                        <FileDown size={20} /> PDF Party Kit
+                      </button>
+                      <button onClick={() => window.print()} className="flex-1 min-w-[140px] bg-gray-500 text-white py-3 rounded-xl font-bold hover:bg-gray-600 transition-all flex items-center justify-center gap-2">
+                        <Printer size={20} /> Print
+                      </button>
+                      <ShareButton partyData={partyData} checklist={checklist} />
+                    </div>
+
+                    {/* Email & SMS */}
+                    <div className="space-y-3">
+                      <EmailCapture source="checklist" partyData={partyData} mergedZones={mergedZones} excludedItems={excludedItems} zoneChecks={zoneChecks} />
+                      <SMSCapture source="checklist" partyData={partyData} mergedZones={mergedZones} excludedItems={excludedItems} zoneChecks={zoneChecks} onPhoneUpdate={(phone) => updateField('phone', phone)} />
+                    </div>
+                  </div>
+                </TierGate>
 
                 {/* Summary */}
                 <div className="mt-6 p-6 bg-gradient-to-r from-pink-100 to-rose-100 rounded-2xl border-2 border-pink-300">
