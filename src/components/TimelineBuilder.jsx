@@ -54,8 +54,8 @@ export default function TimelineBuilder({ timeline, onTimelineChange, partyData 
         {items.map((item, idx) => (
           <div key={idx} className="p-3 bg-white rounded-xl border border-sky-100">
             {/* Mobile: stacked layout / Desktop: row layout */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <div className="flex items-center gap-3">
                 <div className="flex flex-col gap-0.5 flex-shrink-0">
                   <button onClick={() => moveItem(idx, -1)} className="text-gray-300 hover:text-sky-500 transition-colors" disabled={idx === 0}>
                     <ChevronUp size={14} />
@@ -65,20 +65,17 @@ export default function TimelineBuilder({ timeline, onTimelineChange, partyData 
                   </button>
                 </div>
                 <input type="text" value={item.time} onChange={e => updateItem(idx, 'time', e.target.value)}
-                  className="w-20 sm:w-24 px-2 py-1.5 border border-gray-200 rounded-lg text-sm font-mono focus:border-sky-400 outline-none"
+                  className="w-24 sm:w-28 px-2 py-1.5 border border-gray-200 rounded-lg text-sm font-mono focus:border-sky-400 outline-none"
                   placeholder="3:00 PM" />
                 <input type="text" value={item.duration} onChange={e => updateItem(idx, 'duration', e.target.value)}
-                  className="w-16 sm:w-20 px-2 py-1.5 border border-gray-200 rounded-lg text-sm text-center focus:border-sky-400 outline-none"
+                  className="w-20 sm:w-24 px-2 py-1.5 border border-gray-200 rounded-lg text-sm text-center focus:border-sky-400 outline-none whitespace-nowrap"
                   placeholder="30 min" />
-                <button onClick={() => removeItem(idx)} className="text-gray-300 hover:text-red-400 transition-colors sm:hidden flex-shrink-0">
-                  <Trash2 size={16} />
-                </button>
               </div>
-              <div className="flex items-center gap-2 flex-1 min-w-0">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
                 <input type="text" value={item.event} onChange={e => updateItem(idx, 'event', e.target.value)}
                   className="flex-1 min-w-0 px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:border-sky-400 outline-none"
                   placeholder="Activity description..." />
-                <button onClick={() => removeItem(idx)} className="text-gray-300 hover:text-red-400 transition-colors hidden sm:block flex-shrink-0">
+                <button onClick={() => removeItem(idx)} className="text-gray-300 hover:text-red-400 transition-colors flex-shrink-0">
                   <Trash2 size={16} />
                 </button>
               </div>

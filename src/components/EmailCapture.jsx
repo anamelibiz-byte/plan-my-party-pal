@@ -206,7 +206,7 @@ export default function EmailCapture({ source = 'landing', partyData, mergedZone
           ? 'Enter your email and we\'ll send your complete party plan — checklist, zones, costs, and all!'
           : 'Join 1,000+ parents who plan amazing parties. Get tips, themes & deals.'}
       </p>
-      <form onSubmit={handleSubmit} className="flex gap-2">
+      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
           <input
@@ -220,7 +220,7 @@ export default function EmailCapture({ source = 'landing', partyData, mergedZone
         <button
           type="submit"
           disabled={status === 'loading'}
-          className="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-5 py-3 rounded-xl font-bold hover:shadow-xl transition-all disabled:opacity-50 flex items-center gap-2"
+          className="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-5 py-3 rounded-xl font-bold hover:shadow-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap"
         >
           {status === 'loading' ? (
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

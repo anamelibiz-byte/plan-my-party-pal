@@ -90,7 +90,7 @@ export default function SMSCapture({ source, partyData, mergedZones, excludedIte
             Get your party checklist sent directly to your phone via text message
           </p>
 
-          <form onSubmit={handleSubmit} className="flex gap-2">
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1 relative">
               <MessageCircle className="absolute left-3 top-1/2 -translate-y-1/2 text-cyan-500" size={20} />
               <input
@@ -105,7 +105,7 @@ export default function SMSCapture({ source, partyData, mergedZones, excludedIte
             <button
               type="submit"
               disabled={status === 'loading'}
-              className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl font-bold hover:shadow-lg transition-all disabled:opacity-60 flex items-center gap-2"
+              className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl font-bold hover:shadow-lg transition-all disabled:opacity-60 flex items-center justify-center gap-2 whitespace-nowrap"
             >
               <Send size={18} />
               {status === 'loading' ? 'Sending...' : 'Text It'}
