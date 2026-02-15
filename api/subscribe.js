@@ -107,9 +107,18 @@ export default async function handler(req, res) {
               <strong>Pro Tip:</strong> Your party details are automatically saved and synced across devices. Click the button above to resume planning from anywhere!
             </p>
 
-            <div style="background: #FEF3C7; border-left: 4px solid #F59E0B; padding: 16px; margin: 24px 0 0; border-radius: 4px;">
-              <p style="font-size: 13px; color: #92400E; margin: 0; line-height: 1.5;">
-                <strong>📬 Get all our updates:</strong> Add <code style="background: #FDE68A; padding: 2px 6px; border-radius: 3px;">hello@go.planmypartypal.com</code> to your contacts so our emails don't end up in spam. We'll send you helpful party planning tips and updates.
+            <div style="background: linear-gradient(135deg, #FCE7F3, #FDF2F8); border-left: 6px solid #EC4899; padding: 20px; margin: 24px 0 0; border-radius: 8px;">
+              <p style="font-size: 13px; color: #374151; margin: 0 0 12px; font-weight: 600; line-height: 1.4;">
+                📬 <strong>Don't miss our tips!</strong>
+              </p>
+              <p style="font-size: 14px; color: #374151; margin: 0 0 12px; line-height: 1.6;">
+                Add this to your contacts:
+              </p>
+              <p style="font-size: 14px; background: white; border: 2px solid #EC4899; color: #EC4899; padding: 10px; margin: 0 0 12px; border-radius: 6px; text-align: center; font-family: 'Courier New', monospace; font-weight: 600; word-break: break-all;">
+                hello@go.planmypartypal.com
+              </p>
+              <p style="font-size: 13px; color: #666666; margin: 0; line-height: 1.5;">
+                This prevents our emails from going to spam and you'll get helpful party planning tips.
               </p>
             </div>
           </div>
