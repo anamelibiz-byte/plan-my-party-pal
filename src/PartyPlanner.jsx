@@ -848,7 +848,7 @@ export default function PartyPlanner() {
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
-                              className="inline-flex items-center gap-1 text-sm font-semibold text-pink-600 hover:text-pink-800"
+                              className="inline-flex items-center gap-1 text-sm font-semibold text-orange-600 hover:text-orange-800"
                             >
                               Shop on Amazon
                               <ExternalLink className="h-3 w-3" />

@@ -16,7 +16,8 @@ export const giftIdeas = {
         why: 'Keeps toddlers entertained and encourages active play',
         amazonSearch: 'bubble machine toddler automatic',
         popular: true,
-        unique: false
+        unique: false,
+        gender: 'unisex'
       },
       {
         id: 'shape-sorter',
@@ -148,7 +149,112 @@ export const giftIdeas = {
         why: 'Hours of sensory play in the backyard',
         amazonSearch: 'water table toddler outdoor play',
         popular: true,
-        unique: false
+        unique: false,
+        gender: 'unisex'
+      },
+      {
+        id: 'play-kitchen',
+        name: 'Play Kitchen Set',
+        description: 'Wooden kitchen with pots, pans, and pretend food',
+        type: 'toys',
+        priceRange: '$$',
+        price: '$40-60',
+        why: 'Encourages imaginative play and social skills',
+        amazonSearch: 'play kitchen toddler wooden',
+        popular: true,
+        unique: false,
+        gender: 'unisex'
+      },
+      {
+        id: 'toy-vacuum',
+        name: 'Toy Vacuum Cleaner',
+        description: 'Working vacuum that really picks up small pieces',
+        type: 'toys',
+        priceRange: '$',
+        price: '$18-28',
+        why: 'Mimics adult activities and helps with cleanup',
+        amazonSearch: 'toy vacuum cleaner toddler working',
+        popular: true,
+        unique: false,
+        gender: 'unisex'
+      },
+      {
+        id: 'toy-trucks',
+        name: 'Construction Truck Set',
+        description: 'Dump truck, excavator, and bulldozer set',
+        type: 'toys',
+        priceRange: '$',
+        price: '$20-30',
+        why: 'Perfect for sandbox and imaginative construction play',
+        amazonSearch: 'construction trucks toddler set',
+        popular: true,
+        unique: false,
+        gender: 'boy'
+      },
+      {
+        id: 'baby-doll',
+        name: 'Baby Doll with Accessories',
+        description: 'Soft baby doll with bottle and blanket',
+        type: 'toys',
+        priceRange: '$',
+        price: '$15-25',
+        why: 'Nurtures empathy and caregiving skills',
+        amazonSearch: 'baby doll toddler soft accessories',
+        popular: true,
+        unique: false,
+        gender: 'girl'
+      },
+      {
+        id: 'ride-on-toy',
+        name: 'Ride-On Push Car',
+        description: 'Foot-powered ride-on with storage compartment',
+        type: 'outdoor',
+        priceRange: '$$',
+        price: '$35-55',
+        why: 'Builds leg strength and gross motor skills',
+        amazonSearch: 'ride on car toddler foot powered',
+        popular: true,
+        unique: false,
+        gender: 'unisex'
+      },
+      {
+        id: 'play-tent',
+        name: 'Pop-Up Play Tent',
+        description: 'Foldable tent with ball pit balls',
+        type: 'toys',
+        priceRange: '$',
+        price: '$20-30',
+        why: 'Creates a special hideaway space',
+        amazonSearch: 'play tent toddler ball pit',
+        popular: false,
+        unique: true,
+        gender: 'unisex'
+      },
+      {
+        id: 'magnetic-tiles',
+        name: 'Magnetic Building Tiles',
+        description: '3D magnetic shapes for building structures',
+        type: 'toys',
+        priceRange: '$$',
+        price: '$30-45',
+        why: 'STEM learning through creative construction',
+        amazonSearch: 'magnetic tiles toddler building set',
+        popular: true,
+        unique: false,
+        gender: 'unisex'
+      },
+      {
+        id: 'toy-phone',
+        name: 'Learning Phone Toy',
+        description: 'Interactive phone with songs and numbers',
+        type: 'toys',
+        priceRange: '$',
+        price: '$12-18',
+        why: 'Teaches numbers, letters, and pretend communication',
+        amazonSearch: 'learning phone toy toddler interactive',
+        popular: false,
+        unique: false,
+        gender: 'unisex'
       }
     ]
   },
