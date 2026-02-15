@@ -1072,29 +1072,31 @@ export default function PartyPlanner() {
                 </div>
 
                 {/* Gift Ideas Section - Optional */}
-                <div className="no-print">
-                  <div className="bg-gradient-to-r from-pink-50 to-rose-50 rounded-2xl border-2 border-pink-200 p-6">
-                    <div className="flex items-start gap-4">
-                      <div className="bg-gradient-to-r from-pink-500 to-rose-500 text-white p-3 rounded-xl flex-shrink-0">
-                        <Gift size={32} />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold text-gray-800 mb-2">
-                          🎁 Need Gift Ideas for {partyData.childName}?
-                        </h3>
-                        <p className="text-gray-600 mb-4">
-                          Browse {filteredGifts.length} curated gift suggestions for age {partyData.age} - from popular toys to unique finds!
-                        </p>
-                        <button
-                          onClick={() => setShowGiftIdeas(true)}
-                          className="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-6 py-3 rounded-xl font-bold hover:shadow-lg hover:scale-[1.02] transition-all flex items-center gap-2"
-                        >
-                          Browse Gift Ideas <ChevronRight size={20} />
-                        </button>
+                {filteredGifts.length > 0 && (
+                  <div className="no-print">
+                    <div className="bg-gradient-to-r from-pink-50 to-rose-50 rounded-2xl border-2 border-pink-200 p-6">
+                      <div className="flex items-start gap-4">
+                        <div className="bg-gradient-to-r from-pink-500 to-rose-500 text-white p-3 rounded-xl flex-shrink-0">
+                          <Gift size={32} />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-xl font-bold text-gray-800 mb-2">
+                            🎁 Need Gift Ideas for {partyData.childName}?
+                          </h3>
+                          <p className="text-gray-600 mb-4">
+                            Browse {filteredGifts.length} curated gift suggestions for age {partyData.age} - from popular toys to unique finds!
+                          </p>
+                          <button
+                            onClick={() => setShowGiftIdeas(true)}
+                            className="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-6 py-3 rounded-xl font-bold hover:shadow-lg hover:scale-[1.02] transition-all flex items-center gap-2"
+                          >
+                            Browse Gift Ideas <ChevronRight size={20} />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 {/* Cake Ordering */}
                 <div className="p-6 bg-amber-50 rounded-2xl border-2 border-amber-200 no-print">
