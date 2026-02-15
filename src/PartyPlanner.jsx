@@ -1013,17 +1013,22 @@ export default function PartyPlanner() {
         {/* ═══════ STEP 6: GIFT IDEAS ═══════ */}
         {step === 6 && (
           <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl p-8 border-4 border-pink-200 relative z-10">
-            <div className="text-center mb-8">
-              <div className="inline-block bg-gradient-to-r from-pink-500 to-rose-500 text-white px-6 py-2 rounded-full mb-4">
-                <Gift className="inline mr-2 h-5 w-5" />
-                <span className="font-bold">Gift Ideas for {partyData.childName}</span>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex-1 text-center">
+                <div className="inline-block bg-gradient-to-r from-pink-500 to-rose-500 text-white px-6 py-2 rounded-full mb-4">
+                  <Gift className="inline mr-2 h-5 w-5" />
+                  <span className="font-bold">Gift Ideas for {partyData.childName}</span>
+                </div>
+                <h2 className="text-3xl font-bold text-gray-800 mb-2">
+                  What Should Guests Bring?
+                </h2>
+                <p className="text-gray-600">
+                  Curated gift ideas for age {partyData.age} • No selection required
+                </p>
               </div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-2">
-                What Should Guests Bring?
-              </h2>
-              <p className="text-gray-600">
-                Curated gift ideas for age {partyData.age} • No selection required
-              </p>
+              <button onClick={() => setStep(5)} className="text-gray-400 hover:text-gray-600 flex items-center gap-1 text-sm font-semibold">
+                <ChevronLeft size={18} /> Back
+              </button>
             </div>
 
             {/* Filter Toggles */}
