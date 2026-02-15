@@ -96,6 +96,13 @@ export async function searchNearbyVenues(location, venueType, radiusMiles = 15) 
         {
           location: center,
           radius: radiusMeters,
+          type: venueType === 'Park/Outdoor' ? 'park' :
+                venueType === 'Trampoline Park' ? 'amusement_park' :
+                venueType === 'Swimming Pool/Water Park/Splash Pad' ? 'park' :
+                venueType === 'Indoor Play Center' ? 'amusement_park' :
+                venueType === 'Bowling Alley' ? 'bowling_alley' :
+                venueType === 'Community Center' ? 'community_center' :
+                'point_of_interest',
           keyword: keyword,
         },
         (results, status) => {
