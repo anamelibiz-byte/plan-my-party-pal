@@ -123,8 +123,6 @@ export default function PartyPlanner() {
   const [giftTypeFilter, setGiftTypeFilter] = useState('all');
   const [giftPriceFilter, setGiftPriceFilter] = useState('All');
   const [showGiftIdeas, setShowGiftIdeas] = useState(false);
-  const [aiGiftLoading, setAIGiftLoading] = useState(false);
-  const [aiGeneratedGifts, setAIGeneratedGifts] = useState([]);
 
   // Collapsible sections state
   const [showTimeline, setShowTimeline] = useState(false);
@@ -325,10 +323,7 @@ export default function PartyPlanner() {
     const ageGroup = getGiftAgeGroup(partyData.age);
     const staticGifts = giftIdeas[ageGroup]?.gifts || [];
 
-    // Combine static + AI-generated gifts
-    const allGifts = [...staticGifts, ...aiGeneratedGifts];
-
-    return allGifts
+    return staticGifts
       .filter(gift => {
         // Type filter
         const typeMatch = giftTypeFilter === 'all' || gift.type === giftTypeFilter;
@@ -353,7 +348,7 @@ export default function PartyPlanner() {
         const priceOrder = { '$': 1, '$$': 2, '$$$': 3 };
         return (priceOrder[a.priceRange] || 2) - (priceOrder[b.priceRange] || 2);
       });
-  }, [partyData.age, giftTypeFilter, giftPriceFilter, partyData.genderCategory, aiGeneratedGifts]);
+  }, [partyData.age, giftTypeFilter, giftPriceFilter, partyData.genderCategory]);
 
   // ─── AI / Checklist Generation ──────────────────────────────────────────────
   const generateChecklist = async () => {
@@ -573,33 +568,6 @@ export default function PartyPlanner() {
     URL.revokeObjectURL(url);
   };
 
-  const generateAIGifts = async () => {
-    setAIGiftLoading(true);
-    try {
-      const response = await fetch('/api/ai-gift-suggestions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          age: partyData.age,
-          genderCategory: partyData.genderCategory,
-          giftTypeFilter,
-          giftPriceFilter
-        })
-      });
-
-      const data = await response.json();
-      if (data.gifts) {
-        setAIGeneratedGifts(data.gifts);
-      } else {
-        console.error('AI gift generation failed:', data.error);
-      }
-    } catch (error) {
-      console.error('AI gift generation failed:', error);
-    } finally {
-      setAIGiftLoading(false);
-    }
-  };
-
   // ─── Checklist Categories ────────────────────────────────────────────────────
   const CHECKLIST_CATEGORIES = [
     'Invitations', 'Decorations', 'Food & Cake', 'Dessert Table', 'Drinks',
@@ -736,31 +704,6 @@ export default function PartyPlanner() {
                   </div>
                 </div>
 
-                {/* AI Gift Generation Button */}
-                <div className="mb-6">
-                  <button
-                    onClick={generateAIGifts}
-                    disabled={aiGiftLoading || !partyData.age}
-                    className="w-full bg-gradient-to-r from-purple-500 to-violet-500 text-white py-4 px-6 rounded-xl font-bold hover:shadow-lg hover:scale-[1.02] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {aiGiftLoading ? (
-                      <>
-                        <div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin" />
-                        Generating Personalized Gifts...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles size={20} /> Get AI Gift Suggestions
-                      </>
-                    )}
-                  </button>
-                  {aiGeneratedGifts.length > 0 && (
-                    <p className="text-sm text-green-600 mt-2 text-center font-semibold">
-                      ✨ {aiGeneratedGifts.length} AI-generated gifts added!
-                    </p>
-                  )}
-                </div>
-
                 {/* Selected Gifts Display */}
                 {partyData.selectedGifts.length > 0 && (
                   <div className="bg-gradient-to-r from-pink-50 to-rose-50 rounded-2xl border-2 border-pink-200 p-4 mb-4">
@@ -844,7 +787,7 @@ export default function PartyPlanner() {
 
                             {/* Amazon Link */}
                             <a
-                              href={`https://www.amazon.com/s?k=${encodeURIComponent(gift.amazonSearch)}`}
+                              href={`https://www.amazon.com/s?k=${encodeURIComponent(gift.amazonSearch)}&tag=buyitnow075-20`}
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
