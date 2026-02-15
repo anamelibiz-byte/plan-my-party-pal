@@ -53,7 +53,7 @@ export default async function handler(req, res) {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                from: 'Plan My Party Pal <hello@planmypartypal.com>',
+                from: 'Plan My Party Pal <hello@go.planmypartypal.com>',
                 to: [customerEmail],
                 subject: '🎉 Welcome to Plan My Party Pal Pro!',
                 html: `
