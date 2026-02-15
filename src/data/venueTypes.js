@@ -100,10 +100,13 @@ export async function searchNearbyVenues(location, venueType, radiusMiles = 10) 
         },
         (results, status) => {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
+            console.log(`Google Places found ${results.length} results for "${keyword}"`);
             resolve(results);
           } else if (status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
+            console.log(`Google Places: Zero results for "${keyword}"`);
             resolve([]);
           } else {
+            console.error('Places search failed:', status);
             reject(new Error('Places search failed: ' + status));
           }
         }
@@ -146,8 +149,9 @@ export async function searchNearbyVenues(location, venueType, radiusMiles = 10) 
         }
         return true;
       })
-      .slice(0, 10);
+      .slice(0, 20); // Increased from 10 to 20 results
 
+    console.log(`Filtered to ${venues.length} venues within ${radiusMiles} miles`);
     venues.sort((a, b) => a.distanceMiles - b.distanceMiles);
 
     return {
