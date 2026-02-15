@@ -34,7 +34,7 @@ export default async function handler(req, res) {
       'Bowling Alley': 'bowling alley',
       'Skating Rink': 'skating rink roller skating ice skating',
       'Laser Tag Arena': 'laser tag',
-      'Swimming Pool/Water Park': 'water park swimming pool',
+      'Swimming Pool/Water Park/Splash Pad': 'water park swimming pool splash pad aquatic center public pool community pool swimming center pool recreation',
       'Art/Pottery Studio': 'art studio pottery painting',
       'Petting Zoo': 'petting zoo farm animals',
       'Community Center': 'community center recreation center',
