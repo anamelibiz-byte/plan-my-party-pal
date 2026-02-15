@@ -210,7 +210,7 @@ export default function PartyPlanner() {
   const [venueLoading, setVenueLoading] = useState(false);
   const [venueLocation, setVenueLocation] = useState('');
   const [venueError, setVenueError] = useState('');
-  const [venueRadius, setVenueRadius] = useState(10); // 5 or 10 miles
+  const [venueRadius, setVenueRadius] = useState(15); // Search radius in miles
   const [customVenueSearch, setCustomVenueSearch] = useState('');
 
   const searchVenues = async (venueType, radius) => {

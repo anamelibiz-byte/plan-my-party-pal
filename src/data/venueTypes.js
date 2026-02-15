@@ -34,7 +34,7 @@ export function getVenuesByType(type) {
   return sampleVenues.filter(v => v.type === type);
 }
 
-export function getAllVenuesWithinRadius(radiusMiles = 10) {
+export function getAllVenuesWithinRadius(radiusMiles = 15) {
   return sampleVenues.filter(v => parseFloat(v.distance) <= radiusMiles);
 }
 
@@ -63,7 +63,7 @@ function haversineDistance(lat1, lng1, lat2, lng2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-export async function searchNearbyVenues(location, venueType, radiusMiles = 10) {
+export async function searchNearbyVenues(location, venueType, radiusMiles = 15) {
   // Check if Google Maps API is loaded
   if (typeof google === 'undefined' || !google.maps) {
     return { results: [], error: 'Google Maps not loaded yet. Please try again.' };
@@ -141,17 +141,24 @@ export async function searchNearbyVenues(location, venueType, radiusMiles = 10) 
       })
       .filter(v => {
         // Filter by radius
-        if (v.distanceMiles > radiusMiles) return false;
+        if (v.distanceMiles > radiusMiles) {
+          console.log(`Filtered out ${v.name}: ${v.distanceMiles.toFixed(1)} mi > ${radiusMiles} mi`);
+          return false;
+        }
         // For Park/Outdoor, filter out indoor venues
         if (isOutdoor) {
           const nameLower = v.name.toLowerCase();
-          if (indoorKeywords.some(kw => nameLower.includes(kw))) return false;
+          if (indoorKeywords.some(kw => nameLower.includes(kw))) {
+            console.log(`Filtered out ${v.name}: contains indoor keyword`);
+            return false;
+          }
         }
         return true;
       })
       .slice(0, 20); // Increased from 10 to 20 results
 
-    console.log(`Filtered to ${venues.length} venues within ${radiusMiles} miles`);
+    console.log(`✅ Filtered to ${venues.length} venues within ${radiusMiles} miles`);
+    console.log('Venue names:', venues.map(v => `${v.name} (${v.distance})`));
     venues.sort((a, b) => a.distanceMiles - b.distanceMiles);
 
     return {
@@ -165,7 +172,7 @@ export async function searchNearbyVenues(location, venueType, radiusMiles = 10) 
 }
 
 // Custom search — user types their own query
-export async function searchCustomVenue(location, query, radiusMiles = 10) {
+export async function searchCustomVenue(location, query, radiusMiles = 15) {
   if (typeof google === 'undefined' || !google.maps) {
     return { results: [], error: 'Google Maps not loaded yet. Please try again.' };
   }
