@@ -65,7 +65,7 @@ export default async function handler(req, res) {
             radius: searchRadius
           }
         },
-        maxResultCount: 10,
+        maxResultCount: 20,
         rankPreference: 'DISTANCE'
       })
     });
