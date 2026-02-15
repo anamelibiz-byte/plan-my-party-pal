@@ -12,6 +12,99 @@ export default function AdminPage() {
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState(null);
 
+  // Pre-made email templates
+  const emailTemplates = [
+    {
+      id: 1,
+      name: 'New Themes',
+      emoji: '🎨',
+      subject: '🎉 New Party Themes Just Added!',
+      message: `Exciting news! We just added 5 amazing new party themes perfect for {{childName}}'s celebration:
+
+✨ Unicorn Dreams - Magical and sparkly
+🦖 Dinosaur Adventure - Roar-some fun
+🚀 Space Explorer - Out of this world
+🎨 Art Party - Creative masterpiece
+🧁 Baking Bonanza - Sweet treats galore
+
+Check them out in your party planner and make {{childName}}'s party unforgettable!`
+    },
+    {
+      id: 2,
+      name: 'Special Discount',
+      emoji: '💰',
+      subject: '💝 Special Offer for {{childName}}\'s Party!',
+      message: `Great news! We're offering 20% off premium party supplies this week.
+
+Planning {{childName}}'s party? Now's the perfect time to:
+• Browse our expanded theme collection
+• Get personalized activity suggestions
+• Create your custom shopping list with exclusive discounts
+
+This offer expires in 48 hours - start planning now!`
+    },
+    {
+      id: 3,
+      name: 'Party Tips',
+      emoji: '💡',
+      subject: '🎈 Pro Tips for {{childName}}\'s Perfect Party',
+      message: `Planning {{childName}}'s party? Here are our top 3 tips from party planning experts:
+
+1. Book your venue 3-4 weeks ahead for the best selection
+2. Choose activities that match your child's age group
+3. Send invitations 2 weeks before the party date
+
+Ready to plan? Jump back into your party planner and we'll help you nail every detail!`
+    },
+    {
+      id: 4,
+      name: 'Seasonal Themes',
+      emoji: '🌸',
+      subject: '🌺 Perfect Spring/Summer Themes for {{childName}}',
+      message: `Spring and summer are here! Check out these outdoor party themes perfect for {{childName}}:
+
+🌈 Rainbow Garden Party
+🏖️ Beach Bash
+🦋 Butterfly Garden
+🍉 Watermelon Party
+🌻 Sunflower Celebration
+
+Each theme includes activity ideas, decoration tips, and shopping lists. Let's make this season special!`
+    },
+    {
+      id: 5,
+      name: 'Last-Minute Party',
+      emoji: '⏰',
+      subject: '⚡ Quick & Easy Party Ideas for {{childName}}',
+      message: `Short on time? No problem! We've got quick party ideas that look amazing but take minimal effort:
+
+• Simple themes with easy DIY decorations
+• Activities that require no prep
+• Ready-made shopping lists for fast ordering
+
+Planning {{childName}}'s party doesn't have to be stressful. Let us help you pull off an amazing celebration in no time!`
+    },
+    {
+      id: 6,
+      name: 'Follow-Up',
+      emoji: '👋',
+      subject: '🎊 How\'s {{childName}}\'s Party Planning Going?',
+      message: `Just checking in! We noticed you started planning {{childName}}'s party and wanted to see if you need any help.
+
+We're here to make party planning stress-free:
+• Not sure which theme to choose? We can help!
+• Need activity ideas? We've got tons!
+• Questions about venues? We're happy to assist!
+
+Jump back into your planner or reply to this email - we're here to help make {{childName}}'s party amazing!`
+    }
+  ];
+
+  const loadTemplate = (template) => {
+    setSubject(template.subject);
+    setMessage(template.message);
+  };
+
   const handleLogin = (e) => {
     e.preventDefault();
     if (password === import.meta.env.VITE_ADMIN_PASSWORD) {
@@ -106,8 +199,31 @@ export default function AdminPage() {
           </div>
         </div>
 
+        {/* Email Templates */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">📧 Quick Templates</h2>
+          <p className="text-sm text-gray-600 mb-4">Click a template to load it into the editor below</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {emailTemplates.map((template) => (
+              <button
+                key={template.id}
+                type="button"
+                onClick={() => loadTemplate(template)}
+                className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-lg hover:border-pink-500 hover:bg-pink-50 transition-all text-left"
+              >
+                <span className="text-3xl">{template.emoji}</span>
+                <div>
+                  <p className="font-bold text-gray-800 text-sm">{template.name}</p>
+                  <p className="text-xs text-gray-500 line-clamp-1">{template.subject}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Send Promo Form */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">✍️ Compose Email</h2>
           <form onSubmit={handleSendPromo} className="space-y-6">
             {/* Subject */}
             <div>
