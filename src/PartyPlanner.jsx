@@ -124,7 +124,7 @@ export default function PartyPlanner() {
   const [showGiftIdeas, setShowGiftIdeas] = useState(false);
 
   // Collapsible sections state
-  const [showTimeline, setShowTimeline] = useState(true);
+  const [showTimeline, setShowTimeline] = useState(false);
   const [openZones, setOpenZones] = useState({});
   const [showCakeOrdering, setShowCakeOrdering] = useState(false);
   const [showPartyHelp, setShowPartyHelp] = useState(false);
@@ -458,12 +458,12 @@ export default function PartyPlanner() {
     }));
   }, [checklist]);
 
-  // Initialize all zones as open when mergedZones changes
+  // Initialize all zones as closed when mergedZones changes
   useEffect(() => {
     if (mergedZones.length > 0 && Object.keys(openZones).length === 0) {
       const initialOpenZones = {};
       mergedZones.forEach(zone => {
-        initialOpenZones[zone.id] = true;
+        initialOpenZones[zone.id] = false;
       });
       setOpenZones(initialOpenZones);
     }
@@ -1270,31 +1270,6 @@ export default function PartyPlanner() {
                 {/* Guest Invite List — track who you're inviting */}
                 <GuestList partyData={partyData} />
 
-                {/* Timeline Builder (Pro+) - Collapsible */}
-                <TierGate feature="timelineBuilder">
-                  <div className="bg-white rounded-2xl border-2 border-purple-200 overflow-hidden no-print">
-                    <button
-                      onClick={() => setShowTimeline(!showTimeline)}
-                      className="w-full p-4 flex items-center justify-between hover:bg-purple-50 transition-all"
-                    >
-                      <div className="flex items-center gap-3">
-                        <Clock className="text-purple-500" size={24} />
-                        <h3 className="text-xl font-bold text-purple-800">Day of Timeline</h3>
-                      </div>
-                      {showTimeline ? (
-                        <ChevronUp className="text-purple-500" size={24} />
-                      ) : (
-                        <ChevronDown className="text-purple-500" size={24} />
-                      )}
-                    </button>
-                    {showTimeline && (
-                      <div className="p-6 border-t-2 border-purple-200">
-                        <TimelineBuilder timeline={timeline} onTimelineChange={setTimeline} partyData={partyData} />
-                      </div>
-                    )}
-                  </div>
-                </TierGate>
-
                 {/* Food & Drink Labels — Etsy */}
                 <div className="no-print">
                   <a href="https://www.etsy.com/shop/gotinatravels" target="_blank" rel="noopener noreferrer"
@@ -1575,6 +1550,31 @@ export default function PartyPlanner() {
                     );
                   })}
                 </div>
+
+                {/* Timeline Builder (Pro+) - Collapsible */}
+                <TierGate feature="timelineBuilder">
+                  <div className="bg-white rounded-2xl border-2 border-purple-200 overflow-hidden no-print">
+                    <button
+                      onClick={() => setShowTimeline(!showTimeline)}
+                      className="w-full p-4 flex items-center justify-between hover:bg-purple-50 transition-all"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Clock className="text-purple-500" size={24} />
+                        <h3 className="text-xl font-bold text-purple-800">Day of Timeline</h3>
+                      </div>
+                      {showTimeline ? (
+                        <ChevronUp className="text-purple-500" size={24} />
+                      ) : (
+                        <ChevronDown className="text-purple-500" size={24} />
+                      )}
+                    </button>
+                    {showTimeline && (
+                      <div className="p-6 border-t-2 border-purple-200">
+                        <TimelineBuilder timeline={timeline} onTimelineChange={setTimeline} partyData={partyData} />
+                      </div>
+                    )}
+                  </div>
+                </TierGate>
 
                 {/* Budget Tracker — above exports so you can see your totals before downloading */}
                 <BudgetTracker checklist={checklist} budget={partyData.budget} />
