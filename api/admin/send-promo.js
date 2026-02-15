@@ -71,10 +71,12 @@ export default async function handler(req, res) {
         const emailHtml = `
           <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="background: linear-gradient(135deg, #EC4899, #F43F5E); padding: 40px 24px; border-radius: 16px 16px 0 0; text-align: center;">
-              <h1 style="color: white; font-size: 28px; margin: 0;">Plan My Party Pal</h1>
+              <h1 style="color: white; font-size: 28px; margin: 0;">🎉 Plan My Party Pal</h1>
             </div>
 
             <div style="padding: 32px 24px; background: white;">
+              <p style="font-size: 18px; color: #374151; margin: 0 0 16px;">Hi there! 👋</p>
+
               <div style="font-size: 16px; color: #374151; line-height: 1.6; white-space: pre-wrap;">
 ${personalizedMessage}
               </div>
@@ -92,6 +94,7 @@ ${personalizedMessage}
                 You're receiving this because you're a Plan My Party Pal subscriber.
               </p>
               <p style="font-size: 12px; color: #9CA3AF; margin: 0;">
+                Questions? Reply to this email anytime! |
                 <a href="https://planmypartypal.com/unsubscribe?email=${encodeURIComponent(subscriber.email)}" style="color: #EC4899; text-decoration: none;">Unsubscribe</a>
               </p>
             </div>
@@ -99,12 +102,15 @@ ${personalizedMessage}
         `;
 
         const emailText = `
+Hi there!
+
 ${personalizedMessage}
 
 Continue planning your party: https://planmypartypal.com/app?email=${encodeURIComponent(subscriber.email)}
 
 ---
 You're receiving this because you're a Plan My Party Pal subscriber.
+Questions? Reply to this email anytime!
 Unsubscribe: https://planmypartypal.com/unsubscribe?email=${encodeURIComponent(subscriber.email)}
         `;
 
