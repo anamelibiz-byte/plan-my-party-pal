@@ -411,7 +411,7 @@ export const giftIdeas = {
         type: 'outdoor',
         priceRange: '$$',
         price: '$25-40',
-        why: 'Active play that's safe and exciting',
+        why: 'Active play that is safe and exciting',
         amazonSearch: 'nerf blaster kids foam darts',
         popular: true,
         unique: false
