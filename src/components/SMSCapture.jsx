@@ -28,11 +28,52 @@ export default function SMSCapture({ source, partyData, mergedZones, excludedIte
       onPhoneUpdate(phone);
     }
 
-    // TODO: Call SMS API endpoint (Phase 2)
-    // For now, just simulate success after delay
-    setTimeout(() => {
-      setStatus('success');
-    }, 1500);
+    try {
+      // Build checklist from zones (similar to email logic)
+      const checklist = [];
+
+      if (mergedZones && Array.isArray(mergedZones)) {
+        mergedZones.forEach(zone => {
+          zone.allItems?.forEach(item => {
+            const key = item._type === 'zone' ? item._zoneKey : `checklist-${item._checklistIdx}`;
+            if (!excludedItems?.[key]) {
+              checklist.push({
+                task: item.task,
+                category: item.category || zone.name,
+                priority: item.priority || 'medium',
+                completed: item._type === 'zone'
+                  ? (zoneChecks?.[item._zoneKey] || false)
+                  : (item.completed || false),
+              });
+            }
+          });
+        });
+      }
+
+      // Call SMS API
+      const response = await fetch('/api/send-sms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone,
+          partyData,
+          checklist,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setStatus('success');
+      } else {
+        setError(data.error || 'Failed to send SMS. Please try again.');
+        setStatus('idle');
+      }
+    } catch (err) {
+      console.error('SMS error:', err);
+      setError('Failed to send SMS. Please try again.');
+      setStatus('idle');
+    }
   };
 
   return (
