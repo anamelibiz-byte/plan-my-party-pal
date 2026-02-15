@@ -23,10 +23,11 @@ dist-ssr
 *.sln
 *.sw?
 
-# Environment files
+# Environment files - NEVER commit these!
 .env
-.env.local
-.env.production
+.env.*
+!.env.example
+# This protects all .env files except .env.example
 
 # Vercel
 .vercel
@@ -37,4 +38,3 @@ s.b64
 .claude/
 w.js
 write1.js
-.env.vercel
