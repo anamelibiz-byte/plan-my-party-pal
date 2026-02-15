@@ -40,7 +40,7 @@ export function getAllVenuesWithinRadius(radiusMiles = 10) {
 
 // ─── Client-side Google Places Search ───────────────────────────────
 const typeKeywords = {
-  'Park/Outdoor': 'outdoor park playground picnic area pavilion',
+  'Park/Outdoor': 'park playground nature park picnic area pavilion recreation area outdoor park city park county park state park greenway trail park',
   'Trampoline Park': 'trampoline park',
   'Gaming Truck': 'mobile gaming entertainment kids',
   'Indoor Play Center': 'indoor playground kids play center',

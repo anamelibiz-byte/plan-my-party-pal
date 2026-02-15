@@ -27,7 +27,7 @@ export default async function handler(req, res) {
 
     // Step 2: Map venue category to Google Places type keywords
     const typeKeywords = {
-      'Park/Outdoor': 'park playground',
+      'Park/Outdoor': 'park playground nature park picnic area pavilion recreation area outdoor park city park county park state park greenway trail park',
       'Trampoline Park': 'trampoline park',
       'Gaming Truck': 'mobile gaming entertainment',
       'Indoor Play Center': 'indoor playground kids play center',
