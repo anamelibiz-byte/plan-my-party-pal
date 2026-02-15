@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { DollarSign, TrendingUp, AlertTriangle, ChevronDown, ChevronUp, Printer } from 'lucide-react';
+import { DollarSign, TrendingUp, AlertTriangle, ChevronDown, ChevronUp, Printer, Lock } from 'lucide-react';
 import { sumChecklistCosts, getCostBreakdown, formatCurrency } from '../utils/parseCost';
 import { hasFeature } from '../config/tiers';
+import { useTier } from '../context/TierContext';
 
 const CATEGORY_COLORS = {
   'Invitations': '#3B82F6',
@@ -185,6 +186,7 @@ export default function BudgetTracker({ checklist, budget, userTier = 'free', pa
   };
 
   const canPrint = hasFeature(userTier, 'printChecklist');
+  const { requireFeature } = useTier();
 
   if (checklist.length === 0) return null;
 
@@ -205,7 +207,7 @@ export default function BudgetTracker({ checklist, budget, userTier = 'free', pa
             {expanded ? <ChevronUp size={18} className="text-gray-400" /> : <ChevronDown size={18} className="text-gray-400" />}
           </div>
         </button>
-        {canPrint && (
+        {canPrint ? (
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -216,6 +218,20 @@ export default function BudgetTracker({ checklist, budget, userTier = 'free', pa
           >
             <Printer size={16} />
             <span className="hidden sm:inline">Print</span>
+          </button>
+        ) : (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              requireFeature('printChecklist');
+            }}
+            className="ml-3 flex items-center gap-1.5 text-xs sm:text-sm text-purple-600 hover:text-purple-800 font-semibold transition-colors no-print whitespace-nowrap"
+            title="Upgrade to Pro to download the budget tracker"
+          >
+            <Lock size={14} className="flex-shrink-0" />
+            <span className="hidden sm:inline">Want to download the budget tracker?</span>
+            <span className="sm:hidden">Download</span>
+            <span className="hidden sm:inline underline">Unlock Pro</span>
           </button>
         )}
       </div>
