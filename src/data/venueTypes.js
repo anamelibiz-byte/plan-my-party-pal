@@ -92,11 +92,11 @@ export async function searchNearbyVenues(location, venueType, radiusMiles = 15) 
     const radiusMeters = Math.round(radiusMiles * 1609.34);
 
     const places = await new Promise((resolve, reject) => {
-      service.textSearch(
+      service.nearbySearch(
         {
-          query: keyword,
           location: center,
           radius: radiusMeters,
+          keyword: keyword,
         },
         (results, status) => {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
@@ -193,8 +193,8 @@ export async function searchCustomVenue(location, query, radiusMiles = 15) {
     const radiusMeters = Math.round(radiusMiles * 1609.34);
 
     const places = await new Promise((resolve, reject) => {
-      service.textSearch(
-        { query, location: center, radius: radiusMeters },
+      service.nearbySearch(
+        { location: center, radius: radiusMeters, keyword: query },
         (results, status) => {
           if (status === google.maps.places.PlacesServiceStatus.OK) resolve(results);
           else if (status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS) resolve([]);
