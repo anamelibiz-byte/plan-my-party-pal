@@ -16,6 +16,7 @@ import { giftIdeas, getAgeGroup as getGiftAgeGroup } from './data/giftIdeas';
 // New components
 import BudgetTracker from './components/BudgetTracker';
 import EmailCapture from './components/EmailCapture';
+import SMSCapture from './components/SMSCapture';
 import EmailGate from './components/EmailGate';
 import RSVPManager from './components/RSVPManager';
 import TimelineBuilder from './components/TimelineBuilder';
@@ -894,13 +895,6 @@ export default function PartyPlanner() {
                 <input type="text" value={partyData.location} onChange={e => updateField('location', e.target.value)} placeholder="City, State or ZIP" className="w-full px-4 py-3 border-2 border-pink-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-lg" />
               </div>
 
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Phone Number <span className="text-gray-400 font-normal">(optional)</span>
-                </label>
-                <input type="tel" value={partyData.phone} onChange={e => updateField('phone', e.target.value)} placeholder="(555) 123-4567" className="w-full px-4 py-3 border-2 border-pink-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-lg" />
-              </div>
-
               <button onClick={() => setStep(2)} disabled={!partyData.childName || !partyData.age || !partyData.budget || !partyData.guestCount}
                 className="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2">
                 Continue <ChevronRight size={24} />
@@ -1591,9 +1585,13 @@ export default function PartyPlanner() {
                   </TierGate>
                 </div>
 
-                {/* Email Capture */}
-                <div className="no-print">
+                {/* Email & SMS Capture */}
+                <div className="no-print space-y-4">
                   <EmailCapture source="checklist" partyData={partyData} mergedZones={mergedZones} excludedItems={excludedItems} zoneChecks={zoneChecks} />
+
+                  <TierGate feature="smsPartyPlan" inline>
+                    <SMSCapture source="checklist" partyData={partyData} mergedZones={mergedZones} excludedItems={excludedItems} zoneChecks={zoneChecks} onPhoneUpdate={(phone) => updateField('phone', phone)} />
+                  </TierGate>
                 </div>
 
                 {/* Summary */}

@@ -30,6 +30,7 @@ export const TIERS = {
       aiSuggestions: false,
       rsvpSystem: false,
       emailPartyPlan: false,
+      smsPartyPlan: false,
       partyZonesPreview: true,
       partyZonesFull: false,
       amazonLinks: true,
@@ -67,6 +68,7 @@ export const TIERS = {
       aiSuggestions: true, // AI-powered suggestions
       rsvpSystem: true, // RSVP tracking
       emailPartyPlan: true,
+      smsPartyPlan: true,
       partyZonesPreview: true,
       partyZonesFull: true,
       amazonLinks: true,
@@ -97,6 +99,7 @@ export const FEATURE_LABELS = {
   aiSuggestions: 'AI-Powered Theme & Activity Suggestions',
   rsvpSystem: 'RSVP Tracking',
   emailPartyPlan: 'Email Your Party Plan',
+  smsPartyPlan: 'Text Your Party Plan',
   partyZonesPreview: 'Party Zones Preview',
   partyZonesFull: 'Full Party Zones Guide',
   amazonLinks: 'Amazon Shopping Links',
