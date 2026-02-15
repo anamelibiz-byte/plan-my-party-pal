@@ -188,18 +188,23 @@ export default function UpgradeModal() {
                   {DISPLAY_FEATURES.map(feat => {
                     const has = tier.features[feat];
                     const isHighlight = feat === highlightFeature;
+
+                    // Custom labels for maxParties and maxGuests to show actual values
+                    let label = FEATURE_LABELS[feat];
+                    if (feat === 'maxParties') {
+                      label = has === null ? 'Unlimited parties' : has === 1 ? '1 party at a time' : `${has} parties`;
+                    } else if (feat === 'maxGuests') {
+                      label = has === null ? 'Unlimited guests' : `Up to ${has} guests`;
+                    }
+
                     return (
                       <div
                         key={feat}
                         className={`flex items-center gap-2 text-sm ${isHighlight ? 'bg-purple-100 -mx-2 px-2 py-1 rounded-lg' : ''}`}
                       >
-                        {has ? (
-                          <Check size={16} className="text-green-500 flex-shrink-0" />
-                        ) : (
-                          <X size={16} className="text-gray-300 flex-shrink-0" />
-                        )}
-                        <span className={has ? 'text-gray-700' : 'text-gray-400'}>
-                          {FEATURE_LABELS[feat]}
+                        <Check size={16} className="text-green-500 flex-shrink-0" />
+                        <span className="text-gray-700">
+                          {label}
                         </span>
                       </div>
                     );
