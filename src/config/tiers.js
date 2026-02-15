@@ -18,17 +18,16 @@ export const TIERS = {
       basicWizard: true,
       maxParties: 1, // NEW: Can only plan 1 party at a time
       maxGuests: 15, // NEW: Up to 15 guests
-      limitedThemes: true,
-      allThemes: false,
-      characterThemes: false,
-      limitedActivities: true,
-      allActivities: false,
+      limitedThemes: false, // All themes available
+      allThemes: true, // All themes available
+      characterThemes: true, // All themes available
+      limitedActivities: false, // All activities available
+      allActivities: true, // All activities available
       budgetTrackerBasic: true,
       budgetTrackerFull: false,
       saveExport: false,
       downloadPDF: false,
-      aiSuggestions: false,
-      rsvpSystem: false,
+      rsvpSystem: true, // RSVP tracking available in free
       emailPartyPlan: false,
       smsPartyPlan: false,
       partyZonesPreview: true,
@@ -58,16 +57,15 @@ export const TIERS = {
       basicWizard: true,
       maxParties: null, // Unlimited parties
       maxGuests: null, // Unlimited guests
-      limitedThemes: true,
+      limitedThemes: false,
       allThemes: true,
       characterThemes: true,
-      limitedActivities: true,
+      limitedActivities: false,
       allActivities: true,
       budgetTrackerBasic: true,
       budgetTrackerFull: true,
       saveExport: true,
       downloadPDF: true,
-      aiSuggestions: true, // AI-powered suggestions
       rsvpSystem: true, // RSVP tracking
       emailPartyPlan: true,
       smsPartyPlan: true,
@@ -77,12 +75,11 @@ export const TIERS = {
       vendorRecommendations: true, // NEW: Vendor recommendations by location
       budgetAnalytics: true, // NEW: Budget analytics & breakdown
       timelineBuilder: true,
-      dietaryTracker: true,
+      dietaryTracker: true, // Keep for Pro (component exists for future)
       weatherAlert: true,
       shareChecklist: true,
       downloadChecklist: true,
       printChecklist: true,
-      prioritySupport: true, // NEW: Priority support
     },
   },
 };

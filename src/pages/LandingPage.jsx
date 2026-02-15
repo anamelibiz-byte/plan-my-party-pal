@@ -222,10 +222,16 @@ export default function LandingPage() {
 
               <ul className="space-y-3 mb-8">
                 {[
-                  "Plan 1 party at a time",
-                  "Basic checklist & guest list (up to 15 guests)",
-                  "Browse party theme ideas",
-                  "Basic budget tracker"
+                  "Plan 1 party at a time with up to 15 guests",
+                  "Complete party checklist builder",
+                  "Custom invitations (create, download, share)",
+                  "Guest list management with RSVP tracking",
+                  "80+ curated gift ideas with Amazon links",
+                  "Cake ordering resources & party help hiring",
+                  "Access to all 60+ party themes",
+                  "100+ age-appropriate activities",
+                  "Party zones planner (view only)",
+                  "Basic budget tracker (view only)"
                 ].map((feature, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <CheckCircle2 size={20} className="text-green-500 flex-shrink-0 mt-0.5" />
@@ -262,13 +268,15 @@ export default function LandingPage() {
 
               <ul className="space-y-3 mb-8">
                 {[
-                  "Unlimited parties",
-                  "Unlimited guests + RSVP tracking",
-                  "AI-powered theme & activity suggestions",
-                  "Printable/shareable party plans",
-                  "Vendor recommendations by location",
-                  "Budget analytics & spending breakdown",
-                  "Priority support"
+                  "Everything in Free, PLUS:",
+                  "Unlimited parties with unlimited guests",
+                  "Day-of Timeline Builder (minute-by-minute schedule)",
+                  "Download party plans (PDF, TXT formats)",
+                  "Print entire party checklist",
+                  "Email party plans to yourself or co-hosts",
+                  "SMS party plans to your phone",
+                  "Share checklists via text/email/social",
+                  "Full budget analytics with spending breakdown"
                 ].map((feature, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <CheckCircle2 size={20} className="text-white flex-shrink-0 mt-0.5" />
