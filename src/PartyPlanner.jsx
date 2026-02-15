@@ -71,7 +71,7 @@ function Sprinkles() {
 }
 
 // ─── Step Config ─────────────────────────────────────────────────────────────
-const STEP_LABELS = ['Basics', 'Email', 'Venue', 'Theme', 'Activities', 'Gift Ideas', 'Checklist'];
+const STEP_LABELS = ['Basics', 'Email', 'Venue', 'Theme', 'Activities', 'Checklist'];
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function PartyPlanner() {
@@ -121,6 +121,7 @@ export default function PartyPlanner() {
   // Gift Ideas filters
   const [giftTypeFilter, setGiftTypeFilter] = useState('all');
   const [giftPriceFilter, setGiftPriceFilter] = useState('All');
+  const [showGiftIdeas, setShowGiftIdeas] = useState(false);
 
   // ─── Auto-Restore from Database ──────────────────────────────────────────────
   useEffect(() => {
@@ -1003,207 +1004,16 @@ export default function PartyPlanner() {
               })}
             </div>
 
-            <button onClick={() => setStep(6)}
+            <button onClick={() => { generateChecklist(); setStep(6); }}
               className="w-full mt-6 bg-gradient-to-r from-pink-500 to-rose-500 text-white py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
-              Continue to Gift Ideas <ChevronRight size={24} />
+              Generate My Party Checklist & Shopping List <ChevronRight size={24} />
             </button>
           </div>
         )}
 
-        {/* ═══════ STEP 6: GIFT IDEAS ═══════ */}
+
+        {/* ═══════ STEP 6: CHECKLIST ═══════ */}
         {step === 6 && (
-          <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl p-8 border-4 border-pink-200 relative z-10">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex-1 text-center">
-                <div className="inline-block bg-gradient-to-r from-pink-500 to-rose-500 text-white px-6 py-2 rounded-full mb-4">
-                  <Gift className="inline mr-2 h-5 w-5" />
-                  <span className="font-bold">Gift Ideas for {partyData.childName}</span>
-                </div>
-                <h2 className="text-3xl font-bold text-gray-800 mb-2">
-                  What Should Guests Bring?
-                </h2>
-                <p className="text-gray-600">
-                  Curated gift ideas for age {partyData.age} • No selection required
-                </p>
-              </div>
-              <button onClick={() => setStep(5)} className="text-gray-400 hover:text-gray-600 flex items-center gap-1 text-sm font-semibold">
-                <ChevronLeft size={18} /> Back
-              </button>
-            </div>
-
-            {/* Filter Toggles */}
-            <div className="bg-gradient-to-r from-pink-50 to-rose-50 rounded-2xl border-2 border-pink-200 p-6 mb-6">
-              <div className="space-y-4">
-                {/* Type Filter */}
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Filter by Type:
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {['All', 'Toys', 'Books', 'Games', 'Outdoor', 'Creative'].map(type => (
-                      <button
-                        key={type}
-                        onClick={() => setGiftTypeFilter(type.toLowerCase())}
-                        className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-                          giftTypeFilter === type.toLowerCase()
-                            ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg'
-                            : 'bg-white text-gray-700 border-2 border-pink-200 hover:border-pink-400'
-                        }`}
-                      >
-                        {type}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Price Filter */}
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Filter by Price Range:
-                  </label>
-                  <div className="flex gap-2">
-                    {['All', '$', '$$', '$$$'].map(price => (
-                      <button
-                        key={price}
-                        onClick={() => setGiftPriceFilter(price)}
-                        className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-                          giftPriceFilter === price
-                            ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg'
-                            : 'bg-white text-gray-700 border-2 border-green-200 hover:border-green-400'
-                        }`}
-                      >
-                        {price === 'All' ? 'All Prices' : price}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Selected Gifts Display */}
-            {partyData.selectedGifts.length > 0 && (
-              <div className="bg-gradient-to-r from-pink-50 to-rose-50 rounded-2xl border-2 border-pink-200 p-4 mb-4">
-                <p className="text-sm font-bold text-gray-700 mb-2">
-                  {partyData.selectedGifts.length} gift{partyData.selectedGifts.length !== 1 ? 's' : ''} saved for reference
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {partyData.selectedGifts.map(giftId => {
-                    const gift = filteredGifts.find(g => g.id === giftId);
-                    if (!gift) return null;
-                    return (
-                      <div key={giftId} className="bg-white px-3 py-1 rounded-full border-2 border-pink-300 flex items-center gap-2">
-                        <span className="text-sm font-semibold text-gray-700">{gift.name}</span>
-                        <button
-                          onClick={() => updateField('selectedGifts', partyData.selectedGifts.filter(id => id !== giftId))}
-                          className="text-pink-500 hover:text-pink-700 font-bold"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Gift Grid */}
-            {filteredGifts.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                {filteredGifts.map(gift => {
-                  const isSelected = partyData.selectedGifts.includes(gift.id);
-                  return (
-                    <div
-                      key={gift.id}
-                      className={`relative rounded-xl border-2 p-4 transition-all cursor-pointer ${
-                        isSelected
-                          ? 'border-pink-500 bg-pink-50 shadow-lg scale-[1.02]'
-                          : 'border-gray-200 bg-white hover:border-pink-300 hover:shadow-md'
-                      }`}
-                      onClick={() => {
-                        if (isSelected) {
-                          updateField('selectedGifts', partyData.selectedGifts.filter(id => id !== gift.id));
-                        } else {
-                          updateField('selectedGifts', [...partyData.selectedGifts, gift.id]);
-                        }
-                      }}
-                    >
-                      {/* Selection Indicator */}
-                      <div className="absolute top-3 right-3">
-                        {isSelected ? (
-                          <CheckCircle2 className="h-6 w-6 text-pink-500" />
-                        ) : (
-                          <Circle className="h-6 w-6 text-gray-300" />
-                        )}
-                      </div>
-
-                      {/* Gift Content */}
-                      <div className="pr-8">
-                        <h3 className="font-bold text-gray-800 mb-1">{gift.name}</h3>
-                        <p className="text-sm text-gray-600 mb-3">{gift.description}</p>
-
-                        {/* Tags Row */}
-                        <div className="flex flex-wrap gap-2 mb-3">
-                          <span className="text-xs font-bold px-2 py-0.5 rounded bg-green-100 text-green-700">
-                            {gift.price}
-                          </span>
-                          {gift.popular && (
-                            <span className="text-xs font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-700">
-                              ⭐ Popular
-                            </span>
-                          )}
-                          {gift.unique && (
-                            <span className="text-xs font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-700">
-                              ✨ Unique
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Why This Gift */}
-                        <p className="text-xs text-gray-500 italic mb-3">{gift.why}</p>
-
-                        {/* Amazon Link */}
-                        <a
-                          href={`https://www.amazon.com/s?k=${encodeURIComponent(gift.amazonSearch)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="inline-flex items-center gap-1 text-sm font-semibold text-pink-600 hover:text-pink-800"
-                        >
-                          Shop on Amazon
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="text-center py-12 bg-gray-50 rounded-2xl mb-6">
-                <p className="text-gray-600 mb-2">No gifts match your filters</p>
-                <button
-                  onClick={() => {
-                    setGiftTypeFilter('all');
-                    setGiftPriceFilter('All');
-                  }}
-                  className="text-pink-600 font-semibold hover:underline"
-                >
-                  Clear all filters
-                </button>
-              </div>
-            )}
-
-            {/* Continue Button */}
-            <button
-              onClick={() => { generateChecklist(); setStep(7); }}
-              className="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
-            >
-              Continue to Checklist <ChevronRight size={24} />
-            </button>
-          </div>
-        )}
-
-        {/* ═══════ STEP 7: CHECKLIST ═══════ */}
-        {step === 7 && (
           <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-8 border-4 border-pink-200 relative z-10">
             <div className="flex items-center justify-between mb-6">
               <div className="flex-1">
@@ -1214,7 +1024,7 @@ export default function PartyPlanner() {
                 <p className="text-gray-600">{partyData.childName}'s {partyData.theme} Party &bull; {partyData.guestCount} guests &bull; ${partyData.budget} budget</p>
                 {partyData.selectedActivities.length > 0 && <p className="text-sm text-violet-600 mt-1">Activities: {partyData.selectedActivities.join(', ')}</p>}
               </div>
-              <button onClick={() => setStep(6)} className="text-gray-400 hover:text-gray-600 flex items-center gap-1 text-sm font-semibold no-print"><ChevronLeft size={18} /> Back</button>
+              <button onClick={() => setStep(5)} className="text-gray-400 hover:text-gray-600 flex items-center gap-1 text-sm font-semibold no-print"><ChevronLeft size={18} /> Back</button>
             </div>
 
             {loading && (
@@ -1259,6 +1069,31 @@ export default function PartyPlanner() {
                       <ExternalLink className="text-orange-300 ml-auto flex-shrink-0" size={20} />
                     </div>
                   </a>
+                </div>
+
+                {/* Gift Ideas Section - Optional */}
+                <div className="no-print">
+                  <div className="bg-gradient-to-r from-pink-50 to-rose-50 rounded-2xl border-2 border-pink-200 p-6">
+                    <div className="flex items-start gap-4">
+                      <div className="bg-gradient-to-r from-pink-500 to-rose-500 text-white p-3 rounded-xl flex-shrink-0">
+                        <Gift size={32} />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-gray-800 mb-2">
+                          🎁 Need Gift Ideas for {partyData.childName}?
+                        </h3>
+                        <p className="text-gray-600 mb-4">
+                          Browse {filteredGifts.length} curated gift suggestions for age {partyData.age} - from popular toys to unique finds!
+                        </p>
+                        <button
+                          onClick={() => setShowGiftIdeas(true)}
+                          className="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-6 py-3 rounded-xl font-bold hover:shadow-lg hover:scale-[1.02] transition-all flex items-center gap-2"
+                        >
+                          Browse Gift Ideas <ChevronRight size={20} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Cake Ordering */}
@@ -1470,6 +1305,203 @@ export default function PartyPlanner() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Gift Ideas Modal Overlay */}
+        {showGiftIdeas && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
+            <div className="bg-white rounded-3xl shadow-2xl max-w-6xl w-full my-8 max-h-[90vh] overflow-y-auto">
+              <div className="sticky top-0 bg-white border-b-2 border-pink-200 p-6 flex items-center justify-between z-10">
+                <div>
+                  <h2 className="text-3xl font-bold text-gray-800 mb-1">
+                    🎁 Gift Ideas for {partyData.childName}
+                  </h2>
+                  <p className="text-gray-600">
+                    Age {partyData.age} • {filteredGifts.length} curated suggestions
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowGiftIdeas(false)}
+                  className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-lg transition-all"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="p-8">
+                {/* Filter Toggles */}
+                <div className="bg-gradient-to-r from-pink-50 to-rose-50 rounded-2xl border-2 border-pink-200 p-6 mb-6">
+                  <div className="space-y-4">
+                    {/* Type Filter */}
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-2">
+                        Filter by Type:
+                      </label>
+                      <div className="flex flex-wrap gap-2">
+                        {['All', 'Toys', 'Books', 'Games', 'Outdoor', 'Creative'].map(type => (
+                          <button
+                            key={type}
+                            onClick={() => setGiftTypeFilter(type.toLowerCase())}
+                            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                              giftTypeFilter === type.toLowerCase()
+                                ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg'
+                                : 'bg-white text-gray-700 border-2 border-pink-200 hover:border-pink-400'
+                            }`}
+                          >
+                            {type}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Price Filter */}
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-2">
+                        Filter by Price Range:
+                      </label>
+                      <div className="flex gap-2">
+                        {['All', '$', '$$', '$$$'].map(price => (
+                          <button
+                            key={price}
+                            onClick={() => setGiftPriceFilter(price)}
+                            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                              giftPriceFilter === price
+                                ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg'
+                                : 'bg-white text-gray-700 border-2 border-green-200 hover:border-green-400'
+                            }`}
+                          >
+                            {price === 'All' ? 'All Prices' : price}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Selected Gifts Display */}
+                {partyData.selectedGifts.length > 0 && (
+                  <div className="bg-gradient-to-r from-pink-50 to-rose-50 rounded-2xl border-2 border-pink-200 p-4 mb-4">
+                    <p className="text-sm font-bold text-gray-700 mb-2">
+                      {partyData.selectedGifts.length} gift{partyData.selectedGifts.length !== 1 ? 's' : ''} saved for reference
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {partyData.selectedGifts.map(giftId => {
+                        const gift = filteredGifts.find(g => g.id === giftId);
+                        if (!gift) return null;
+                        return (
+                          <div key={giftId} className="bg-white px-3 py-1 rounded-full border-2 border-pink-300 flex items-center gap-2">
+                            <span className="text-sm font-semibold text-gray-700">{gift.name}</span>
+                            <button
+                              onClick={() => updateField('selectedGifts', partyData.selectedGifts.filter(id => id !== giftId))}
+                              className="text-pink-500 hover:text-pink-700 font-bold"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Gift Grid */}
+                {filteredGifts.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {filteredGifts.map(gift => {
+                      const isSelected = partyData.selectedGifts.includes(gift.id);
+                      return (
+                        <div
+                          key={gift.id}
+                          className={`relative rounded-xl border-2 p-4 transition-all cursor-pointer ${
+                            isSelected
+                              ? 'border-pink-500 bg-pink-50 shadow-lg scale-[1.02]'
+                              : 'border-gray-200 bg-white hover:border-pink-300 hover:shadow-md'
+                          }`}
+                          onClick={() => {
+                            if (isSelected) {
+                              updateField('selectedGifts', partyData.selectedGifts.filter(id => id !== gift.id));
+                            } else {
+                              updateField('selectedGifts', [...partyData.selectedGifts, gift.id]);
+                            }
+                          }}
+                        >
+                          {/* Selection Indicator */}
+                          <div className="absolute top-3 right-3">
+                            {isSelected ? (
+                              <CheckCircle2 className="h-6 w-6 text-pink-500" />
+                            ) : (
+                              <Circle className="h-6 w-6 text-gray-300" />
+                            )}
+                          </div>
+
+                          {/* Gift Content */}
+                          <div className="pr-8">
+                            <h3 className="font-bold text-gray-800 mb-1">{gift.name}</h3>
+                            <p className="text-sm text-gray-600 mb-3">{gift.description}</p>
+
+                            {/* Tags Row */}
+                            <div className="flex flex-wrap gap-2 mb-3">
+                              <span className="text-xs font-bold px-2 py-0.5 rounded bg-green-100 text-green-700">
+                                {gift.price}
+                              </span>
+                              {gift.popular && (
+                                <span className="text-xs font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-700">
+                                  ⭐ Popular
+                                </span>
+                              )}
+                              {gift.unique && (
+                                <span className="text-xs font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-700">
+                                  ✨ Unique
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Why This Gift */}
+                            <p className="text-xs text-gray-500 italic mb-3">{gift.why}</p>
+
+                            {/* Amazon Link */}
+                            <a
+                              href={`https://www.amazon.com/s?k=${encodeURIComponent(gift.amazonSearch)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center gap-1 text-sm font-semibold text-pink-600 hover:text-pink-800"
+                            >
+                              Shop on Amazon
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 bg-gray-50 rounded-2xl">
+                    <p className="text-gray-600 mb-2">No gifts match your filters</p>
+                    <button
+                      onClick={() => {
+                        setGiftTypeFilter('all');
+                        setGiftPriceFilter('All');
+                      }}
+                      className="text-pink-600 font-semibold hover:underline"
+                    >
+                      Clear all filters
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Footer with Close Button */}
+              <div className="sticky bottom-0 bg-white border-t-2 border-pink-200 p-6 flex justify-end">
+                <button
+                  onClick={() => setShowGiftIdeas(false)}
+                  className="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-8 py-3 rounded-xl font-bold hover:shadow-lg hover:scale-[1.02] transition-all"
+                >
+                  Done Browsing
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
