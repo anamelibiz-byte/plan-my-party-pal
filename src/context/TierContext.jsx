@@ -9,6 +9,37 @@ export function TierProvider({ children }) {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [upgradeFeature, setUpgradeFeature] = useState(null);
   const [upgradeSuccess, setUpgradeSuccess] = useState(false);
+  const [tierVerified, setTierVerified] = useState(false);
+
+  // Verify tier from database on mount
+  useEffect(() => {
+    const verifyTierFromDatabase = async () => {
+      const email = localStorage.getItem('pp_user_email');
+
+      // No email = guest mode = free tier
+      if (!email) {
+        setTierVerified(true);
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/users/get-tier?email=${encodeURIComponent(email)}`);
+        const data = await response.json();
+
+        if (data.tier && data.tier !== userTier) {
+          console.log('📊 Tier synced from database:', data.tier);
+          setUserTier(data.tier);
+        }
+      } catch (error) {
+        console.error('Failed to verify tier:', error);
+        // On error, trust localStorage (offline-first)
+      } finally {
+        setTierVerified(true);
+      }
+    };
+
+    verifyTierFromDatabase();
+  }, []); // Run once on mount
 
   // Handle Stripe checkout success redirect
   // When user returns from Stripe, URL will have ?upgraded=pro&session_id=...
@@ -71,6 +102,7 @@ export function TierProvider({ children }) {
     isOverridden: ADMIN_OVERRIDE !== 'none',
     tiers: TIERS,
     upgradeSuccess, dismissUpgradeSuccess,
+    tierVerified,
   };
 
   return <TierContext.Provider value={value}>{children}</TierContext.Provider>;

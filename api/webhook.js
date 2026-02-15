@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import { createClient } from '@supabase/supabase-js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -33,15 +34,36 @@ export default async function handler(req, res) {
           subscriptionId,
         });
 
-        // TODO: Store in Supabase or your database
-        // Example:
-        // await supabase.from('users').upsert({
-        //   email: customerEmail,
-        //   tier: tier,
-        //   stripe_customer_id: customerId,
-        //   stripe_subscription_id: subscriptionId,
-        //   subscription_status: 'active',
-        // });
+        // Save to Supabase users table
+        const supabaseUrl = process.env.SUPABASE_URL;
+        const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+
+        if (supabaseUrl && supabaseKey) {
+          try {
+            const supabase = createClient(supabaseUrl, supabaseKey);
+
+            const { error } = await supabase
+              .from('users')
+              .upsert({
+                email: customerEmail,
+                tier: tier,
+                stripe_customer_id: customerId,
+                stripe_subscription_id: subscriptionId,
+                subscription_status: 'active',
+                updated_at: new Date().toISOString(),
+              }, {
+                onConflict: 'email'
+              });
+
+            if (error) {
+              console.error('Failed to save user:', error);
+            } else {
+              console.log('✅ User tier saved to database:', customerEmail, tier);
+            }
+          } catch (dbError) {
+            console.error('Database error:', dbError);
+          }
+        }
 
         // Send welcome email
         if (process.env.RESEND_API_KEY && customerEmail) {
@@ -82,14 +104,59 @@ export default async function handler(req, res) {
       case 'customer.subscription.updated': {
         const subscription = event.data.object;
         console.log('Subscription updated:', subscription.status);
-        // TODO: Update user's subscription status in database
+
+        const supabaseUrl = process.env.SUPABASE_URL;
+        const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+
+        if (supabaseUrl && supabaseKey) {
+          try {
+            const supabase = createClient(supabaseUrl, supabaseKey);
+
+            const tier = subscription.status === 'active' ? 'pro' : 'free';
+
+            await supabase
+              .from('users')
+              .update({
+                tier,
+                subscription_status: subscription.status,
+                subscription_current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+                updated_at: new Date().toISOString(),
+              })
+              .eq('stripe_subscription_id', subscription.id);
+
+            console.log('✅ Subscription status updated in database');
+          } catch (error) {
+            console.error('Failed to update subscription:', error);
+          }
+        }
         break;
       }
 
       case 'customer.subscription.deleted': {
         const subscription = event.data.object;
         console.log('❌ Subscription cancelled:', subscription.customer);
-        // TODO: Downgrade user to free tier in database
+
+        const supabaseUrl = process.env.SUPABASE_URL;
+        const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+
+        if (supabaseUrl && supabaseKey) {
+          try {
+            const supabase = createClient(supabaseUrl, supabaseKey);
+
+            await supabase
+              .from('users')
+              .update({
+                tier: 'free',
+                subscription_status: 'canceled',
+                updated_at: new Date().toISOString(),
+              })
+              .eq('stripe_subscription_id', subscription.id);
+
+            console.log('✅ User downgraded to free tier in database');
+          } catch (error) {
+            console.error('Failed to downgrade user:', error);
+          }
+        }
         break;
       }
 
