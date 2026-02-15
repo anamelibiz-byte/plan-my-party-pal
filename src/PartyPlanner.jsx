@@ -935,6 +935,22 @@ export default function PartyPlanner() {
                 <input type="text" value={partyData.location} onChange={e => updateField('location', e.target.value)} placeholder="City, State or ZIP" className="w-full px-4 py-3 border-2 border-pink-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-lg" />
               </div>
 
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Your Phone Number <span className="text-gray-400 font-normal">(optional)</span>
+                </label>
+                <input
+                  type="tel"
+                  value={partyData.phone}
+                  onChange={e => updateField('phone', e.target.value)}
+                  placeholder="(555) 123-4567"
+                  className="w-full px-4 py-3 border-2 border-pink-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-lg"
+                />
+                <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                  <span>📱</span> Used for RSVP tracking on your party invitations
+                </p>
+              </div>
+
               <button onClick={() => setStep(2)} disabled={!partyData.childName || !partyData.age || !partyData.budget || !partyData.guestCount}
                 className="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2">
                 Continue <ChevronRight size={24} />
