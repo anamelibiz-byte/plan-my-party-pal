@@ -126,6 +126,8 @@ export default function PartyPlanner() {
   // Collapsible sections state
   const [showTimeline, setShowTimeline] = useState(true);
   const [openZones, setOpenZones] = useState({});
+  const [showCakeOrdering, setShowCakeOrdering] = useState(false);
+  const [showPartyHelp, setShowPartyHelp] = useState(false);
 
   // ─── Auto-Restore from Database ──────────────────────────────────────────────
   useEffect(() => {
@@ -1335,43 +1337,77 @@ export default function PartyPlanner() {
                   </div>
                 )}
 
-                {/* Cake Ordering */}
-                <div className="p-6 bg-amber-50 rounded-2xl border-2 border-amber-200 no-print">
-                  <h3 className="text-xl font-bold text-amber-800 mb-4 flex items-center gap-2"><Cake size={24} /> Order Your Cake</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {bakeryLinks.chains.map((b, i) => (
-                      <a key={i} href={b.url} target="_blank" rel="noopener noreferrer" className="p-3 bg-white rounded-xl border-2 border-amber-100 hover:border-amber-300 hover:shadow-lg transition-all flex items-center gap-3">
-                        <ExternalLink size={16} className="text-amber-500 flex-shrink-0" />
-                        <div><p className="font-bold text-gray-800">{b.name}</p><p className="text-sm text-gray-600">{b.description}</p></div>
-                      </a>
-                    ))}
-                  </div>
-                  {partyData.location && (
-                    <div className="mt-4 flex gap-2">
-                      <a href={bakeryLinks.searchLocal.google(partyData.location)} target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2 bg-amber-400 text-white rounded-xl font-bold hover:bg-amber-500 transition-all">Find Local Cake Makers</a>
-                      <a href={bakeryLinks.searchLocal.yelp(partyData.location)} target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2 bg-red-400 text-white rounded-xl font-bold hover:bg-red-500 transition-all">Search Yelp</a>
+                {/* Cake Ordering - Collapsible */}
+                <div className="bg-white rounded-2xl border-2 border-amber-200 overflow-hidden no-print">
+                  <button
+                    onClick={() => setShowCakeOrdering(!showCakeOrdering)}
+                    className="w-full p-4 flex items-center justify-between bg-amber-50 hover:bg-amber-100 transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Cake className="text-amber-600" size={24} />
+                      <h3 className="text-xl font-bold text-amber-800">Order Your Cake</h3>
+                    </div>
+                    {showCakeOrdering ? (
+                      <ChevronUp className="text-amber-600" size={24} />
+                    ) : (
+                      <ChevronDown className="text-amber-600" size={24} />
+                    )}
+                  </button>
+                  {showCakeOrdering && (
+                    <div className="p-6 border-t-2 border-amber-200 bg-amber-50">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {bakeryLinks.chains.map((b, i) => (
+                          <a key={i} href={b.url} target="_blank" rel="noopener noreferrer" className="p-3 bg-white rounded-xl border-2 border-amber-100 hover:border-amber-300 hover:shadow-lg transition-all flex items-center gap-3">
+                            <ExternalLink size={16} className="text-amber-500 flex-shrink-0" />
+                            <div><p className="font-bold text-gray-800">{b.name}</p><p className="text-sm text-gray-600">{b.description}</p></div>
+                          </a>
+                        ))}
+                      </div>
+                      {partyData.location && (
+                        <div className="mt-4 flex gap-2">
+                          <a href={bakeryLinks.searchLocal.google(partyData.location)} target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2 bg-amber-400 text-white rounded-xl font-bold hover:bg-amber-500 transition-all">Find Local Cake Makers</a>
+                          <a href={bakeryLinks.searchLocal.yelp(partyData.location)} target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2 bg-red-400 text-white rounded-xl font-bold hover:bg-red-500 transition-all">Search Yelp</a>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
 
-                {/* Hire Help */}
-                <div className="p-6 bg-violet-50 rounded-2xl border-2 border-violet-200 no-print">
-                  <h3 className="text-xl font-bold text-violet-800 mb-4 flex items-center gap-2"><Users size={24} /> Hire Party Help</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {[
-                      { label: 'Face Painter', search: 'face painter for birthday party near me' },
-                      { label: 'Balloon Artist', search: 'balloon artist birthday party near me' },
-                      { label: 'Bounce House / Slide', search: 'bounce house rental birthday party near me' },
-                      { label: 'Party Helper', search: 'party assistant helper near me' },
-                      { label: 'DJ / Music', search: 'kids party DJ near me' },
-                      ...(hireCharacter ? [{ label: `${partyData.theme} Character`, search: `hire ${partyData.theme} character performer near me` }] : []),
-                    ].map((item, i) => (
-                      <a key={i} href={`https://www.google.com/search?q=${encodeURIComponent(item.search + (partyData.location ? ' ' + partyData.location : ''))}`} target="_blank" rel="noopener noreferrer"
-                        className="p-3 bg-white rounded-xl border-2 border-violet-100 hover:border-violet-300 hover:shadow-lg transition-all flex items-center gap-3">
-                        <Search size={16} className="text-violet-500" /><span className="font-bold text-gray-800">{item.label}</span>
-                      </a>
-                    ))}
-                  </div>
+                {/* Hire Help - Collapsible */}
+                <div className="bg-white rounded-2xl border-2 border-violet-200 overflow-hidden no-print">
+                  <button
+                    onClick={() => setShowPartyHelp(!showPartyHelp)}
+                    className="w-full p-4 flex items-center justify-between bg-violet-50 hover:bg-violet-100 transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Users className="text-violet-600" size={24} />
+                      <h3 className="text-xl font-bold text-violet-800">Hire Party Help</h3>
+                    </div>
+                    {showPartyHelp ? (
+                      <ChevronUp className="text-violet-600" size={24} />
+                    ) : (
+                      <ChevronDown className="text-violet-600" size={24} />
+                    )}
+                  </button>
+                  {showPartyHelp && (
+                    <div className="p-6 border-t-2 border-violet-200 bg-violet-50">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {[
+                          { label: 'Face Painter', search: 'face painter for birthday party near me' },
+                          { label: 'Balloon Artist', search: 'balloon artist birthday party near me' },
+                          { label: 'Bounce House / Slide', search: 'bounce house rental birthday party near me' },
+                          { label: 'Party Helper', search: 'party assistant helper near me' },
+                          { label: 'DJ / Music', search: 'kids party DJ near me' },
+                          ...(hireCharacter ? [{ label: `${partyData.theme} Character`, search: `hire ${partyData.theme} character performer near me` }] : []),
+                        ].map((item, i) => (
+                          <a key={i} href={`https://www.google.com/search?q=${encodeURIComponent(item.search + (partyData.location ? ' ' + partyData.location : ''))}`} target="_blank" rel="noopener noreferrer"
+                            className="p-3 bg-white rounded-xl border-2 border-violet-100 hover:border-violet-300 hover:shadow-lg transition-all flex items-center gap-3">
+                            <Search size={16} className="text-violet-500" /><span className="font-bold text-gray-800">{item.label}</span>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* ═══════ UNIFIED PARTY ZONES — All Items Merged ═══════ */}
