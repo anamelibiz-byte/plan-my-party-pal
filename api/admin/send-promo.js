@@ -137,8 +137,8 @@ Unsubscribe: https://planmypartypal.com/unsubscribe?email=${encodeURIComponent(s
           console.error(`Failed to send to ${subscriber.email}:`, await response.text());
         }
 
-        // Add small delay to avoid rate limiting (100ms between emails)
-        await new Promise(resolve => setTimeout(resolve, 100));
+        // Add delay to avoid rate limiting and reduce spam triggers (500ms between emails)
+        await new Promise(resolve => setTimeout(resolve, 500));
 
       } catch (emailError) {
         failed++;

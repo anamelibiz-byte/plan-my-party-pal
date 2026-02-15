@@ -106,6 +106,12 @@ export default async function handler(req, res) {
             <p style="font-size: 14px; color: #6B7280; line-height: 1.6; margin: 24px 0 0;">
               <strong>Pro Tip:</strong> Your party details are automatically saved and synced across devices. Click the button above to resume planning from anywhere!
             </p>
+
+            <div style="background: #FEF3C7; border-left: 4px solid #F59E0B; padding: 16px; margin: 24px 0 0; border-radius: 4px;">
+              <p style="font-size: 13px; color: #92400E; margin: 0; line-height: 1.5;">
+                <strong>📬 Get all our updates:</strong> Add <code style="background: #FDE68A; padding: 2px 6px; border-radius: 3px;">hello@go.planmypartypal.com</code> to your contacts so our emails don't end up in spam. We'll send you helpful party planning tips and updates.
+              </p>
+            </div>
           </div>
 
           <div style="padding: 24px; text-align: center; background: #F9FAFB; border-radius: 0 0 16px 16px; border-top: 1px solid #E5E7EB;">
@@ -135,6 +141,8 @@ Here's what you can do next:
 Continue planning your party: https://planmypartypal.com/app?email=${encodeURIComponent(email)}
 
 Pro Tip: Your party details are automatically saved and synced across devices. Click the link above to resume planning from anywhere!
+
+📬 Get all our updates: Add hello@go.planmypartypal.com to your contacts so our emails don't end up in spam. We'll send you helpful party planning tips and updates.
 
 ---
 You're receiving this because you started planning a party at Plan My Party Pal.

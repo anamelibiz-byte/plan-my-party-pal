@@ -12,91 +12,102 @@ export default function AdminPage() {
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState(null);
 
-  // Pre-made email templates
+  // Pre-made email templates (transactional tone to avoid spam filters)
   const emailTemplates = [
     {
       id: 1,
       name: 'New Themes',
       emoji: '🎨',
-      subject: '🎉 New Party Themes Just Added!',
-      message: `Exciting news! We just added 5 amazing new party themes perfect for {{childName}}'s celebration:
+      subject: 'New party themes matching {{childName}}\'s interests',
+      message: `We added some new party themes to your planner based on what other parents planning for kids this age enjoyed:
 
-✨ Unicorn Dreams - Magical and sparkly
-🦖 Dinosaur Adventure - Roar-some fun
-🚀 Space Explorer - Out of this world
-🎨 Art Party - Creative masterpiece
-🧁 Baking Bonanza - Sweet treats galore
+• Unicorn Dreams (magical & creative)
+• Dinosaur Adventure (active & educational)
+• Space Explorer (STEM-focused)
+• Art Party (hands-on creativity)
+• Baking Bonanza (interactive & tasty)
 
-Check them out in your party planner and make {{childName}}'s party unforgettable!`
+These are now available when you continue planning {{childName}}'s party. No pressure – just wanted to let you know they're there if helpful!`
     },
     {
       id: 2,
-      name: 'Special Discount',
-      emoji: '💰',
-      subject: '💝 Special Offer for {{childName}}\'s Party!',
-      message: `Great news! We're offering 20% off premium party supplies this week.
+      name: 'Planning Update',
+      emoji: '💡',
+      subject: 'Your party planning progress for {{childName}}',
+      message: `Just checking on {{childName}}'s party planning. We noticed you started but haven't finished yet.
 
-Planning {{childName}}'s party? Now's the perfect time to:
-• Browse our expanded theme collection
-• Get personalized activity suggestions
-• Create your custom shopping list with exclusive discounts
+Here's what you can still do:
+• Browse venue options near you
+• Pick activities for their age group
+• Get your personalized shopping list
+• Set up RSVPs and invitations
 
-This offer expires in 48 hours - start planning now!`
+Your progress is saved, so you can pick up right where you left off anytime.`
     },
     {
       id: 3,
       name: 'Party Tips',
-      emoji: '💡',
-      subject: '🎈 Pro Tips for {{childName}}\'s Perfect Party',
-      message: `Planning {{childName}}'s party? Here are our top 3 tips from party planning experts:
+      emoji: '📝',
+      subject: 'Timeline checklist for {{childName}}\'s party',
+      message: `Here's a helpful timeline based on your party date to stay organized:
 
-1. Book your venue 3-4 weeks ahead for the best selection
-2. Choose activities that match your child's age group
-3. Send invitations 2 weeks before the party date
+3-4 weeks before:
+• Book venue (if needed)
+• Send invitations
 
-Ready to plan? Jump back into your party planner and we'll help you nail every detail!`
+2 weeks before:
+• Order supplies from your shopping list
+• Confirm RSVPs
+
+1 week before:
+• Prepare activities
+• Confirm final headcount
+
+This is just a guide – plan at your own pace!`
     },
     {
       id: 4,
-      name: 'Seasonal Themes',
-      emoji: '🌸',
-      subject: '🌺 Perfect Spring/Summer Themes for {{childName}}',
-      message: `Spring and summer are here! Check out these outdoor party themes perfect for {{childName}}:
+      name: 'Venue Ideas',
+      emoji: '🏡',
+      subject: 'Venue options for {{childName}}\'s party',
+      message: `Based on your party details, here are some venue ideas matching your guest count and location:
 
-🌈 Rainbow Garden Party
-🏖️ Beach Bash
-🦋 Butterfly Garden
-🍉 Watermelon Party
-🌻 Sunflower Celebration
+• Local parks (free, outdoor space)
+• Community centers (indoor, affordable)
+• Trampoline parks (active kids, built-in entertainment)
+• Bowling alleys (all ages, weather-proof)
+• Home party (most flexible, budget-friendly)
 
-Each theme includes activity ideas, decoration tips, and shopping lists. Let's make this season special!`
+You can browse and compare these in your party planner when you're ready.`
     },
     {
       id: 5,
-      name: 'Last-Minute Party',
-      emoji: '⏰',
-      subject: '⚡ Quick & Easy Party Ideas for {{childName}}',
-      message: `Short on time? No problem! We've got quick party ideas that look amazing but take minimal effort:
+      name: 'Shopping List',
+      emoji: '🛒',
+      subject: 'Your party shopping list is ready',
+      message: `Your personalized shopping list for {{childName}}'s party is ready to view.
 
-• Simple themes with easy DIY decorations
-• Activities that require no prep
-• Ready-made shopping lists for fast ordering
+It includes:
+• Decorations for your chosen theme
+• Activity supplies
+• Party favors
+• Tableware and serving items
 
-Planning {{childName}}'s party doesn't have to be stressful. Let us help you pull off an amazing celebration in no time!`
+Everything has direct links so you can order when ready. Your list is saved in your planner.`
     },
     {
       id: 6,
       name: 'Follow-Up',
       emoji: '👋',
-      subject: '🎊 How\'s {{childName}}\'s Party Planning Going?',
-      message: `Just checking in! We noticed you started planning {{childName}}'s party and wanted to see if you need any help.
+      subject: 'Need help with {{childName}}\'s party planning?',
+      message: `We noticed you started planning {{childName}}'s party but haven't finished yet.
 
-We're here to make party planning stress-free:
-• Not sure which theme to choose? We can help!
-• Need activity ideas? We've got tons!
-• Questions about venues? We're happy to assist!
+Is there anything you're stuck on? Common questions we can help with:
+• Not sure which theme fits your budget?
+• Need age-appropriate activity ideas?
+• Questions about venue options?
 
-Jump back into your planner or reply to this email - we're here to help make {{childName}}'s party amazing!`
+Feel free to reply to this email if you need help, or continue planning at your own pace.`
     }
   ];
 
