@@ -72,11 +72,8 @@ export const TIERS = {
       partyZonesPreview: true,
       partyZonesFull: true,
       amazonLinks: true,
-      vendorRecommendations: true, // NEW: Vendor recommendations by location
-      budgetAnalytics: true, // NEW: Budget analytics & breakdown
       timelineBuilder: true,
       dietaryTracker: true, // Keep for Pro (component exists for future)
-      weatherAlert: true,
       shareChecklist: true,
       downloadChecklist: true,
       printChecklist: true,
@@ -90,29 +87,23 @@ export const FEATURE_LABELS = {
   maxGuests: 'Guest Limit',
   limitedThemes: '15 Classic Themes',
   allThemes: 'All 60+ Themes',
-  characterThemes: '15 Character Themes',
   limitedActivities: '15 Activities',
   allActivities: 'All 100+ Activities',
   budgetTrackerBasic: 'Basic Budget Tracker',
   budgetTrackerFull: 'Full Budget Tracker with Charts',
   saveExport: 'Save & Export Checklist',
   downloadPDF: 'Download PDF Party Kit',
-  aiSuggestions: 'AI-Powered Theme & Activity Suggestions',
   rsvpSystem: 'RSVP Tracking',
   emailPartyPlan: 'Email Your Party Plan',
   smsPartyPlan: 'Text Your Party Plan',
   partyZonesPreview: 'Party Zones Preview',
   partyZonesFull: 'Full Party Zones Guide',
   amazonLinks: 'Amazon Shopping Links',
-  vendorRecommendations: 'Vendor Recommendations by Location',
-  budgetAnalytics: 'Budget Analytics & Spending Breakdown',
   timelineBuilder: 'Day-of Timeline Builder',
   dietaryTracker: 'Dietary & Allergy Tracker',
-  weatherAlert: 'Weather Alerts',
   shareChecklist: 'Printable/Shareable Party Plans',
   downloadChecklist: 'Download Checklist as TXT',
   printChecklist: 'Print Checklist',
-  prioritySupport: 'Priority Support',
 };
 
 export function getEffectiveTier(userTier) {

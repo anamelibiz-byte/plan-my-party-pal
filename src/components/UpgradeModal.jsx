@@ -202,8 +202,12 @@ export default function UpgradeModal() {
                         key={feat}
                         className={`flex items-center gap-2 text-sm ${isHighlight ? 'bg-purple-100 -mx-2 px-2 py-1 rounded-lg' : ''}`}
                       >
-                        <Check size={16} className="text-green-500 flex-shrink-0" />
-                        <span className="text-gray-700">
+                        {has ? (
+                          <Check size={16} className="text-green-500 flex-shrink-0" />
+                        ) : (
+                          <X size={16} className="text-gray-400 flex-shrink-0" />
+                        )}
+                        <span className={has ? "text-gray-700" : "text-gray-400"}>
                           {label}
                         </span>
                       </div>

@@ -48,12 +48,12 @@ export default function TierGate({ feature, children, fallback, inline }) {
   return (
     <div className="relative">
       {/* Blurred preview */}
-      <div className="filter blur-sm pointer-events-none opacity-50">
+      <div className="pointer-events-none">
         {children}
       </div>
 
       {/* Centered unlock button with feature details */}
-      <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 backdrop-blur-sm">
+      <div className="absolute inset-0 flex items-center justify-center">
         <div className="bg-white p-6 rounded-2xl shadow-2xl border-4 border-purple-300 max-w-md text-center">
           <Lock className="text-purple-500 mx-auto mb-3" size={48} />
           <h3 className="text-2xl font-bold text-gray-800 mb-2">
