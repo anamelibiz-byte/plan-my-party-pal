@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { PartyPopper, CheckCircle2, Clock, Sparkles, Heart, Calendar, Users, DollarSign } from 'lucide-react';
 import EmailCapture from '../components/EmailCapture';
+import LoginModal from '../components/LoginModal';
+import Header from '../components/Header';
 import { TIERS } from '../config/tiers';
 
 export default function LandingPage() {
   const [showChecklistPreview, setShowChecklistPreview] = useState(false);
   const [isUpgrading, setIsUpgrading] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const navigate = useNavigate();
 
   const handleUpgradeToPro = async () => {
@@ -57,9 +60,11 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-purple-50">
-      {/* Hero Section */}
-      <div className="max-w-6xl mx-auto px-4 py-12">
+    <>
+      <Header />
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-purple-50">
+        {/* Hero Section */}
+        <div className="max-w-6xl mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-md mb-6">
             <PartyPopper className="text-pink-500" size={20} />
@@ -90,6 +95,12 @@ export default function LandingPage() {
               <Sparkles size={20} />
               Start Planning Free
             </Link>
+            <button
+              onClick={() => setShowLoginModal(true)}
+              className="bg-white text-pink-600 px-8 py-4 rounded-2xl font-bold text-lg hover:shadow-xl transition-all border-2 border-pink-300 hover:bg-pink-50"
+            >
+              Login
+            </button>
             <button
               onClick={() => setShowChecklistPreview(true)}
               className="bg-white text-gray-700 px-8 py-4 rounded-2xl font-semibold text-lg hover:shadow-xl transition-all border-2 border-gray-200"
@@ -388,6 +399,10 @@ export default function LandingPage() {
           </div>
         </div>
       )}
-    </div>
+
+        {/* Login Modal */}
+        <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+      </div>
+    </>
   );
 }
