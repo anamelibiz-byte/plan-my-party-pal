@@ -109,7 +109,6 @@ export default function PartyPlanner() {
     selectedActivities: [],
     selectedGifts: [], // array of gift IDs
   });
-  const [suggestions, setSuggestions] = useState([]);
   const [checklist, setChecklist] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hireCharacter, setHireCharacter] = useState(false);
@@ -650,73 +649,6 @@ export default function PartyPlanner() {
       return item.completed || false;
     }).length;
   }, 0);
-
-  // AI Theme Suggestions
-  const generateThemeSuggestions = async () => {
-    setLoading(true);
-    try {
-      const requestData = {
-        age: partyData.age,
-        budget: partyData.budget,
-        guestCount: partyData.guestCount,
-      };
-      console.log('🤖 Requesting AI theme suggestions with data:', requestData);
-
-      const response = await fetch('/api/ai-suggestions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestData),
-      });
-
-      console.log('🤖 Response status:', response.status);
-      const data = await response.json();
-      console.log('🤖 Response data:', data);
-
-      // Check if API returned an error
-      if (!response.ok || data.error) {
-        console.error('🤖 API error response:', data);
-        throw new Error(data.error || data.details || `API returned status ${response.status}`);
-      }
-
-      // Parse the AI response
-      const text = data.content?.find(b => b.type === 'text')?.text || '';
-      console.log('🤖 Extracted text:', text);
-
-      // Remove markdown code blocks
-      let cleanedText = text
-        .replace(/```json/g, '')
-        .replace(/```/g, '')
-        .trim();
-
-      // Extract JSON array from text (find first [ to last ])
-      const startIdx = cleanedText.indexOf('[');
-      const endIdx = cleanedText.lastIndexOf(']');
-
-      if (startIdx === -1 || endIdx === -1) {
-        console.error('🤖 No valid JSON array found in response');
-        throw new Error('No valid JSON array found in response');
-      }
-
-      // Extract only the JSON array portion
-      cleanedText = cleanedText.substring(startIdx, endIdx + 1);
-      console.log('🤖 Cleaned text:', cleanedText);
-
-      const themes = JSON.parse(cleanedText);
-      console.log('🤖 Parsed themes:', themes);
-
-      setSuggestions(themes);
-      showToast('AI themes generated!', 'success');
-    } catch (error) {
-      console.error('🤖 AI suggestion error:', error);
-      console.error('🤖 Error details:', {
-        message: error.message,
-        response: error.response,
-        stack: error.stack
-      });
-      showToast(`Failed to generate AI themes: ${error.message}`, 'error');
-    }
-    setLoading(false);
-  };
 
   // ─── Download / Print ────────────────────────────────────────────────────────
   const downloadChecklist = () => {
@@ -1381,42 +1313,6 @@ export default function PartyPlanner() {
                 <h2 className="text-3xl font-bold text-gray-800">Choose a Theme</h2>
               </div>
               <button onClick={() => setStep(3)} className="text-gray-400 hover:text-gray-600 flex items-center gap-1 text-sm font-semibold"><ChevronLeft size={18} /> Back</button>
-            </div>
-
-            {/* AI Suggestions Section */}
-            <div className="mb-6 bg-gradient-to-r from-amber-50 to-orange-50 p-6 rounded-2xl border-2 border-amber-200">
-              <div className="flex items-center gap-2 mb-4">
-                <Sparkles className="text-amber-600" size={24} />
-                <h3 className="text-lg font-bold text-amber-800">✨ AI-Powered Theme Ideas</h3>
-              </div>
-
-              <button onClick={generateThemeSuggestions} disabled={loading}
-                className="w-full bg-gradient-to-r from-amber-400 to-orange-400 text-white py-3 rounded-xl font-bold text-base hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-70 flex items-center justify-center gap-2">
-                {loading ? (<><div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin" /> Generating Ideas...</>) : (<><Sparkles size={20} /> Get AI Theme Suggestions</>)}
-              </button>
-
-              {suggestions.length > 0 && (
-                <div className="mt-4">
-                  <p className="text-sm text-amber-700 font-semibold mb-3">🎉 {suggestions.length} AI-generated themes found! Click to select:</p>
-                  <div className="grid gap-3">
-                    {suggestions.map((t, i) => (
-                      <button key={`ai-${i}`} onClick={() => { updateField('theme', t.name); setStep(5); }}
-                        className="text-left p-5 rounded-2xl transition-all border-2 hover:shadow-xl group border-amber-300 hover:border-amber-500 bg-white">
-                        <div className="flex justify-between items-start">
-                          <div><h4 className="text-lg font-bold text-gray-800 group-hover:text-amber-600">{t.name}</h4><p className="text-gray-600 text-sm mt-1">{t.description}</p></div>
-                          <span className="text-xs font-bold text-amber-600 bg-amber-100 px-2 py-1 rounded-lg">{t.costTier || '$$'}</span>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {!loading && suggestions.length === 0 && (
-                <p className="text-sm text-amber-600 mt-3 text-center">
-                  💡 Click the button above to generate personalized theme ideas based on your party details!
-                </p>
-              )}
             </div>
 
             {/* Character Themes */}
