@@ -1702,7 +1702,5 @@ function ChecklistItem({ item, idx, toggle, showCategory, categoryColors }) {
         </a>
       )}
     </div>
-      </div>
-    </>
   );
 }
