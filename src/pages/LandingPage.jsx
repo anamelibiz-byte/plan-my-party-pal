@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { PartyPopper, CheckCircle2, Clock, Sparkles, Heart, Calendar, Users, DollarSign } from 'lucide-react';
 import EmailCapture from '../components/EmailCapture';
-import LoginModal from '../components/LoginModal';
+import AuthModal from '../components/AuthModal';
 import Header from '../components/Header';
 import Testimonials from '../components/Testimonials';
 import BusinessSocialLinks from '../components/BusinessSocialLinks';
@@ -13,6 +13,12 @@ export default function LandingPage() {
   const [isUpgrading, setIsUpgrading] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const navigate = useNavigate();
+
+  const handleAuthSuccess = (email) => {
+    // User logged in successfully
+    setShowLoginModal(false);
+    navigate('/app');
+  };
 
   const handleUpgradeToPro = async () => {
     setIsUpgrading(true);
@@ -408,7 +414,11 @@ export default function LandingPage() {
       )}
 
         {/* Login Modal */}
-        <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+        <AuthModal
+          isOpen={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+          onSuccess={handleAuthSuccess}
+        />
 
         {/* Footer */}
         <footer className="bg-white border-t border-gray-200 mt-20">
