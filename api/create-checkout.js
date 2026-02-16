@@ -27,7 +27,7 @@ export default async function handler(req, res) {
     const stripe = new Stripe(stripeKey);
 
     // Determine base URL for redirects
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || req.headers.origin || 'https://planmypartypal.com';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || req.headers.origin || 'https://partyplann.com';
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],

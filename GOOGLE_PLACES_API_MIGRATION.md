@@ -136,7 +136,7 @@ The new API has different pricing:
 ## Testing the Migration
 
 ### Test the venue search:
-1. Go to: https://planmypartypal.com/app
+1. Go to: https://partyplann.com/app
 2. Fill in basic party info (Step 1)
 3. In Step 2, select a venue type (e.g., "Trampoline Park")
 4. Enter your location

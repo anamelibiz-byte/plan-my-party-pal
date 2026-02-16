@@ -2,7 +2,7 @@
 
 ## 🌙 ALL FEATURES IMPLEMENTED WHILE YOU SLEPT! 🌙
 
-**Deployment Status:** ✅ LIVE at https://www.planmypartypal.com
+**Deployment Status:** ✅ LIVE at https://www.partyplann.com
 
 ---
 
@@ -124,7 +124,7 @@ Body: {
 - `/src/components/ReferralProgram.jsx`
 
 **Referral Link Format:**
-`planmypartypal.com?ref=A3F9D2E1`
+`partyplann.com?ref=A3F9D2E1`
 
 ---
 
@@ -409,7 +409,7 @@ CREATE INDEX IF NOT EXISTS idx_coupons_code ON coupons(code);
 
 ## 🚀 DEPLOYMENT DETAILS
 
-**Production URL:** https://www.planmypartypal.com
+**Production URL:** https://www.partyplann.com
 
 **Build Stats:**
 - Files Deployed: 135 files

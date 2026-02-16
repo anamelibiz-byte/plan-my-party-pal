@@ -54,7 +54,7 @@ export default async function handler(req, res) {
 
     // Send reset email if Resend is configured
     if (resendKey) {
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.planmypartypal.com';
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.partyplann.com';
       const resetUrl = `${baseUrl}/reset-password?token=${resetToken}`;
 
       const emailHtml = `
@@ -89,7 +89,7 @@ export default async function handler(req, res) {
 
           <div style="padding: 24px; text-align: center; background: #F9FAFB; border-radius: 0 0 16px 16px; border-top: 1px solid #E5E7EB;">
             <p style="font-size: 12px; color: #9CA3AF; margin: 0;">
-              Plan My Party Pal | <a href="${baseUrl}" style="color: #EC4899; text-decoration: none;">planmypartypal.com</a>
+              Plan My Party Pal | <a href="${baseUrl}" style="color: #EC4899; text-decoration: none;">partyplann.com</a>
             </p>
           </div>
         </div>
@@ -102,7 +102,7 @@ export default async function handler(req, res) {
           'Authorization': `Bearer ${resendKey}`,
         },
         body: JSON.stringify({
-          from: 'Plan My Party Pal <hello@go.planmypartypal.com>',
+          from: 'Plan My Party Pal <hello@go.partyplann.com>',
           to: [user.email],
           subject: '🔒 Reset Your Password - Plan My Party Pal',
           html: emailHtml,

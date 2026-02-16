@@ -215,10 +215,10 @@ export default function TermsPage() {
             </p>
             <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-xl">
               <p className="text-gray-700 mb-2">
-                <strong>Email:</strong> hello@go.planmypartypal.com
+                <strong>Email:</strong> hello@go.partyplann.com
               </p>
               <p className="text-gray-700">
-                <strong>Website:</strong> planmypartypal.com
+                <strong>Website:</strong> partyplann.com
               </p>
             </div>
           </section>

@@ -47,7 +47,7 @@ export default async function handler(req, res) {
             </ul>
 
             <div style="text-align: center; margin: 40px 0;">
-              <a href="https://planmypartypal.com/app" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: bold;">
+              <a href="https://partyplann.com/app" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: bold;">
                 Start Planning Your First Party →
               </a>
             </div>
@@ -89,7 +89,7 @@ export default async function handler(req, res) {
             </div>
 
             <div style="text-align: center; margin: 40px 0;">
-              <a href="https://planmypartypal.com/app" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: bold;">
+              <a href="https://partyplann.com/app" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: bold;">
                 Continue Planning →
               </a>
             </div>
@@ -129,7 +129,7 @@ export default async function handler(req, res) {
             </div>
 
             <div style="text-align: center; margin: 40px 0;">
-              <a href="https://planmypartypal.com/app" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: bold;">
+              <a href="https://partyplann.com/app" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: bold;">
                 Upgrade to Pro →
               </a>
             </div>
@@ -148,7 +148,7 @@ export default async function handler(req, res) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'Plan My Party Pal <hello@go.planmypartypal.com>',
+          from: 'Plan My Party Pal <hello@go.partyplann.com>',
           to: [email],
           subject: emailContent.subject,
           html: emailContent.html,

@@ -50,7 +50,7 @@ Wait 2-3 minutes for deployment to complete.
 
 Once the environment variable is added and redeployed:
 
-1. Go to: https://planmypartypal.com/admin
+1. Go to: https://partyplann.com/admin
 2. You'll see a password login screen
 3. Enter: `PartyPal2024!Secure` (or your chosen password)
 4. Click **Login**
@@ -129,7 +129,7 @@ Example of data stored:
 ## 🧪 Testing Checklist
 
 ### Test 1: Admin Page Access ✅
-- [ ] Go to https://planmypartypal.com/admin
+- [ ] Go to https://partyplann.com/admin
 - [ ] See password login screen
 - [ ] Enter admin password
 - [ ] Successfully see admin dashboard
@@ -143,7 +143,7 @@ Example of data stored:
 - [ ] Verify child name is personalized
 
 ### Test 3: Phone Collection (With Phone) ✅
-- [ ] Go to https://planmypartypal.com/app
+- [ ] Go to https://partyplann.com/app
 - [ ] Fill out Step 1
 - [ ] Enter phone number in phone field
 - [ ] Submit email at Email Gate
@@ -211,7 +211,7 @@ Phone numbers are stored in existing JSONB columns, so no schema migration was n
 
 ### For Now, You're All Set! 🎊
 
-**Admin Access**: https://planmypartypal.com/admin
+**Admin Access**: https://partyplann.com/admin
 **Password**: `PartyPal2024!Secure` (stored in your .env.local)
 
 **Remember**:

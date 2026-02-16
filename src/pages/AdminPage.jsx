@@ -377,7 +377,7 @@ Feel free to reply to this email if you need help, or continue planning at your 
                 <ul className="text-sm text-blue-700 space-y-1">
                   <li>• Emails will be sent to all subscribers in your database</li>
                   <li>• Use {`{{childName}}`} to personalize with each child's name</li>
-                  <li>• Emails are sent from: hello@go.planmypartypal.com</li>
+                  <li>• Emails are sent from: hello@go.partyplann.com</li>
                   <li>• Recipients can unsubscribe at any time</li>
                 </ul>
               </div>

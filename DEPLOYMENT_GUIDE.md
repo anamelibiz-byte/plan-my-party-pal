@@ -3,7 +3,7 @@
 ## 🚀 Quick Start - Deploy to Vercel (Recommended)
 
 ### Prerequisites
-- [ ] Domain registered (planmypartypal.com)
+- [ ] Domain registered (partyplann.com)
 - [ ] Stripe account set up with products
 - [ ] Supabase account (optional)
 - [ ] Resend account for emails (optional)
@@ -78,8 +78,8 @@ STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
 1. **In Vercel Dashboard:**
    - Go to Settings → Domains
    - Click "Add Domain"
-   - Enter `planmypartypal.com`
-   - Also add `www.planmypartypal.com`
+   - Enter `partyplann.com`
+   - Also add `www.partyplann.com`
 
 2. **Update DNS Records at Your Domain Registrar:**
 
@@ -101,7 +101,7 @@ STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
 
 4. **Enable HTTPS:**
    - Vercel automatically provisions SSL certificates
-   - Your site will be available at `https://planmypartypal.com`
+   - Your site will be available at `https://partyplann.com`
 
 ---
 
@@ -169,7 +169,7 @@ export default async function handler(req, res) {
 1. **In Stripe Dashboard:**
    - Go to Developers → Webhooks
    - Click "Add endpoint"
-   - Endpoint URL: `https://planmypartypal.com/api/stripe-webhook`
+   - Endpoint URL: `https://partyplann.com/api/stripe-webhook`
    - Select events:
      - `checkout.session.completed`
      - `customer.subscription.deleted`
@@ -187,10 +187,10 @@ export default async function handler(req, res) {
 1. Sign up at https://resend.com
 2. Get API key
 3. Add to Vercel environment variables: `RESEND_API_KEY`
-4. Verify your domain (planmypartypal.com) in Resend
+4. Verify your domain (partyplann.com) in Resend
 5. Update email "from" address in `/api/send-checklist.js`:
    ```javascript
-   from: 'Plan My Party Pal <hello@planmypartypal.com>',
+   from: 'Plan My Party Pal <hello@partyplann.com>',
    ```
 
 ### 5. Set Up Database (Optional)

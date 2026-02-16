@@ -98,7 +98,7 @@ export default async function handler(req, res) {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                from: 'Plan My Party Pal <hello@go.planmypartypal.com>',
+                from: 'Plan My Party Pal <hello@go.partyplann.com>',
                 to: [customerEmail],
                 subject: '✅ Your Pro Subscription is Confirmed!',
                 html: `
@@ -181,7 +181,7 @@ export default async function handler(req, res) {
 
                     <!-- CTA Button -->
                     <div style="text-align: center; margin: 40px 0;">
-                      <a href="https://planmypartypal.com/app" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%); color: white; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                      <a href="https://partyplann.com/app" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%); color: white; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: bold; font-size: 16px;">
                         Start Planning Your Next Party →
                       </a>
                     </div>
@@ -192,7 +192,7 @@ export default async function handler(req, res) {
                       <p style="margin: 10px 0; color: #666; font-size: 14px;">
                         You can manage your billing, update payment methods, view invoices, or cancel your subscription anytime from your account page.
                       </p>
-                      <a href="https://planmypartypal.com/account" style="color: #ec4899; text-decoration: none; font-weight: 600;">
+                      <a href="https://partyplann.com/account" style="color: #ec4899; text-decoration: none; font-weight: 600;">
                         Go to Account Settings →
                       </a>
                     </div>
@@ -205,7 +205,7 @@ export default async function handler(req, res) {
                       </p>
                       <p style="margin-top: 20px;">
                         Plan My Party Pal<br>
-                        <a href="https://planmypartypal.com" style="color: #ec4899; text-decoration: none;">planmypartypal.com</a>
+                        <a href="https://partyplann.com" style="color: #ec4899; text-decoration: none;">partyplann.com</a>
                       </p>
                     </div>
 

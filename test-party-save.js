@@ -12,7 +12,7 @@ const testData = {
   status: 'archived'
 };
 
-fetch('https://www.planmypartypal.com/api/party/save', {
+fetch('https://www.partyplann.com/api/party/save', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(testData)

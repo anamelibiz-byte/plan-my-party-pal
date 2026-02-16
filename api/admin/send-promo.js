@@ -82,7 +82,7 @@ ${personalizedMessage}
               </div>
 
               <div style="text-align: center; margin: 32px 0;">
-                <a href="https://planmypartypal.com/app?email=${encodeURIComponent(subscriber.email)}"
+                <a href="https://partyplann.com/app?email=${encodeURIComponent(subscriber.email)}"
                    style="display: inline-block; background: linear-gradient(135deg, #EC4899, #F43F5E); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px;">
                   Continue Planning Your Party →
                 </a>
@@ -95,7 +95,7 @@ ${personalizedMessage}
               </p>
               <p style="font-size: 12px; color: #9CA3AF; margin: 0;">
                 Questions? Reply to this email anytime! |
-                <a href="https://planmypartypal.com/unsubscribe?email=${encodeURIComponent(subscriber.email)}" style="color: #EC4899; text-decoration: none;">Unsubscribe</a>
+                <a href="https://partyplann.com/unsubscribe?email=${encodeURIComponent(subscriber.email)}" style="color: #EC4899; text-decoration: none;">Unsubscribe</a>
               </p>
             </div>
           </div>
@@ -106,12 +106,12 @@ Hi there!
 
 ${personalizedMessage}
 
-Continue planning your party: https://planmypartypal.com/app?email=${encodeURIComponent(subscriber.email)}
+Continue planning your party: https://partyplann.com/app?email=${encodeURIComponent(subscriber.email)}
 
 ---
 You're receiving this because you're a Plan My Party Pal subscriber.
 Questions? Reply to this email anytime!
-Unsubscribe: https://planmypartypal.com/unsubscribe?email=${encodeURIComponent(subscriber.email)}
+Unsubscribe: https://partyplann.com/unsubscribe?email=${encodeURIComponent(subscriber.email)}
         `;
 
         // Send via Resend
@@ -122,7 +122,7 @@ Unsubscribe: https://planmypartypal.com/unsubscribe?email=${encodeURIComponent(s
             'Authorization': `Bearer ${resendKey}`,
           },
           body: JSON.stringify({
-            from: 'Plan My Party Pal <hello@go.planmypartypal.com>',
+            from: 'Plan My Party Pal <hello@go.partyplann.com>',
             to: [subscriber.email],
             subject: subject,
             html: emailHtml,

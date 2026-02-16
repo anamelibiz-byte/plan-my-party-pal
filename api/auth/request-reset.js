@@ -61,7 +61,7 @@ export default async function handler(req, res) {
     }
 
     // Send magic link email
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://planmypartypal.com';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://partyplann.com';
     const resetUrl = `${baseUrl}/reset-password?token=${resetToken}`;
 
     await fetch('https://api.resend.com/emails', {
@@ -71,7 +71,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Plan My Party Pal <hello@go.planmypartypal.com>',
+        from: 'Plan My Party Pal <hello@go.partyplann.com>',
         to: [email],
         subject: '🔑 Access Your Account - Plan My Party Pal',
         html: `
@@ -125,7 +125,7 @@ export default async function handler(req, res) {
             <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center; color: #9ca3af; font-size: 13px;">
               <p>Plan My Party Pal</p>
               <p style="margin-top: 10px;">
-                <a href="https://planmypartypal.com" style="color: #ec4899; text-decoration: none;">planmypartypal.com</a>
+                <a href="https://partyplann.com" style="color: #ec4899; text-decoration: none;">partyplann.com</a>
               </p>
             </div>
 

@@ -40,7 +40,7 @@ export default async function handler(req, res) {
       referral_code: user.referral_code,
       referral_count: user.referral_count || 0,
       referral_url: user.referral_code
-        ? `${process.env.NEXT_PUBLIC_SITE_URL || 'https://planmypartypal.com'}?ref=${user.referral_code}`
+        ? `${process.env.NEXT_PUBLIC_SITE_URL || 'https://partyplann.com'}?ref=${user.referral_code}`
         : null,
     });
   } catch (error) {

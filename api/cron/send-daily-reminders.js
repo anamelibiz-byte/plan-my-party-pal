@@ -144,7 +144,7 @@ async function sendReminderEmails(party, pendingRSVPs, supabase) {
 
     try {
       // Generate RSVP link
-      const rsvpUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.planmypartypal.com'}/rsvp/${party.id}`;
+      const rsvpUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.partyplann.com'}/rsvp/${party.id}`;
 
       // Get ordinal suffix for age
       const getOrdinal = (num) => {
@@ -218,7 +218,7 @@ async function sendReminderEmails(party, pendingRSVPs, supabase) {
         Sent via <strong>Plan My Party Pal</strong> ✨
       </p>
       <p style="margin: 0; font-size: 12px; color: #9ca3af;">
-        <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.planmypartypal.com'}" style="color: #ec4899; text-decoration: none;">PlanMyPartyPal.com</a>
+        <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.partyplann.com'}" style="color: #ec4899; text-decoration: none;">PlanMyPartyPal.com</a>
       </p>
     </div>
   </div>
@@ -233,7 +233,7 @@ async function sendReminderEmails(party, pendingRSVPs, supabase) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'Plan My Party Pal <hello@go.planmypartypal.com>',
+          from: 'Plan My Party Pal <hello@go.partyplann.com>',
           to: [guest.email],
           subject: `🎉 Reminder: ${childName}'s party is TOMORROW!`,
           html: emailHtml,

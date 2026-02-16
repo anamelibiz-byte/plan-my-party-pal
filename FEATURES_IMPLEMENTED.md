@@ -1,7 +1,7 @@
 # 🎉 Plan My Party Pal - New Features Implemented
 
 ## Overview
-While you were sleeping, I implemented the Top 5 recommended features plus many additional enhancements to make Plan My Party Pal even better! All features have been deployed to production at **https://www.planmypartypal.com**
+While you were sleeping, I implemented the Top 5 recommended features plus many additional enhancements to make Plan My Party Pal even better! All features have been deployed to production at **https://www.partyplann.com**
 
 ---
 
@@ -161,7 +161,7 @@ ALTER TABLE rsvp_responses ADD COLUMN last_reminded TIMESTAMP;
 
 **How It Works:**
 1. User gets unique 8-character referral code (e.g., `A3F9D2E1`)
-2. Share link: `planmypartypal.com?ref=A3F9D2E1`
+2. Share link: `partyplann.com?ref=A3F9D2E1`
 3. Friend signs up using link → Both get rewards
 4. Track referrals in dashboard
 
@@ -229,7 +229,7 @@ CREATE INDEX IF NOT EXISTS idx_rsvp_status ON rsvp_responses(status);
 
 ## 🚀 DEPLOYMENT STATUS
 
-**Production URL:** https://www.planmypartypal.com
+**Production URL:** https://www.partyplann.com
 
 **Deployment Details:**
 - Build: Successful ✅
@@ -405,7 +405,7 @@ const sendReminders = async (partyId) => {
 **Total Files Created:** 15+ new files
 **Total Lines of Code:** 2,000+ lines
 **Features Added:** 5 complete systems
-**Deployment:** ✅ Live at planmypartypal.com
+**Deployment:** ✅ Live at partyplann.com
 
 **You're all set!** 🚀
 

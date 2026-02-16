@@ -4,7 +4,7 @@
 
 ### Step 1: Check Your Tier in Browser
 
-1. Go to: https://planmypartypal.com/app
+1. Go to: https://partyplann.com/app
 2. Open Console (F12)
 3. Type: `localStorage.getItem('pp_user_tier')`
 

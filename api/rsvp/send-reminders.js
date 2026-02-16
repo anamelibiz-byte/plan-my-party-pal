@@ -66,7 +66,7 @@ export default async function handler(req, res) {
       if (!guest.email) continue;
 
       try {
-        const rsvpUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://planmypartypal.com'}/rsvp/${party_id}`;
+        const rsvpUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://partyplann.com'}/rsvp/${party_id}`;
 
         await fetch('https://api.resend.com/emails', {
           method: 'POST',
@@ -75,7 +75,7 @@ export default async function handler(req, res) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            from: 'Plan My Party Pal <hello@go.planmypartypal.com>',
+            from: 'Plan My Party Pal <hello@go.partyplann.com>',
             to: [guest.email],
             subject: `🎉 RSVP Reminder: ${partyData.childName}'s Party`,
             html: `
@@ -134,7 +134,7 @@ export default async function handler(req, res) {
                 <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center; color: #9ca3af; font-size: 13px;">
                   <p>Sent via Plan My Party Pal</p>
                   <p style="margin-top: 10px;">
-                    <a href="https://planmypartypal.com" style="color: #ec4899; text-decoration: none;">planmypartypal.com</a>
+                    <a href="https://partyplann.com" style="color: #ec4899; text-decoration: none;">partyplann.com</a>
                   </p>
                 </div>
 

@@ -50,7 +50,7 @@ export default async function handler(req, res) {
     }
 
     // Send verification email
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://planmypartypal.com';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://partyplann.com';
     const verificationUrl = `${baseUrl}/verify-email?token=${verificationToken}`;
 
     await fetch('https://api.resend.com/emails', {
@@ -60,7 +60,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Plan My Party Pal <hello@go.planmypartypal.com>',
+        from: 'Plan My Party Pal <hello@go.partyplann.com>',
         to: [email],
         subject: '✨ Verify Your Email - Plan My Party Pal',
         html: `
@@ -117,7 +117,7 @@ export default async function handler(req, res) {
               <p>Need help? Reply to this email - we're here for you!</p>
               <p style="margin-top: 10px;">
                 Plan My Party Pal<br>
-                <a href="https://planmypartypal.com" style="color: #ec4899; text-decoration: none;">planmypartypal.com</a>
+                <a href="https://partyplann.com" style="color: #ec4899; text-decoration: none;">partyplann.com</a>
               </p>
             </div>
 

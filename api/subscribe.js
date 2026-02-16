@@ -97,7 +97,7 @@ export default async function handler(req, res) {
             </div>
 
             <div style="text-align: center; margin: 32px 0;">
-              <a href="https://planmypartypal.com/app?email=${encodeURIComponent(email)}"
+              <a href="https://partyplann.com/app?email=${encodeURIComponent(email)}"
                  style="display: inline-block; background: linear-gradient(135deg, #EC4899, #F43F5E); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px;">
                 Continue Planning Your Party →
               </a>
@@ -115,7 +115,7 @@ export default async function handler(req, res) {
                 Add this to your contacts:
               </p>
               <p style="font-size: 14px; background: white; border: 2px solid #EC4899; color: #EC4899; padding: 10px; margin: 0 0 12px; border-radius: 6px; text-align: center; font-family: 'Courier New', monospace; font-weight: 600; word-break: break-all;">
-                hello@go.planmypartypal.com
+                hello@go.partyplann.com
               </p>
               <p style="font-size: 13px; color: #666666; margin: 0; line-height: 1.5;">
                 This prevents our emails from going to spam and you'll get helpful party planning tips.
@@ -129,7 +129,7 @@ export default async function handler(req, res) {
             </p>
             <p style="font-size: 12px; color: #9CA3AF; margin: 0;">
               Questions? Reply to this email anytime! |
-              <a href="https://planmypartypal.com/unsubscribe?email=${encodeURIComponent(email)}" style="color: #EC4899; text-decoration: none;">Unsubscribe</a>
+              <a href="https://partyplann.com/unsubscribe?email=${encodeURIComponent(email)}" style="color: #EC4899; text-decoration: none;">Unsubscribe</a>
             </p>
           </div>
         </div>
@@ -147,16 +147,16 @@ Here's what you can do next:
 • Get a custom shopping list with direct links
 • Save everything and come back anytime
 
-Continue planning your party: https://planmypartypal.com/app?email=${encodeURIComponent(email)}
+Continue planning your party: https://partyplann.com/app?email=${encodeURIComponent(email)}
 
 Pro Tip: Your party details are automatically saved and synced across devices. Click the link above to resume planning from anywhere!
 
-📬 Get all our updates: Add hello@go.planmypartypal.com to your contacts so our emails don't end up in spam. We'll send you helpful party planning tips and updates.
+📬 Get all our updates: Add hello@go.partyplann.com to your contacts so our emails don't end up in spam. We'll send you helpful party planning tips and updates.
 
 ---
 You're receiving this because you started planning a party at Plan My Party Pal.
 Questions? Reply to this email anytime!
-Unsubscribe: https://planmypartypal.com/unsubscribe?email=${encodeURIComponent(email)}
+Unsubscribe: https://partyplann.com/unsubscribe?email=${encodeURIComponent(email)}
       `;
 
       await fetch('https://api.resend.com/emails', {
@@ -166,7 +166,7 @@ Unsubscribe: https://planmypartypal.com/unsubscribe?email=${encodeURIComponent(e
           'Authorization': `Bearer ${resendKey}`,
         },
         body: JSON.stringify({
-          from: 'Plan My Party Pal <hello@go.planmypartypal.com>',
+          from: 'Plan My Party Pal <hello@go.partyplann.com>',
           to: [email],
           subject: `🎉 Let's plan ${childName}'s perfect party!`,
           html: welcomeHtml,

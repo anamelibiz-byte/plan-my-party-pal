@@ -69,7 +69,7 @@ export default async function handler(req, res) {
     const baseUrl =
       process.env.NEXT_PUBLIC_SITE_URL ||
       req.headers.origin ||
-      'https://planmypartypal.com';
+      'https://partyplann.com';
 
     const session = await stripe.billingPortal.sessions.create({
       customer: user.stripe_customer_id,

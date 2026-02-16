@@ -5,7 +5,7 @@
 I implemented **15 complete feature systems** while you slept!
 
 **Status:** ✅ All features deployed to production
-**URL:** https://www.planmypartypal.com
+**URL:** https://www.partyplann.com
 **Build:** Successful
 **Total Files Created:** 30+ files
 **Total Code Written:** 4,000+ lines

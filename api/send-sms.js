@@ -117,7 +117,7 @@ function formatChecklistForSMS(partyData, checklist) {
   }
 
   lines.push('');
-  lines.push('View full plan: go.planmypartypal.com');
+  lines.push('View full plan: go.partyplann.com');
 
   return lines.join('\n');
 }

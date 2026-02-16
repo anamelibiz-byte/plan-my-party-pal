@@ -56,7 +56,7 @@ export default async function handler(req, res) {
 
     // Send invitation email
     if (resendKey) {
-      const inviteUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://planmypartypal.com'}/collaborate/${party_id}?invite=${data.id}`;
+      const inviteUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://partyplann.com'}/collaborate/${party_id}?invite=${data.id}`;
 
       const emailResponse = await fetch('https://api.resend.com/emails', {
         method: 'POST',
@@ -65,7 +65,7 @@ export default async function handler(req, res) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'Plan My Party Pal <hello@go.planmypartypal.com>',
+          from: 'Plan My Party Pal <hello@go.partyplann.com>',
           to: [invitee_email],
           subject: `🎉 You've been invited to help plan a party!`,
           html: `

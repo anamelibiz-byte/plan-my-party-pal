@@ -153,7 +153,7 @@ SUPABASE_SERVICE_KEY=your-service-key
 RESEND_API_KEY=your-resend-api-key
 
 # App URL (already configured)
-NEXT_PUBLIC_SITE_URL=https://www.planmypartypal.com
+NEXT_PUBLIC_SITE_URL=https://www.partyplann.com
 ```
 
 ### Step 4: Deploy to Vercel
@@ -294,7 +294,7 @@ The auth flow tracks these events:
 ## ⚠️ Important Notes
 
 1. **Email Provider:** Make sure Resend API is configured and domain is verified
-2. **Reset Link Format:** `https://www.planmypartypal.com/reset-password?token=xxx`
+2. **Reset Link Format:** `https://www.partyplann.com/reset-password?token=xxx`
 3. **Token Security:** Reset tokens are 32-byte random strings (very secure)
 4. **Password Policy:** Minimum 8 characters (consider adding complexity requirements)
 5. **Legacy Users:** Existing users without passwords can still login by resetting password

@@ -61,7 +61,7 @@ function buildChecklistHTML(partyData, zones, excludedItems, zoneChecks) {
 
   const footer = `
     <div style="padding: 20px 24px; text-align: center; background: #FDF2F8; border-radius: 0 0 16px 16px;">
-      <p style="font-size: 12px; color: #9CA3AF; margin: 0;">✨ Made with <a href="https://planmypartypal.com" style="color: #EC4899; text-decoration: none; font-weight: bold;">PlanMyPartyPal.com</a></p>
+      <p style="font-size: 12px; color: #9CA3AF; margin: 0;">✨ Made with <a href="https://partyplann.com" style="color: #EC4899; text-decoration: none; font-weight: bold;">PlanMyPartyPal.com</a></p>
     </div>
   `;
 

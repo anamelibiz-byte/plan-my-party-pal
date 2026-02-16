@@ -15,7 +15,7 @@ export function exportTimelineICal(timelineEvents, partyData) {
 
   // Helper to create unique ID
   const createUID = (index) => {
-    return `${Date.now()}-${index}@planmypartypal.com`;
+    return `${Date.now()}-${index}@partyplann.com`;
   };
 
   // Build iCal content
@@ -107,7 +107,7 @@ export function exportPartyDateICal(partyData) {
     'PRODID:-//Plan My Party Pal//Party Event//EN',
     'CALSCALE:GREGORIAN',
     'BEGIN:VEVENT',
-    `UID:${Date.now()}@planmypartypal.com`,
+    `UID:${Date.now()}@partyplann.com`,
     `DTSTAMP:${formatICalDate(new Date())}`,
     `DTSTART:${formatICalDate(partyDate)}`,
     `DTEND:${formatICalDate(endDate)}`,

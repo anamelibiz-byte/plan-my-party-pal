@@ -25,11 +25,11 @@ Resend is already integrated into your app! You just need to get an API key and 
 
 ### Step 3: Verify Your Domain (Important!)
 
-**By default, Resend emails come from `onboarding@resend.dev`**. To send from your own domain (`hello@planmypartypal.com`), you need to verify it:
+**By default, Resend emails come from `onboarding@resend.dev`**. To send from your own domain (`hello@partyplann.com`), you need to verify it:
 
 1. Go to **[Domains](https://resend.com/domains)** in Resend
 2. Click **"Add Domain"**
-3. Enter your domain: `planmypartypal.com`
+3. Enter your domain: `partyplann.com`
 4. Resend will give you DNS records to add
 5. Add these DNS records to your domain provider:
    - **If you use Cloudflare, Namecheap, GoDaddy, etc.:**
@@ -110,15 +110,15 @@ Once your domain is verified, update the sender address:
 
 **File:** `api/subscribe.js` (line 125)
 ```javascript
-from: 'Plan My Party Pal <hello@planmypartypal.com>',
+from: 'Plan My Party Pal <hello@partyplann.com>',
 ```
 
 **File:** `api/send-checklist.js` (line 26)
 ```javascript
-from: 'Plan My Party Pal <hello@planmypartypal.com>',
+from: 'Plan My Party Pal <hello@partyplann.com>',
 ```
 
-Replace `hello@planmypartypal.com` with whatever email you want to send from (must be on your verified domain).
+Replace `hello@partyplann.com` with whatever email you want to send from (must be on your verified domain).
 
 ### What Emails Are Sent?
 
@@ -167,7 +167,7 @@ Google Analytics is already integrated - you just need to create an account and 
 1. Choose platform: **Web**
 2. **Website URL:** Your production URL
    - If testing locally, use: `http://localhost:5173`
-   - For production: `https://planmypartypal.com`
+   - For production: `https://partyplann.com`
 3. **Stream name:** `Party Planner Website`
 4. Click **"Create stream"**
 

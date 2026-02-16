@@ -246,7 +246,7 @@ export default function PrivacyPage() {
             </div>
 
             <p className="text-gray-700 leading-relaxed">
-              To exercise these rights, please contact us at <a href="mailto:hello@go.planmypartypal.com" className="text-pink-600 hover:text-pink-700 font-semibold">hello@go.planmypartypal.com</a>
+              To exercise these rights, please contact us at <a href="mailto:hello@go.partyplann.com" className="text-pink-600 hover:text-pink-700 font-semibold">hello@go.partyplann.com</a>
             </p>
           </section>
 
@@ -277,7 +277,7 @@ export default function PrivacyPage() {
               Plan My Party Pal is not intended for use by children under the age of 13. We do not knowingly collect personal information from children under 13.
             </p>
             <p className="text-gray-700 leading-relaxed">
-              If we discover that we have collected information from a child under 13, we will delete it immediately. If you believe we have collected information from a child under 13, please contact us at hello@go.planmypartypal.com.
+              If we discover that we have collected information from a child under 13, we will delete it immediately. If you believe we have collected information from a child under 13, please contact us at hello@go.partyplann.com.
             </p>
           </section>
 
@@ -345,10 +345,10 @@ export default function PrivacyPage() {
             <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-xl border-2 border-pink-200">
               <div className="space-y-3">
                 <p className="text-gray-700 mb-0">
-                  <strong className="text-pink-600">Email:</strong> hello@go.planmypartypal.com
+                  <strong className="text-pink-600">Email:</strong> hello@go.partyplann.com
                 </p>
                 <p className="text-gray-700 mb-0">
-                  <strong className="text-pink-600">Website:</strong> planmypartypal.com
+                  <strong className="text-pink-600">Website:</strong> partyplann.com
                 </p>
                 <p className="text-gray-700 mb-0">
                   <strong className="text-pink-600">Response Time:</strong> We typically respond within 48 hours

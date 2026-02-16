@@ -36,7 +36,7 @@ export default async function handler(req, res) {
       return res.status(200).json({
         success: true,
         referral_code: existingUser.referral_code,
-        referral_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://planmypartypal.com'}?ref=${existingUser.referral_code}`,
+        referral_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://partyplann.com'}?ref=${existingUser.referral_code}`,
       });
     }
 
@@ -59,7 +59,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       referral_code: referralCode,
-      referral_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://planmypartypal.com'}?ref=${referralCode}`,
+      referral_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://partyplann.com'}?ref=${referralCode}`,
     });
   } catch (error) {
     console.error('Create referral error:', error);

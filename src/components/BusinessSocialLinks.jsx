@@ -24,7 +24,7 @@ export default function BusinessSocialLinks() {
     {
       name: 'Email',
       icon: Mail,
-      url: 'mailto:hello@planmypartypal.com',
+      url: 'mailto:hello@partyplann.com',
       color: 'bg-gray-600 hover:bg-gray-700'
     }
   ];

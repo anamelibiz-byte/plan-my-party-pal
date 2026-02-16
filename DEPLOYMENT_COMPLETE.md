@@ -110,7 +110,7 @@ This ensures the new environment variables are picked up.
 ### Test 1: Cross-Device Persistence
 
 1. **On Device A:**
-   - Go to https://planmypartypal.com/app
+   - Go to https://partyplann.com/app
    - Start planning a party (fill out Step 1)
    - Submit your email at the Email Gate
    - Continue to Step 3, choose a venue
@@ -138,7 +138,7 @@ This ensures the new environment variables are picked up.
 ### Test 2: Admin Dashboard
 
 1. **Access Admin Page:**
-   - Go to https://planmypartypal.com/admin
+   - Go to https://partyplann.com/admin
    - Or create a route in your app to access `/admin`
 
 2. **Send a Test Promo:**
@@ -192,7 +192,7 @@ export default async function handler(req, res) {
 
 Or use **UptimeRobot** (free):
 - Create free account at uptimerobot.com
-- Add monitor: `https://planmypartypal.com/app`
+- Add monitor: `https://partyplann.com/app`
 - Set interval: Every 5 minutes
 - This keeps your Vercel + Supabase alive
 
@@ -245,7 +245,7 @@ if (!authenticated) {
 
 Users receive emails with links like:
 ```
-https://planmypartypal.com/app?email=user@example.com
+https://partyplann.com/app?email=user@example.com
 ```
 
 When clicked:

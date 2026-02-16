@@ -95,7 +95,7 @@ export const TIERS = {
    - Click "Add endpoint"
 
 2. **Configure Endpoint:**
-   - **Endpoint URL:** `https://planmypartypal.com/api/webhook`
+   - **Endpoint URL:** `https://partyplann.com/api/webhook`
    - **Description:** Plan My Party Pal subscription events
 
    **Select events to listen to:**
@@ -165,17 +165,17 @@ Vercel will automatically redeploy with the new environment variables.
 
 ### Step 4: Verify Your Domain (Important!)
 
-To send emails from `hello@planmypartypal.com`:
+To send emails from `hello@partyplann.com`:
 
 1. **In Resend Dashboard:**
    - Go to: https://resend.com/domains
    - Click "Add Domain"
-   - Enter: `planmypartypal.com`
+   - Enter: `partyplann.com`
    - Click "Add"
 
 2. **Add DNS Records:**
    - Resend will show you DNS records to add
-   - Go to your domain registrar (where you bought planmypartypal.com)
+   - Go to your domain registrar (where you bought partyplann.com)
    - Add these DNS records (usually 3-4 TXT records)
 
    **Example records (yours will be different):**
@@ -192,7 +192,7 @@ To send emails from `hello@planmypartypal.com`:
 3. **Verify:**
    - Wait 5-10 minutes for DNS propagation
    - In Resend, click "Verify" on your domain
-   - Once verified, you can send emails from `hello@planmypartypal.com`!
+   - Once verified, you can send emails from `hello@partyplann.com`!
 
 ### Step 5: Redeploy
 
@@ -207,7 +207,7 @@ git push origin main
 
 ### Test 1: Email Capture (Free)
 
-1. **Go to:** https://planmypartypal.com
+1. **Go to:** https://partyplann.com
 2. **Enter your email** in the email capture form
 3. **Check:**
    - Browser console for errors
@@ -225,7 +225,7 @@ git push origin main
 
 **Test the flow:**
 
-1. **Go to:** https://planmypartypal.com/app
+1. **Go to:** https://partyplann.com/app
 2. **Try to add 16th guest** → Upgrade modal should appear
 3. **Click "Upgrade to Pro"**
 4. **Use test card:** `4242 4242 4242 4242`
@@ -283,18 +283,18 @@ Once testing is complete:
 ### 1. **Landing Page Email Capture**
 - **Trigger:** User submits email on landing page
 - **Content:** Welcome + free checklist PDF (not implemented yet)
-- **Sender:** `hello@planmypartypal.com`
+- **Sender:** `hello@partyplann.com`
 
 ### 2. **Pro Upgrade Welcome Email**
 - **Trigger:** Successful payment (Stripe webhook)
 - **Content:** Welcome to Pro + feature list
-- **Sender:** `hello@planmypartypal.com`
+- **Sender:** `hello@partyplann.com`
 - **Location:** `/api/webhook.js` (line ~47)
 
 ### 3. **Party Checklist Email**
 - **Trigger:** User clicks "Email Your Checklist" (Pro only)
 - **Content:** Complete party plan with zones, budget, activities
-- **Sender:** `hello@planmypartypal.com`
+- **Sender:** `hello@partyplann.com`
 - **Location:** `/api/send-checklist.js`
 
 ---
@@ -315,7 +315,7 @@ Once testing is complete:
 - ✅ Check `/api/create-checkout.js` logs in Vercel
 
 **Problem: Webhook not receiving events**
-- ✅ Check webhook URL is correct: `https://planmypartypal.com/api/webhook`
+- ✅ Check webhook URL is correct: `https://partyplann.com/api/webhook`
 - ✅ Verify webhook secret matches Vercel env variable
 - ✅ Check "Recent events" in Stripe webhook dashboard
 - ✅ Look for errors in webhook delivery attempts
