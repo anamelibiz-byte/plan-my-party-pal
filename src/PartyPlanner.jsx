@@ -1936,15 +1936,18 @@ export default function PartyPlanner() {
 
     {/* Collaborator Invite Modal */}
     <CollaboratorInvite
-      isOpen={showCollabModal && !showCollabList}
-      onClose={() => setShowCollabModal(false)}
+      isOpen={showCollabModal && showCollabList}
+      onClose={() => {
+        setShowCollabList(false);
+        setShowCollabModal(true);
+      }}
       onSend={handleSendInvite}
       partyId={localStorage.getItem('pp_plan_id')}
       isSending={false}
     />
 
     {/* Collaborators List Modal */}
-    {showCollabModal && (
+    {showCollabModal && !showCollabList && (
       <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => setShowCollabModal(false)}>
         <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
           <div className="p-6 border-b border-gray-100 flex items-center justify-between">
@@ -1967,7 +1970,7 @@ export default function PartyPlanner() {
             />
 
             <button
-              onClick={() => setShowCollabList(false)}
+              onClick={() => setShowCollabList(true)}
               className="w-full mt-6 px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-xl font-bold hover:shadow-xl transition-all flex items-center justify-center gap-2"
             >
               <UserPlus size={20} />
