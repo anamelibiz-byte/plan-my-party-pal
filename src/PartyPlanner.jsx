@@ -1878,17 +1878,24 @@ export default function PartyPlanner() {
                 <TierGate feature="downloadPDF">
                   <div className="mt-6 space-y-4 no-print">
                     {/* Export Buttons */}
-                    <div className="flex flex-wrap gap-3">
-                      <button onClick={downloadChecklist} className="flex-1 min-w-[140px] bg-blue-500 text-white py-3 rounded-xl font-bold hover:bg-blue-600 transition-all flex items-center justify-center gap-2">
-                        <Download size={20} /> Download List
-                      </button>
-                      <button onClick={() => downloadPartyPDF(partyData, checklist, mergedZones, excludedItems, zoneChecks, timeline)} className="flex-1 min-w-[140px] bg-purple-500 text-white py-3 rounded-xl font-bold hover:bg-purple-600 transition-all flex items-center justify-center gap-2">
-                        <FileDown size={20} /> PDF Party Kit
-                      </button>
-                      <button onClick={() => window.print()} className="flex-1 min-w-[140px] bg-gray-500 text-white py-3 rounded-xl font-bold hover:bg-gray-600 transition-all flex items-center justify-center gap-2">
-                        <Printer size={20} /> Print
-                      </button>
-                      <ShareButton partyData={partyData} checklist={checklist} />
+                    <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl border-2 border-blue-200 p-5">
+                      <div className="flex items-center gap-2 mb-4">
+                        <FileDown className="text-blue-600" size={20} />
+                        <h4 className="text-lg font-bold text-gray-800">Export & Share Your Plan</h4>
+                        <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-bold">PRO</span>
+                      </div>
+                      <div className="flex flex-wrap gap-3">
+                        <button onClick={downloadChecklist} className="flex-1 min-w-[140px] bg-blue-500 text-white py-3 rounded-xl font-bold hover:bg-blue-600 transition-all flex items-center justify-center gap-2">
+                          <Download size={20} /> Download List
+                        </button>
+                        <button onClick={() => downloadPartyPDF(partyData, checklist, mergedZones, excludedItems, zoneChecks, timeline)} className="flex-1 min-w-[140px] bg-purple-500 text-white py-3 rounded-xl font-bold hover:bg-purple-600 transition-all flex items-center justify-center gap-2">
+                          <FileDown size={20} /> PDF Party Kit
+                        </button>
+                        <button onClick={() => window.print()} className="flex-1 min-w-[140px] bg-gray-500 text-white py-3 rounded-xl font-bold hover:bg-gray-600 transition-all flex items-center justify-center gap-2">
+                          <Printer size={20} /> Print
+                        </button>
+                        <ShareButton partyData={partyData} checklist={checklist} />
+                      </div>
                     </div>
 
                     {/* Email & SMS */}
