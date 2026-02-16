@@ -130,8 +130,8 @@ export default function RSVPManager({ partyData, rsvpId, onSetRsvpId }) {
       <div className="mb-4 p-3 bg-indigo-100 rounded-xl border border-indigo-200">
         <p className="text-sm font-bold text-indigo-800 mb-1">📋 How to use:</p>
         <ol className="text-xs text-indigo-700 space-y-1 ml-4 list-decimal">
-          <li><strong>First:</strong> Share the invite link below with your guests</li>
-          <li><strong>Then:</strong> Send the RSVP link to your guest list</li>
+          <li><strong>First:</strong> Share the invite link above with your guests</li>
+          <li><strong>Then:</strong> Send the RSVP link below to your guest list</li>
         </ol>
       </div>
 
