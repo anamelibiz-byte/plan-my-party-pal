@@ -1354,28 +1354,41 @@ export default function PartyPlanner() {
               <button onClick={() => setStep(3)} className="text-gray-400 hover:text-gray-600 flex items-center gap-1 text-sm font-semibold"><ChevronLeft size={18} /> Back</button>
             </div>
 
-            {/* AI suggestions */}
-            <button onClick={generateThemeSuggestions} disabled={loading}
-              className="w-full mb-6 bg-gradient-to-r from-amber-400 to-orange-400 text-white py-3 rounded-xl font-bold text-base hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
-              {loading ? (<><div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin" /> Generating Ideas...</>) : (<><Sparkles size={20} /> Get AI-Powered Theme Suggestions</>)}
-            </button>
-
-            {suggestions.length > 0 && (
-              <div className="mb-6">
-                <h3 className="text-lg font-bold text-amber-600 mb-3">AI Suggestions</h3>
-                <div className="grid gap-3">
-                  {suggestions.map((t, i) => (
-                    <button key={`ai-${i}`} onClick={() => { updateField('theme', t.name); setStep(5); }}
-                      className="text-left p-5 rounded-2xl transition-all border-2 hover:shadow-xl group border-amber-200 hover:border-amber-400 bg-gradient-to-r from-amber-50 to-orange-50">
-                      <div className="flex justify-between items-start">
-                        <div><h4 className="text-lg font-bold text-gray-800 group-hover:text-amber-600">{t.name}</h4><p className="text-gray-600 text-sm mt-1">{t.description}</p></div>
-                        <span className="text-xs font-bold text-amber-600 bg-amber-100 px-2 py-1 rounded-lg">{t.costTier || '$$'}</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+            {/* AI Suggestions Section */}
+            <div className="mb-6 bg-gradient-to-r from-amber-50 to-orange-50 p-6 rounded-2xl border-2 border-amber-200">
+              <div className="flex items-center gap-2 mb-4">
+                <Sparkles className="text-amber-600" size={24} />
+                <h3 className="text-lg font-bold text-amber-800">✨ AI-Powered Theme Ideas</h3>
               </div>
-            )}
+
+              <button onClick={generateThemeSuggestions} disabled={loading}
+                className="w-full bg-gradient-to-r from-amber-400 to-orange-400 text-white py-3 rounded-xl font-bold text-base hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-70 flex items-center justify-center gap-2">
+                {loading ? (<><div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin" /> Generating Ideas...</>) : (<><Sparkles size={20} /> Get AI Theme Suggestions</>)}
+              </button>
+
+              {suggestions.length > 0 && (
+                <div className="mt-4">
+                  <p className="text-sm text-amber-700 font-semibold mb-3">🎉 {suggestions.length} AI-generated themes found! Click to select:</p>
+                  <div className="grid gap-3">
+                    {suggestions.map((t, i) => (
+                      <button key={`ai-${i}`} onClick={() => { updateField('theme', t.name); setStep(5); }}
+                        className="text-left p-5 rounded-2xl transition-all border-2 hover:shadow-xl group border-amber-300 hover:border-amber-500 bg-white">
+                        <div className="flex justify-between items-start">
+                          <div><h4 className="text-lg font-bold text-gray-800 group-hover:text-amber-600">{t.name}</h4><p className="text-gray-600 text-sm mt-1">{t.description}</p></div>
+                          <span className="text-xs font-bold text-amber-600 bg-amber-100 px-2 py-1 rounded-lg">{t.costTier || '$$'}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {!loading && suggestions.length === 0 && (
+                <p className="text-sm text-amber-600 mt-3 text-center">
+                  💡 Click the button above to generate personalized theme ideas based on your party details!
+                </p>
+              )}
+            </div>
 
             {/* Character Themes */}
             <h3 className="text-lg font-bold text-purple-600 mb-3 flex items-center gap-2"><Star size={18} /> Character Themes</h3>
