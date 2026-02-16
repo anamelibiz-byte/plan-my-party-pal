@@ -204,5 +204,6 @@ export default function EmailGate({ partyData, onContinue, onGuestContinue }) {
         </button>
       </div>
     </div>
+    </>
   );
 }
