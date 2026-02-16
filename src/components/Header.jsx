@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { PartyPopper, Menu, X, LogOut, User, Home, Store } from 'lucide-react';
+import { useTier } from '../context/TierContext';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [userEmail, setUserEmail] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { userName } = useTier();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -153,9 +155,11 @@ export default function Header() {
             <nav className="flex flex-col gap-2 p-4">
               {userEmail && (
                 <div className="px-4 py-3 mb-2 bg-white/10 rounded-lg">
-                  <p className="text-xs text-pink-100 mb-1">Signed in as</p>
+                  <p className="text-xs text-pink-100 mb-1">
+                    {userName ? 'Welcome back' : 'Signed in as'}
+                  </p>
                   <p className="text-sm text-white font-semibold truncate">
-                    {userEmail}
+                    {userName || userEmail}
                   </p>
                 </div>
               )}

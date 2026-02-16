@@ -4,8 +4,9 @@ import useLocalStorage from '../hooks/useLocalStorage';
 
 const TierContext = createContext(null);
 
-export function TierProvider({ children }) {
+export function TierProvider({ children}) {
   const [userTier, setUserTier] = useLocalStorage('pp_user_tier', 'free');
+  const [userName, setUserName] = useState(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [upgradeFeature, setUpgradeFeature] = useState(null);
   const [upgradeSuccess, setUpgradeSuccess] = useState(false);
@@ -25,6 +26,11 @@ export function TierProvider({ children }) {
       try {
         const response = await fetch(`/api/users/get-tier?email=${encodeURIComponent(email)}`);
         const data = await response.json();
+
+        // Store user's name
+        if (data.name) {
+          setUserName(data.name);
+        }
 
         if (data.tier && data.tier !== userTier) {
           console.log('📊 Tier synced from database:', data.tier);
@@ -97,6 +103,7 @@ export function TierProvider({ children }) {
 
   const value = {
     userTier, setUserTier, effectiveTier,
+    userName,
     checkFeature, requireFeature,
     showUpgradeModal, upgradeFeature, closeUpgradeModal,
     isOverridden: ADMIN_OVERRIDE !== 'none',

@@ -23,7 +23,7 @@ export default async function handler(req, res) {
 
     const { data, error } = await supabase
       .from('users')
-      .select('tier, subscription_status, subscription_current_period_end')
+      .select('full_name, tier, subscription_status, subscription_current_period_end')
       .eq('email', email)
       .single();
 
@@ -34,6 +34,7 @@ export default async function handler(req, res) {
     // No user found - they're free tier
     if (!data) {
       return res.status(200).json({
+        name: null,
         tier: 'free',
         subscription_status: null,
         verified: false
@@ -46,6 +47,7 @@ export default async function handler(req, res) {
                      new Date(data.subscription_current_period_end) > new Date());
 
     return res.status(200).json({
+      name: data.full_name,
       tier: isActive ? data.tier : 'free',
       subscription_status: data.subscription_status,
       subscription_end: data.subscription_current_period_end,

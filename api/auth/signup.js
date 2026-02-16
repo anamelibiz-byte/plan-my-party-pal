@@ -6,11 +6,15 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
 
   // Validate input
-  if (!email || !password) {
-    return res.status(400).json({ error: 'Email and password are required' });
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: 'Name, email and password are required' });
+  }
+
+  if (name.trim() === '') {
+    return res.status(400).json({ error: 'Name cannot be empty' });
   }
 
   if (!email.includes('@')) {
@@ -50,6 +54,7 @@ export default async function handler(req, res) {
     const { data: newUser, error } = await supabase
       .from('users')
       .insert({
+        full_name: name.trim(),
         email: email.toLowerCase(),
         password_hash: passwordHash,
         tier: 'free',
@@ -69,6 +74,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       user: {
+        name: newUser.full_name,
         email: newUser.email,
         tier: newUser.tier,
         created_at: newUser.created_at

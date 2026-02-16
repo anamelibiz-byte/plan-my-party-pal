@@ -59,6 +59,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       user: {
+        name: user.full_name,
         email: user.email,
         tier: user.tier,
         subscription_status: user.subscription_status,

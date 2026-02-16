@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { X, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 
 export default function AuthModal({ isOpen, onClose, onSuccess }) {
-  const [mode, setMode] = useState('login'); // 'login', 'signup', 'forgot'
+  const [mode, setMode] = useState('signup'); // 'login', 'signup', 'forgot' - Default to signup
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -22,6 +23,13 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
 
     try {
       if (mode === 'signup') {
+        // Validate name
+        if (!name || name.trim() === '') {
+          setError('Please enter your name');
+          setLoading(false);
+          return;
+        }
+
         // Validate passwords match
         if (password !== confirmPassword) {
           setError('Passwords do not match');
@@ -39,7 +47,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
         const res = await fetch('/api/auth/signup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify({ name: name.trim(), email, password })
         });
 
         const data = await res.json();
@@ -111,6 +119,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
     setMode(newMode);
     setError('');
     setSuccess('');
+    setName('');
     setPassword('');
     setConfirmPassword('');
   };
@@ -124,12 +133,12 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
             <div>
               <h2 className="text-2xl font-bold">
                 {mode === 'login' && '🎉 Welcome Back!'}
-                {mode === 'signup' && '🎊 Create Account'}
+                {mode === 'signup' && '🎊 Create Your Free Account'}
                 {mode === 'forgot' && '🔒 Reset Password'}
               </h2>
               <p className="text-pink-100 text-sm mt-1">
                 {mode === 'login' && 'Sign in to access your party plans'}
-                {mode === 'signup' && 'Join Plan My Party Pal today'}
+                {mode === 'signup' && 'Start planning with our free tier - no credit card required'}
                 {mode === 'forgot' && 'We\'ll send you a reset link'}
               </p>
             </div>
@@ -155,6 +164,26 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
           {success && (
             <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
               {success}
+            </div>
+          )}
+
+          {/* Name Field (only in signup mode) */}
+          {mode === 'signup' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Full Name
+              </label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  placeholder="Your name"
+                />
+              </div>
             </div>
           )}
 
