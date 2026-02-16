@@ -45,6 +45,8 @@ export default async function handler(req, res) {
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   try {
+    console.log('[SAVE API] Request:', { email, hasPartyData: !!partyData, planId, partyName, status });
+
     // TIER ENFORCEMENT: Prevent free users from exceeding limits
     if (!planId) {
       // Only check when creating new party (not updating)
@@ -108,10 +110,11 @@ export default async function handler(req, res) {
     }
 
     if (result.error) {
-      console.error('Supabase error:', result.error);
+      console.error('[SAVE API] Supabase error:', result.error);
       throw result.error;
     }
 
+    console.log('[SAVE API] Success:', result.data.id);
     return res.status(200).json({
       success: true,
       planId: result.data.id,

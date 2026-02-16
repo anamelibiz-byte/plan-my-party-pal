@@ -93,7 +93,9 @@ export async function saveNamedParty(email, partyData, partyName, status = 'arch
       })
     });
 
+    console.log('🔍 Save API Response Status:', response.status);
     const result = await response.json();
+    console.log('🔍 Save API Result:', result);
 
     if (result.error === 'FREE_TIER_LIMIT') {
       return {
@@ -121,7 +123,9 @@ export async function listUserParties(email) {
 
   try {
     const response = await fetch(`/api/party/list?email=${encodeURIComponent(email)}`);
+    console.log('🔍 List API Response Status:', response.status);
     const result = await response.json();
+    console.log('🔍 List API Result:', result);
     return result;
   } catch (error) {
     console.error('Failed to list parties:', error);

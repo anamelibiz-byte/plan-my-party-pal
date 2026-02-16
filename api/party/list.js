@@ -21,6 +21,8 @@ export default async function handler(req, res) {
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   try {
+    console.log('[LIST API] Request for email:', email);
+
     const { data, error } = await supabase
       .from('party_plans')
       .select('id, party_name, party_data, status, created_at, updated_at')
@@ -28,7 +30,12 @@ export default async function handler(req, res) {
       .eq('is_deleted', false)
       .order('updated_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      console.error('[LIST API] Supabase error:', error);
+      throw error;
+    }
+
+    console.log('[LIST API] Found parties:', data.length);
 
     // Extract metadata for efficient rendering
     const parties = data.map(party => ({
