@@ -13,6 +13,8 @@ import VerifyEmailPage from './pages/VerifyEmailPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import AnalyticsDashboard from './pages/AnalyticsDashboard';
 import PartiesPage from './pages/PartiesPage';
+import CollaboratePage from './pages/CollaboratePage';
+import VendorMarketplace from './components/VendorMarketplace';
 import InstallPrompt from './components/InstallPrompt';
 import UpgradeModal from './components/UpgradeModal';
 import UpgradeSuccessBanner from './components/UpgradeSuccessBanner';
@@ -35,6 +37,8 @@ function App() {
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/analytics" element={<AnalyticsDashboard />} />
             <Route path="/parties" element={<PartiesPage />} />
+            <Route path="/collaborate/:partyId" element={<CollaboratePage />} />
+            <Route path="/vendors" element={<VendorMarketplace />} />
           </Routes>
             <UpgradeModal />
             <UpgradeSuccessBanner />

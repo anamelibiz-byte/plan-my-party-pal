@@ -61,7 +61,12 @@ export default function UpgradeModal() {
       const res = await fetch('/api/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId, tier: tierId }),
+        body: JSON.stringify({
+          priceId,
+          tier: tierId,
+          billingInterval: billingCycle,
+          priceAmount: billingCycle === 'yearly' ? tier.priceYearly : tier.price,
+        }),
       });
 
       const data = await res.json();

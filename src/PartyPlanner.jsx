@@ -30,6 +30,8 @@ import GuestList from './components/GuestList';
 import Header from './components/Header';
 import OnboardingTutorial from './components/OnboardingTutorial';
 import SavePartyModal from './components/SavePartyModal';
+import CollaboratorInvite from './components/CollaboratorInvite';
+import CollaboratorsList from './components/CollaboratorsList';
 import { useTier } from './context/TierContext';
 import { useToast } from './context/ToastContext';
 import { downloadPartyPDF, generateSamplePDF } from './utils/generatePDF';
@@ -86,6 +88,9 @@ export default function PartyPlanner() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [showCollabModal, setShowCollabModal] = useState(false);
+  const [showCollabList, setShowCollabList] = useState(false);
+  const [collaborators, setCollaborators] = useState([]);
   const [step, setStep] = useState(1);
   const [partyData, setPartyData] = useState({
     childName: '',
@@ -227,6 +232,26 @@ export default function PartyPlanner() {
     }
   }, [partyData, step, checklist, hireCharacter, userEmail, guestMode]);
 
+  // ─── Load Collaborators ─────────────────────────────────────────────────────
+  useEffect(() => {
+    const loadCollaborators = async () => {
+      const planId = localStorage.getItem('pp_plan_id');
+      if (planId && userEmail && !guestMode) {
+        try {
+          const response = await fetch(`/api/collaboration/list?partyId=${planId}`);
+          const result = await response.json();
+          if (result.success) {
+            setCollaborators(result.collaborators || []);
+          }
+        } catch (error) {
+          console.error('Failed to load collaborators:', error);
+        }
+      }
+    };
+
+    loadCollaborators();
+  }, [userEmail, guestMode]);
+
   // ─── Live Venue Search ──────────────────────────────────────────────────────
   const [liveVenues, setLiveVenues] = useState([]);
   const [venueLoading, setVenueLoading] = useState(false);
@@ -343,6 +368,72 @@ export default function PartyPlanner() {
 
     setIsSaving(false);
     return result;
+  };
+
+  // ─── Collaborator Handlers ──────────────────────────────────────────────────
+  const handleSendInvite = async (email, role) => {
+    const planId = localStorage.getItem('pp_plan_id');
+
+    if (!planId) {
+      showToast('Please save your party first before inviting collaborators', 'error');
+      return { success: false, error: 'No party ID' };
+    }
+
+    try {
+      const response = await fetch('/api/collaboration/invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          party_id: planId,
+          invitee_email: email,
+          inviter_email: userEmail,
+          role
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        showToast(`Invitation sent to ${email}!`, 'success');
+        // Refresh collaborators list
+        const listResponse = await fetch(`/api/collaboration/list?partyId=${planId}`);
+        const listResult = await listResponse.json();
+        if (listResult.success) {
+          setCollaborators(listResult.collaborators || []);
+        }
+        return { success: true };
+      } else {
+        showToast(result.error || 'Failed to send invitation', 'error');
+        return { success: false, error: result.error };
+      }
+    } catch (error) {
+      showToast('Failed to send invitation', 'error');
+      return { success: false, error: error.message };
+    }
+  };
+
+  const handleRemoveCollaborator = async (collaboratorId) => {
+    try {
+      const response = await fetch('/api/collaboration/remove', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          collaboratorId,
+          email: userEmail
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        showToast('Collaborator removed', 'success');
+        setCollaborators(prev => prev.filter(c => c.id !== collaboratorId));
+      } else {
+        showToast(result.error || 'Failed to remove collaborator', 'error');
+      }
+    } catch (error) {
+      showToast('Failed to remove collaborator', 'error');
+    }
   };
 
   // ─── Filtered Data ──────────────────────────────────────────────────────────
@@ -936,7 +1027,7 @@ export default function PartyPlanner() {
         {/* Save/Load Buttons - only show for logged-in users */}
         {userEmail && !guestMode && (
           <div className="max-w-6xl mx-auto px-4 mb-6">
-            <div className="flex items-center gap-3 justify-center">
+            <div className="flex items-center gap-3 justify-center flex-wrap">
               <button
                 onClick={() => navigate('/parties')}
                 className="px-4 py-2 bg-white border-2 border-pink-300 text-pink-600 rounded-xl font-semibold hover:bg-pink-50 transition-all flex items-center gap-2 shadow-md"
@@ -955,6 +1046,22 @@ export default function PartyPlanner() {
                 <Save size={18} />
                 <span>Save Party</span>
               </button>
+
+              {localStorage.getItem('pp_plan_id') && (
+                <button
+                  onClick={() => setShowCollabModal(true)}
+                  className="px-4 py-2 bg-white border-2 border-purple-300 text-purple-600 rounded-xl font-semibold hover:bg-purple-50 transition-all flex items-center gap-2 shadow-md"
+                  title="Manage collaborators"
+                >
+                  <Users size={18} />
+                  <span>Collaborators</span>
+                  {collaborators.length > 0 && (
+                    <span className="ml-1 px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs font-bold">
+                      {collaborators.length}
+                    </span>
+                  )}
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -1776,6 +1883,50 @@ export default function PartyPlanner() {
       partyData={partyData}
       isSaving={isSaving}
     />
+
+    {/* Collaborator Invite Modal */}
+    <CollaboratorInvite
+      isOpen={showCollabModal && !showCollabList}
+      onClose={() => setShowCollabModal(false)}
+      onSend={handleSendInvite}
+      partyId={localStorage.getItem('pp_plan_id')}
+      isSending={false}
+    />
+
+    {/* Collaborators List Modal */}
+    {showCollabModal && (
+      <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => setShowCollabModal(false)}>
+        <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
+          <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-purple-100 rounded-xl">
+                <Users size={24} className="text-purple-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-800">Party Collaborators</h2>
+            </div>
+            <button onClick={() => setShowCollabModal(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+              <X size={24} className="text-gray-500" />
+            </button>
+          </div>
+
+          <div className="p-6">
+            <CollaboratorsList
+              collaborators={collaborators}
+              onRemove={handleRemoveCollaborator}
+              currentUserEmail={userEmail}
+            />
+
+            <button
+              onClick={() => setShowCollabList(false)}
+              className="w-full mt-6 px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-xl font-bold hover:shadow-xl transition-all flex items-center justify-center gap-2"
+            >
+              <UserPlus size={20} />
+              Invite Someone
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
     </>
   );
 }

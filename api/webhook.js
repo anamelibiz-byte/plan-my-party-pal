@@ -65,9 +65,32 @@ export default async function handler(req, res) {
           }
         }
 
-        // Send welcome email
+        // Send confirmation email with subscription details
         if (process.env.RESEND_API_KEY && customerEmail) {
           try {
+            // Extract billing details from metadata
+            const billingInterval = session.metadata.billingInterval || 'monthly';
+            const priceAmount = session.metadata.priceAmount || '4.99';
+
+            // Calculate display values
+            const planName = billingInterval === 'yearly'
+              ? `Pro - $${priceAmount}/year`
+              : `Pro - $${priceAmount}/month`;
+
+            const nextBillingDate = new Date();
+            nextBillingDate.setDate(nextBillingDate.getDate() + (billingInterval === 'yearly' ? 365 : 30));
+            const formattedNextBilling = nextBillingDate.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            });
+
+            const formattedToday = new Date().toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            });
+
             await fetch('https://api.resend.com/emails', {
               method: 'POST',
               headers: {
@@ -77,24 +100,123 @@ export default async function handler(req, res) {
               body: JSON.stringify({
                 from: 'Plan My Party Pal <hello@go.planmypartypal.com>',
                 to: [customerEmail],
-                subject: '🎉 Welcome to Plan My Party Pal Pro!',
+                subject: '✅ Your Pro Subscription is Confirmed!',
                 html: `
-                  <h1>Welcome to Pro! 🎉</h1>
-                  <p>Thank you for upgrading to Plan My Party Pal Pro!</p>
-                  <p>You now have access to:</p>
-                  <ul>
-                    <li>✅ Unlimited parties</li>
-                    <li>✅ Unlimited guests + RSVP tracking</li>
-                    <li>✅ AI-powered suggestions</li>
-                    <li>✅ Budget analytics</li>
-                    <li>✅ And much more!</li>
-                  </ul>
-                  <p><a href="https://planmypartypal.com/app">Start planning your next party →</a></p>
+                  <!DOCTYPE html>
+                  <html>
+                  <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  </head>
+                  <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+
+                    <!-- Header -->
+                    <div style="text-align: center; padding: 30px 0; background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%); border-radius: 12px; margin-bottom: 30px;">
+                      <h1 style="color: white; margin: 0; font-size: 28px;">🎉 Thank You for Upgrading!</h1>
+                    </div>
+
+                    <!-- Greeting -->
+                    <p style="font-size: 16px; color: #333;">Hi there,</p>
+
+                    <p style="font-size: 16px; color: #333;">
+                      Your Plan My Party Pal <strong>Pro subscription</strong> is now active! We're thrilled to have you as a Pro member.
+                    </p>
+
+                    <!-- Subscription Details Box -->
+                    <div style="background-color: #fdf2f8; border-left: 4px solid #ec4899; padding: 20px; margin: 30px 0; border-radius: 8px;">
+                      <h2 style="margin-top: 0; color: #ec4899; font-size: 20px;">📋 Subscription Details</h2>
+
+                      <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                          <td style="padding: 8px 0; color: #666; font-weight: 600;">Plan:</td>
+                          <td style="padding: 8px 0; text-align: right; color: #333; font-weight: bold;">${planName}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; color: #666; font-weight: 600;">Subscription Date:</td>
+                          <td style="padding: 8px 0; text-align: right; color: #333;">${formattedToday}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; color: #666; font-weight: 600;">Next Billing Date:</td>
+                          <td style="padding: 8px 0; text-align: right; color: #333;">${formattedNextBilling}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; color: #666; font-weight: 600;">Amount:</td>
+                          <td style="padding: 8px 0; text-align: right; color: #333; font-weight: bold;">$${priceAmount}</td>
+                        </tr>
+                      </table>
+
+                      <p style="margin: 15px 0 0 0; font-size: 13px; color: #666;">
+                        <em>Your subscription will automatically renew on ${formattedNextBilling}.</em>
+                      </p>
+                    </div>
+
+                    <!-- Pro Features -->
+                    <h2 style="color: #333; font-size: 20px; margin-top: 30px;">✨ What You Get with Pro</h2>
+                    <ul style="list-style: none; padding: 0; margin: 20px 0;">
+                      <li style="padding: 10px 0; border-bottom: 1px solid #f0f0f0;">
+                        <span style="color: #10b981; font-weight: bold; margin-right: 8px;">✓</span>
+                        <strong>Unlimited Parties</strong> - Create as many events as you want
+                      </li>
+                      <li style="padding: 10px 0; border-bottom: 1px solid #f0f0f0;">
+                        <span style="color: #10b981; font-weight: bold; margin-right: 8px;">✓</span>
+                        <strong>Unlimited Guests</strong> - No limit on guest count + RSVP tracking
+                      </li>
+                      <li style="padding: 10px 0; border-bottom: 1px solid #f0f0f0;">
+                        <span style="color: #10b981; font-weight: bold; margin-right: 8px;">✓</span>
+                        <strong>Timeline Builder</strong> - Day-of timeline for smooth execution
+                      </li>
+                      <li style="padding: 10px 0; border-bottom: 1px solid #f0f0f0;">
+                        <span style="color: #10b981; font-weight: bold; margin-right: 8px;">✓</span>
+                        <strong>PDF Export</strong> - Download checklists and timelines
+                      </li>
+                      <li style="padding: 10px 0; border-bottom: 1px solid #f0f0f0;">
+                        <span style="color: #10b981; font-weight: bold; margin-right: 8px;">✓</span>
+                        <strong>Email & SMS</strong> - Send checklists and reminders to guests
+                      </li>
+                      <li style="padding: 10px 0;">
+                        <span style="color: #10b981; font-weight: bold; margin-right: 8px;">✓</span>
+                        <strong>Budget Analytics</strong> - Track spending with detailed insights
+                      </li>
+                    </ul>
+
+                    <!-- CTA Button -->
+                    <div style="text-align: center; margin: 40px 0;">
+                      <a href="https://planmypartypal.com/app" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%); color: white; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                        Start Planning Your Next Party →
+                      </a>
+                    </div>
+
+                    <!-- Account Management -->
+                    <div style="background-color: #f9fafb; padding: 20px; border-radius: 8px; margin: 30px 0;">
+                      <h3 style="margin-top: 0; color: #333; font-size: 18px;">Manage Your Subscription</h3>
+                      <p style="margin: 10px 0; color: #666; font-size: 14px;">
+                        You can manage your billing, update payment methods, view invoices, or cancel your subscription anytime from your account page.
+                      </p>
+                      <a href="https://planmypartypal.com/account" style="color: #ec4899; text-decoration: none; font-weight: 600;">
+                        Go to Account Settings →
+                      </a>
+                    </div>
+
+                    <!-- Footer -->
+                    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center; color: #9ca3af; font-size: 13px;">
+                      <p>Thank you for choosing Plan My Party Pal!</p>
+                      <p style="margin: 10px 0;">
+                        Questions? Reply to this email - we're here to help!
+                      </p>
+                      <p style="margin-top: 20px;">
+                        Plan My Party Pal<br>
+                        <a href="https://planmypartypal.com" style="color: #ec4899; text-decoration: none;">planmypartypal.com</a>
+                      </p>
+                    </div>
+
+                  </body>
+                  </html>
                 `,
               }),
             });
+            console.log('✅ Confirmation email sent to:', customerEmail);
           } catch (emailError) {
-            console.error('Failed to send welcome email:', emailError);
+            console.error('Failed to send confirmation email:', emailError);
           }
         }
 

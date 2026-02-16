@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, X, LogIn, Loader } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 export default function LoginModal({ isOpen, onClose }) {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [sendingReset, setSendingReset] = useState(false);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -42,6 +45,34 @@ export default function LoginModal({ isOpen, onClose }) {
       console.error('Login error:', err);
       setError('Unable to log in. Please try again.');
       setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email || !email.includes('@')) {
+      showToast('Please enter your email address first', 'warning');
+      return;
+    }
+
+    setSendingReset(true);
+
+    try {
+      const res = await fetch('/api/auth/request-reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      if (res.ok) {
+        showToast('Check your email for a login link!', 'success');
+        onClose();
+      } else {
+        showToast('Failed to send reset email', 'error');
+      }
+    } catch (error) {
+      showToast('Something went wrong. Please try again.', 'error');
+    } finally {
+      setSendingReset(false);
     }
   };
 
@@ -109,8 +140,19 @@ export default function LoginModal({ isOpen, onClose }) {
           </button>
         </form>
 
+        {/* Forgot Password Link */}
+        <div className="mt-4 text-center">
+          <button
+            onClick={handleForgotPassword}
+            disabled={sendingReset}
+            className="text-sm text-gray-600 hover:text-pink-600 transition-colors disabled:opacity-50"
+          >
+            {sendingReset ? 'Sending...' : 'Forgot password? Get a login link'}
+          </button>
+        </div>
+
         {/* Footer */}
-        <div className="mt-6 text-center">
+        <div className="mt-6 pt-6 border-t border-gray-200 text-center">
           <p className="text-sm text-gray-500">
             Don't have an account?{' '}
             <button

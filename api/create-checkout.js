@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ url: null, message: 'Stripe not configured — upgraded locally' });
   }
 
-  const { priceId, tier } = req.body;
+  const { priceId, tier, billingInterval, priceAmount } = req.body;
 
   if (!priceId || !tier) {
     return res.status(400).json({ error: 'Missing priceId or tier. Please refresh and try again.' });
@@ -38,6 +38,8 @@ export default async function handler(req, res) {
       metadata: {
         tier,
         app: 'plan-my-party-pal',
+        billingInterval: billingInterval || 'monthly',
+        priceAmount: priceAmount || '4.99',
       },
       allow_promotion_codes: true,
       billing_address_collection: 'auto',

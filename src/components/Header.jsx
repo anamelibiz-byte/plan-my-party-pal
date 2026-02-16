@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { PartyPopper, Menu, X, LogOut, User, Home } from 'lucide-react';
+import { PartyPopper, Menu, X, LogOut, User, Home, Store } from 'lucide-react';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -63,6 +63,14 @@ export default function Header() {
           >
             {mobile && <Home className="inline mr-2" size={18} />}
             My Parties
+          </Link>
+          <Link
+            to="/vendors"
+            className={linkClass}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            {mobile && <Store className="inline mr-2" size={18} />}
+            Find Vendors
           </Link>
           <Link
             to="/account"

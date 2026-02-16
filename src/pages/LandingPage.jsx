@@ -402,6 +402,34 @@ export default function LandingPage() {
 
         {/* Login Modal */}
         <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+
+        {/* Footer */}
+        <footer className="bg-white border-t border-gray-200 mt-20">
+          <div className="container mx-auto px-4 py-6 md:py-8">
+            <div className="flex flex-col items-center justify-center gap-3 md:flex-row md:justify-between md:gap-4">
+              {/* Links - Show first on mobile */}
+              <div className="flex items-center gap-4 md:gap-6 order-1 md:order-2">
+                <a
+                  href="/privacy"
+                  className="text-sm text-gray-600 hover:text-pink-600 transition-colors"
+                >
+                  Privacy Policy
+                </a>
+                <a
+                  href="/terms"
+                  className="text-sm text-gray-600 hover:text-pink-600 transition-colors"
+                >
+                  Terms of Use
+                </a>
+              </div>
+
+              {/* Copyright - Show second on mobile */}
+              <p className="text-gray-600 text-xs md:text-sm text-center order-2 md:order-1">
+                © 2026 Plan My Party Pal. All rights reserved.
+              </p>
+            </div>
+          </div>
+        </footer>
       </div>
     </>
   );

@@ -10,6 +10,7 @@ import {
   CheckCircle,
   AlertCircle,
   Loader,
+  Loader2,
 } from 'lucide-react';
 import { useTier } from '../context/TierContext';
 import Sprinkles from '../components/Sprinkles';
@@ -21,11 +22,63 @@ export default function AccountPage() {
   const { requireFeature } = useTier();
 
   const [userEmail, setUserEmail] = useState(null);
-  const [subscriptionData, setSubscriptionData] = useState(null);
+  const [subscriptionData, setSubscriptionData] = useState({
+    tier: 'free',
+    status: null,
+    renewalDate: null,
+    verified: false,
+    pending: false,          // true | false | 'timeout'
+    verifiedBySession: false, // session verification succeeded
+  });
   const [loading, setLoading] = useState(true);
   const [loadingPortal, setLoadingPortal] = useState(false);
   const [error, setError] = useState(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
+  // Poll for database sync after upgrade
+  const pollForDatabaseSync = async (email, attempts = 0) => {
+    const MAX_ATTEMPTS = 10; // 20 seconds total (2 seconds × 10)
+
+    if (attempts >= MAX_ATTEMPTS) {
+      // Timeout - webhook took too long
+      setSubscriptionData(prev => ({
+        ...prev,
+        pending: 'timeout',
+      }));
+      return;
+    }
+
+    // Wait 2 seconds before next poll
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    try {
+      const res = await fetch(`/api/users/get-tier?email=${encodeURIComponent(email)}`);
+      const data = await res.json();
+
+      if (data.tier === 'pro' && data.verified) {
+        // Success! Database confirmed Pro
+        setSubscriptionData({
+          tier: data.tier,
+          status: data.subscription_status,
+          renewalDate: data.subscription_end,
+          verified: true,
+          pending: false,
+          verifiedBySession: false,
+        });
+        return;
+      }
+
+      // Still not updated - poll again
+      pollForDatabaseSync(email, attempts + 1);
+    } catch (err) {
+      console.error('Polling error:', err);
+      // Stop polling on error
+      setSubscriptionData(prev => ({
+        ...prev,
+        pending: false,
+      }));
+    }
+  };
 
   // Check authentication on mount
   useEffect(() => {
@@ -41,23 +94,97 @@ export default function AccountPage() {
     setUserEmail(email);
   }, [navigate]);
 
-  // Fetch subscription data
+  // Fetch subscription data with upgrade detection
   useEffect(() => {
     const fetchSubscription = async () => {
       const email = localStorage.getItem('pp_user_email');
       if (!email) return;
 
+      // 1. Detect upgrade context
+      const urlParams = new URLSearchParams(window.location.search);
+      const sessionId = urlParams.get('session_id');
+      const upgradedParam = urlParams.get('upgraded');
+      const localStorageTier = localStorage.getItem('pp_user_tier');
+
       setLoading(true);
+
       try {
+        // 2. If session_id exists, verify with Stripe first
+        let verifiedTier = null;
+        if (sessionId) {
+          const verifyRes = await fetch(`/api/users/verify-upgrade?session_id=${sessionId}`);
+          const verifyData = await verifyRes.json();
+
+          if (verifyData.verified) {
+            verifiedTier = verifyData.tier;
+
+            // Set optimistic state immediately
+            setSubscriptionData({
+              tier: verifiedTier,
+              status: 'active',
+              renewalDate: null,
+              verified: false,
+              pending: true,  // Waiting for webhook to update database
+              verifiedBySession: true,
+            });
+
+            // Clean up URL params
+            window.history.replaceState({}, '', '/account');
+          }
+        }
+
+        // 3. Fetch from database
         const res = await fetch(`/api/users/get-tier?email=${encodeURIComponent(email)}`);
         const data = await res.json();
 
-        setSubscriptionData({
-          tier: data.tier || 'free',
-          status: data.subscription_status,
-          renewalDate: data.subscription_end,
-          verified: data.verified,
+        console.log('🔍 Account Page Debug:', {
+          localStorageTier,
+          apiTier: data.tier,
+          apiVerified: data.verified,
+          apiStatus: data.subscription_status,
+          sessionId,
+          verifiedTier,
         });
+
+        // 4. Detect mismatch (localStorage='pro' but database='free')
+        const mismatch = localStorageTier === 'pro' && data.tier === 'free';
+
+        console.log('🔍 Mismatch Detection:', {
+          mismatch,
+          localStorageTier,
+          dataTier: data.tier,
+          willShowPro: mismatch && !verifiedTier,
+        });
+
+        // TEMPORARY FIX: Force Pro if database says free but we know user upgraded
+        // This handles the case where webhook hasn't updated database yet
+        if ((mismatch && !verifiedTier) || (data.tier === 'free' && !data.verified)) {
+          // Show Pro status optimistically with pending state
+          setSubscriptionData({
+            tier: 'pro',
+            status: 'active',
+            renewalDate: null,
+            verified: false,
+            pending: true,
+            verifiedBySession: false,
+          });
+
+          // Start polling for database confirmation
+          pollForDatabaseSync(email);
+        } else if (verifiedTier && data.tier === 'free') {
+          // Session verified Pro but database not updated yet - poll
+          pollForDatabaseSync(email);
+        } else {
+          // Normal case - database and localStorage agree
+          setSubscriptionData({
+            tier: data.tier || 'free',
+            status: data.subscription_status,
+            renewalDate: data.subscription_end,
+            verified: data.verified,
+            pending: false,
+            verifiedBySession: false,
+          });
+        }
       } catch (err) {
         console.error('Failed to fetch subscription:', err);
         // Fall back to localStorage
@@ -66,6 +193,7 @@ export default function AccountPage() {
           status: null,
           renewalDate: null,
           verified: false,
+          pending: false,
         });
         setError('Could not load latest subscription data. Showing cached information.');
       } finally {
@@ -222,11 +350,28 @@ export default function AccountPage() {
             ) : subscriptionData?.tier === 'pro' ? (
               // Pro User View
               <>
-                <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center gap-3 flex-wrap mb-6">
                   <div className="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-lg">
                     <Crown size={20} />
                     <span className="font-bold">Pro Member</span>
                   </div>
+
+                  {/* Show "Confirming..." indicator while pending */}
+                  {subscriptionData.pending === true && (
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-full text-xs">
+                      <Loader2 className="animate-spin text-amber-600" size={14} />
+                      <span className="text-amber-800">Confirming upgrade...</span>
+                    </div>
+                  )}
+
+                  {/* Show timeout warning if webhook took too long */}
+                  {subscriptionData.pending === 'timeout' && (
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-full text-xs">
+                      <AlertCircle className="text-blue-600" size={14} />
+                      <span className="text-blue-800">Confirmation pending</span>
+                    </div>
+                  )}
+
                   {subscriptionData.status && getStatusBadge(subscriptionData.status)}
                 </div>
 
