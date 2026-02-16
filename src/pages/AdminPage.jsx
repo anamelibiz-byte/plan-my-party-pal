@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Send, Mail, Users, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { Send, Mail, Users, CheckCircle, AlertCircle, Loader2, Database } from 'lucide-react';
+import SubscriberDashboard from '../components/SubscriberDashboard';
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -7,6 +8,7 @@ export default function AdminPage() {
   });
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
+  const [activeTab, setActiveTab] = useState('email'); // 'email' or 'subscribers'
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
@@ -196,7 +198,7 @@ Feel free to reply to this email if you need help, or continue planning at your 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 p-6">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
           <div className="flex items-center gap-3 mb-4">
@@ -205,12 +207,46 @@ Feel free to reply to this email if you need help, or continue planning at your 
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
-              <p className="text-gray-600">Send promotional emails to all subscribers</p>
+              <p className="text-gray-600">Manage subscribers and send promotional emails</p>
             </div>
+          </div>
+
+          {/* Tab Navigation */}
+          <div className="flex gap-2 mt-6">
+            <button
+              onClick={() => setActiveTab('subscribers')}
+              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${
+                activeTab === 'subscribers'
+                  ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              <Database size={20} />
+              Subscriber Management
+            </button>
+            <button
+              onClick={() => setActiveTab('email')}
+              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${
+                activeTab === 'email'
+                  ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              <Send size={20} />
+              Email Campaigns
+            </button>
           </div>
         </div>
 
-        {/* Email Templates */}
+        {/* Subscriber Management Tab */}
+        {activeTab === 'subscribers' && (
+          <SubscriberDashboard />
+        )}
+
+        {/* Email Campaign Tab */}
+        {activeTab === 'email' && (
+          <>
+            {/* Email Templates */}
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
           <h2 className="text-xl font-bold text-gray-800 mb-4">📧 Quick Templates</h2>
           <p className="text-sm text-gray-600 mb-4">Click a template to load it into the editor below</p>
@@ -348,6 +384,8 @@ Feel free to reply to this email if you need help, or continue planning at your 
             </div>
           </div>
         </div>
+          </>
+        )}
       </div>
     </div>
   );

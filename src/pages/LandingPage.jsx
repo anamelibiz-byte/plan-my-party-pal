@@ -4,6 +4,8 @@ import { PartyPopper, CheckCircle2, Clock, Sparkles, Heart, Calendar, Users, Dol
 import EmailCapture from '../components/EmailCapture';
 import LoginModal from '../components/LoginModal';
 import Header from '../components/Header';
+import Testimonials from '../components/Testimonials';
+import BusinessSocialLinks from '../components/BusinessSocialLinks';
 import { TIERS } from '../config/tiers';
 
 export default function LandingPage() {
@@ -331,7 +333,12 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
+      </div>
 
+      {/* Testimonials Section */}
+      <Testimonials />
+
+      <div className="max-w-6xl mx-auto px-4">
         {/* Final CTA */}
         <div className="bg-gradient-to-r from-pink-500 to-rose-500 rounded-3xl shadow-2xl p-12 text-center text-white">
           <h2 className="text-4xl font-black mb-4">Ready to Plan Your Party?</h2>
@@ -406,6 +413,11 @@ export default function LandingPage() {
         {/* Footer */}
         <footer className="bg-white border-t border-gray-200 mt-20">
           <div className="container mx-auto px-4 py-6 md:py-8">
+            {/* Social Media Icons */}
+            <div className="mb-4">
+              <BusinessSocialLinks />
+            </div>
+
             <div className="flex flex-col items-center justify-center gap-3 md:flex-row md:justify-between md:gap-4">
               {/* Links - Show first on mobile */}
               <div className="flex items-center gap-4 md:gap-6 order-1 md:order-2">

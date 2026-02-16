@@ -8,6 +8,7 @@ const DIETARY_OPTIONS = [
 export default function RSVPForm({ partyId, partyData, onSubmit }) {
   const [form, setForm] = useState({
     guestName: '',
+    email: '',
     attending: null,
     adultCount: 1,
     childCount: 0,
@@ -80,6 +81,13 @@ export default function RSVPForm({ partyId, partyData, onSubmit }) {
           <label className="block text-sm font-bold text-gray-700 mb-1">Your Name *</label>
           <input type="text" value={form.guestName} onChange={e => setForm(p => ({ ...p, guestName: e.target.value }))}
             className="w-full px-4 py-3 border-2 border-pink-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-100 outline-none" placeholder="Jane Smith" required />
+        </div>
+
+        <div>
+          <label className="block text-sm font-bold text-gray-700 mb-1">Email Address (optional)</label>
+          <input type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
+            className="w-full px-4 py-3 border-2 border-pink-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-100 outline-none" placeholder="jane@example.com" />
+          <p className="text-xs text-gray-500 mt-1">We'll use this to send you party updates and reminders</p>
         </div>
 
         <div>

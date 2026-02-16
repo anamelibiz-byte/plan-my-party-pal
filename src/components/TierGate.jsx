@@ -48,31 +48,31 @@ export default function TierGate({ feature, children, fallback, inline }) {
   return (
     <div className="relative">
       {/* Blurred preview */}
-      <div className="pointer-events-none">
+      <div className="pointer-events-none blur-sm opacity-60">
         {children}
       </div>
 
       {/* Centered unlock button with feature details */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="bg-white p-6 rounded-2xl shadow-2xl border-4 border-purple-300 max-w-md text-center">
-          <Lock className="text-purple-500 mx-auto mb-3" size={48} />
-          <h3 className="text-2xl font-bold text-gray-800 mb-2">
+        <div className="bg-white p-5 rounded-2xl shadow-2xl border-4 border-purple-300 max-w-sm text-center">
+          <Lock className="text-purple-500 mx-auto mb-2" size={40} />
+          <h3 className="text-xl font-bold text-gray-800 mb-2">
             Unlock with {tierName}
           </h3>
 
           {/* Feature-specific benefits */}
-          <p className="text-gray-600 mb-4">
+          <p className="text-sm text-gray-600 mb-3">
             {featureBenefit}
           </p>
 
           {/* Pricing */}
-          <p className="text-sm text-gray-500 mb-4">
-            Only <span className="font-bold text-purple-600">$4.99/month</span> or <span className="font-bold text-purple-600">$29.99/year</span>
+          <p className="text-xs text-gray-500 mb-3">
+            Only <span className="font-bold text-purple-600">$4.99/mo</span> or <span className="font-bold text-purple-600">$29.99/yr</span>
           </p>
 
           <button
             onClick={() => requireFeature(feature)}
-            className="bg-gradient-to-r from-purple-500 to-violet-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:shadow-xl hover:scale-[1.05] transition-all"
+            className="bg-gradient-to-r from-purple-500 to-violet-500 text-white px-6 py-3 rounded-xl font-bold text-base hover:shadow-xl hover:scale-[1.05] transition-all"
           >
             Upgrade to Pro →
           </button>

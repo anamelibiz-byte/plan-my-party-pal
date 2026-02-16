@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RSVP Debug Tool</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #f9fafb;
+      font-size: 14px;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #ec4899;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+    button {
+      background: linear-gradient(135deg, #ec4899, #f43f5e);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 5px;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .section {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f3f4f6;
+      border-radius: 8px;
+    }
+    .label {
+      font-weight: bold;
+      color: #374151;
+      margin-bottom: 5px;
+    }
+    .value {
+      font-family: monospace;
+      background: white;
+      padding: 8px;
+      border-radius: 4px;
+      word-break: break-all;
+      font-size: 12px;
+    }
+    .success {
+      color: #059669;
+      font-weight: bold;
+    }
+    .error {
+      color: #dc2626;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 RSVP Debug Tool</h1>
+    <p>This tool checks what IDs are stored on your device and helps diagnose RSVP issues.</p>
+
+    <button onclick="checkStorage()">Check Storage</button>
+    <button onclick="fixIds()">Fix IDs</button>
+    <button onclick="clearStorage()">Clear All Storage</button>
+
+    <div id="output"></div>
+  </div>
+
+  <script>
+    function checkStorage() {
+      const output = document.getElementById('output');
+
+      const planId = localStorage.getItem('pp_plan_id');
+      const rsvpId = localStorage.getItem('pp_rsvp_id');
+      const userEmail = localStorage.getItem('pp_user_email');
+
+      let html = '<div class="section">';
+      html += '<div class="label">📧 User Email:</div>';
+      html += `<div class="value">${userEmail || '<span class="error">NOT SET</span>'}</div>`;
+
+      html += '<div class="label" style="margin-top:15px;">🆔 Plan ID (pp_plan_id):</div>';
+      html += `<div class="value">${planId || '<span class="error">NOT SET</span>'}</div>`;
+
+      html += '<div class="label" style="margin-top:15px;">🎫 RSVP ID (pp_rsvp_id):</div>';
+      html += `<div class="value">${rsvpId || '<span class="error">NOT SET</span>'}</div>`;
+
+      html += '<div class="label" style="margin-top:15px;">✅ Status:</div>';
+
+      if (!planId && !rsvpId) {
+        html += '<div class="value"><span class="error">❌ NO IDs FOUND - You need to log in and load your party first</span></div>';
+      } else if (planId && !rsvpId) {
+        html += '<div class="value"><span class="error">⚠️ RSVP ID MISSING - Click "Fix IDs" button</span></div>';
+      } else if (!planId && rsvpId) {
+        html += '<div class="value"><span class="error">⚠️ PLAN ID MISSING - This is unusual</span></div>';
+      } else {
+        try {
+          const parsedRsvpId = JSON.parse(rsvpId);
+          if (planId === parsedRsvpId) {
+            html += '<div class="value"><span class="success">✅ IDs ARE SYNCED - RSVPs should work!</span></div>';
+          } else {
+            html += '<div class="value"><span class="error">❌ IDs ARE MISMATCHED - Click "Fix IDs" button</span></div>';
+            html += `<div style="margin-top:10px; font-size:12px;">Plan ID: ${planId}<br>RSVP ID: ${parsedRsvpId}</div>`;
+          }
+        } catch (e) {
+          html += '<div class="value"><span class="error">❌ RSVP ID FORMAT ERROR - Click "Fix IDs" button</span></div>';
+        }
+      }
+
+      html += '</div>';
+      output.innerHTML = html;
+    }
+
+    function fixIds() {
+      const planId = localStorage.getItem('pp_plan_id');
+
+      if (!planId) {
+        alert('❌ No Plan ID found. Please log in to your party planner first, then come back here.');
+        return;
+      }
+
+      // Sync RSVP ID with Plan ID
+      localStorage.setItem('pp_rsvp_id', JSON.stringify(planId));
+
+      alert('✅ IDs have been synchronized!\n\nPlan ID: ' + planId + '\n\nNow go back to your party planner and refresh the page.');
+      checkStorage();
+    }
+
+    function clearStorage() {
+      if (confirm('⚠️ This will clear all your party data from this device. Are you sure?')) {
+        localStorage.removeItem('pp_plan_id');
+        localStorage.removeItem('pp_rsvp_id');
+        localStorage.removeItem('pp_party_data');
+        localStorage.removeItem('pp_user_email');
+        alert('✅ Storage cleared. Refresh your party planner to start fresh.');
+        checkStorage();
+      }
+    }
+
+    // Auto-run on load
+    window.onload = checkStorage;
+  </script>
+</body>
+</html>

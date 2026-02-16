@@ -30,7 +30,7 @@ export default async function handler(req, res) {
 
   // POST — save RSVP
   if (req.method === 'POST') {
-    const { partyId, guestName, attending, adultCount, childCount, dietary, dietaryOther, message } = req.body;
+    const { partyId, guestName, email, attending, adultCount, childCount, dietary, dietaryOther, message } = req.body;
 
     if (!partyId || !guestName) {
       return res.status(400).json({ error: 'partyId and guestName required' });
@@ -52,7 +52,9 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           party_id: partyId,
           guest_name: guestName,
+          email: email || null,
           attending,
+          status: 'confirmed',
           adult_count: adultCount || 0,
           child_count: childCount || 0,
           dietary: dietary || [],

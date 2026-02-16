@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Mail, CheckCircle2, Sparkles } from 'lucide-react';
+import AuthModal from './AuthModal';
 
 export default function EmailGate({ partyData, onContinue, onGuestContinue }) {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Track page view on mount
   useEffect(() => {
@@ -26,27 +28,30 @@ export default function EmailGate({ partyData, onContinue, onGuestContinue }) {
     e.preventDefault();
     setError('');
 
-    if (!email || !validateEmail(email)) {
-      setError('Please enter a valid email address');
-      // Track validation error
-      if (window.gtag) {
-        window.gtag('event', 'email_submitted_error', {
-          event_category: 'email_gate',
-          event_label: 'invalid_email',
-        });
-      }
-      return;
-    }
+    // Instead of just collecting email, show auth modal for signup/login
+    setShowAuthModal(true);
 
+    // Track auth modal opened
+    if (window.gtag) {
+      window.gtag('event', 'auth_modal_opened', {
+        event_category: 'email_gate',
+        child_age: partyData.age,
+        guest_count: partyData.guestCount,
+      });
+    }
+  };
+
+  const handleAuthSuccess = async (authenticatedEmail) => {
+    setShowAuthModal(false);
     setIsSubmitting(true);
 
     try {
-      // Save email to backend/database
+      // Save party data to backend/database
       const res = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email,
+          email: authenticatedEmail,
           source: 'email_gate_step_1',
           partyData: {
             childName: partyData.childName,
@@ -62,19 +67,15 @@ export default function EmailGate({ partyData, onContinue, onGuestContinue }) {
       if (res.ok) {
         const result = await res.json();
 
-        // Save email to localStorage
-        localStorage.setItem('pp_user_email', email);
-        localStorage.setItem('pp_guest_mode', 'false');
-
         // Save plan ID if returned (for future updates)
         if (result.planId) {
           localStorage.setItem('pp_plan_id', result.planId);
           console.log('✅ Plan ID saved:', result.planId);
         }
 
-        // Track successful email submission
+        // Track successful auth and continuation
         if (window.gtag) {
-          window.gtag('event', 'email_submitted_success', {
+          window.gtag('event', 'auth_success_continue', {
             event_category: 'email_gate',
             child_age: partyData.age,
             guest_count: partyData.guestCount,
@@ -82,19 +83,17 @@ export default function EmailGate({ partyData, onContinue, onGuestContinue }) {
         }
 
         // Continue to next step
-        onContinue(email);
+        onContinue(authenticatedEmail);
       } else {
-        throw new Error('Failed to save email');
+        throw new Error('Failed to save party data');
       }
     } catch (err) {
-      // If backend fails, save locally and continue anyway
-      console.error('Email save error:', err);
-      localStorage.setItem('pp_user_email', email);
-      localStorage.setItem('pp_guest_mode', 'false');
+      // If backend fails, continue anyway
+      console.error('Party data save error:', err);
 
-      // Track successful email submission (even if backend failed)
+      // Track continuation even if backend failed
       if (window.gtag) {
-        window.gtag('event', 'email_submitted_success', {
+        window.gtag('event', 'auth_success_continue', {
           event_category: 'email_gate',
           child_age: partyData.age,
           guest_count: partyData.guestCount,
@@ -102,7 +101,7 @@ export default function EmailGate({ partyData, onContinue, onGuestContinue }) {
         });
       }
 
-      onContinue(email);
+      onContinue(authenticatedEmail);
     } finally {
       setIsSubmitting(false);
     }
@@ -127,7 +126,14 @@ export default function EmailGate({ partyData, onContinue, onGuestContinue }) {
   const childName = partyData.childName || '';
 
   return (
-    <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl p-8 border-4 border-pink-200 relative z-10">
+    <>
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onSuccess={handleAuthSuccess}
+      />
+
+      <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl p-8 border-4 border-pink-200 relative z-10">
       {/* Primary Headline */}
       <h2 className="text-2xl sm:text-3xl font-bold text-center mb-5 text-[#FF1493]">
         You're one step away from building {childName ? `${childName}'s` : 'the'} perfect party! 🎉
@@ -153,57 +159,26 @@ export default function EmailGate({ partyData, onContinue, onGuestContinue }) {
         ))}
       </div>
 
-      {/* Email Form */}
-      <form onSubmit={handleEmailSubmit} className="mb-6">
-        <div className="mb-4">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              setError('');
-            }}
-            onFocus={() => {
-              // Track when user starts typing email
-              if (window.gtag && !email) {
-                window.gtag('event', 'email_entered', {
-                  event_category: 'email_gate',
-                });
-              }
-            }}
-            placeholder="Enter your email"
-            className={`w-full max-w-md mx-auto block px-4 py-3 border-2 rounded-lg text-base focus:outline-none focus:ring-4 transition-all ${
-              error
-                ? 'border-red-500 focus:border-red-500 focus:ring-red-100'
-                : 'border-gray-300 focus:border-[#FF1493] focus:ring-rose-100'
-            }`}
-            style={{ height: '48px' }}
-          />
-          {error && (
-            <p className="text-sm text-red-600 mt-2 text-center font-semibold">{error}</p>
-          )}
-        </div>
-
-        {/* Primary CTA Button */}
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full max-w-md mx-auto block bg-[#FF1493] hover:bg-[#DC1476] text-white font-bold text-base sm:text-lg py-3.5 px-8 rounded-lg transition-all shadow-md hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
-          style={{ marginTop: '16px' }}
-        >
-          {isSubmitting ? (
-            <div className="flex items-center justify-center gap-2">
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              <span>Saving...</span>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center gap-2">
-              <span>Show Me Venue Options</span>
-              <ChevronRight size={20} />
-            </div>
-          )}
-        </button>
-      </form>
+      {/* Primary CTA Button - Opens Auth Modal */}
+      <button
+        type="button"
+        onClick={handleEmailSubmit}
+        disabled={isSubmitting}
+        className="w-full max-w-md mx-auto block bg-[#FF1493] hover:bg-[#DC1476] text-white font-bold text-base sm:text-lg py-3.5 px-8 rounded-lg transition-all shadow-md hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] mb-6"
+        style={{ marginTop: '16px' }}
+      >
+        {isSubmitting ? (
+          <div className="flex items-center justify-center gap-2">
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            <span>Loading...</span>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center gap-2">
+            <span>Show Me Venue Options</span>
+            <ChevronRight size={20} />
+          </div>
+        )}
+      </button>
 
       {/* Trust Signal */}
       <p className="text-xs sm:text-sm text-gray-500 italic text-center mb-4">

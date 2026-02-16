@@ -4,6 +4,7 @@ import { Users, CheckCircle2, XCircle, Clock, Copy, Check, Share2 } from 'lucide
 export default function RSVPManager({ partyData, rsvpId, onSetRsvpId }) {
   const [responses, setResponses] = useState([]);
   const [copied, setCopied] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   // Generate a simple party ID if none exists
   useEffect(() => {
@@ -13,11 +14,47 @@ export default function RSVPManager({ partyData, rsvpId, onSetRsvpId }) {
     }
   }, [rsvpId, onSetRsvpId]);
 
-  // Load responses from localStorage (and/or API)
+  // Load responses from database and localStorage
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('pp_rsvp_responses') || '[]');
-    const filtered = stored.filter(r => r.partyId === rsvpId);
-    setResponses(filtered);
+    if (!rsvpId) return;
+
+    const fetchResponses = async () => {
+      try {
+        // Try to fetch from database first
+        const res = await fetch(`/api/rsvp?partyId=${rsvpId}`);
+        const data = await res.json();
+
+        if (data.responses && data.responses.length > 0) {
+          // Transform database responses to match local format
+          const dbResponses = data.responses.map(r => ({
+            partyId: r.party_id,
+            guestName: r.guest_name,
+            email: r.email || '',
+            attending: r.attending,
+            adultCount: r.adult_count,
+            childCount: r.child_count,
+            dietary: r.dietary || [],
+            dietaryOther: r.dietary_other || '',
+            message: r.message || '',
+            submittedAt: r.created_at
+          }));
+          setResponses(dbResponses);
+        } else {
+          // Fallback to localStorage if database is empty
+          const stored = JSON.parse(localStorage.getItem('pp_rsvp_responses') || '[]');
+          const filtered = stored.filter(r => r.partyId === rsvpId);
+          setResponses(filtered);
+        }
+      } catch (error) {
+        console.error('Error fetching RSVPs:', error);
+        // Fallback to localStorage on error
+        const stored = JSON.parse(localStorage.getItem('pp_rsvp_responses') || '[]');
+        const filtered = stored.filter(r => r.partyId === rsvpId);
+        setResponses(filtered);
+      }
+    };
+
+    fetchResponses();
   }, [rsvpId]);
 
   const stats = useMemo(() => {
@@ -38,11 +75,55 @@ export default function RSVPManager({ partyData, rsvpId, onSetRsvpId }) {
     } catch {}
   };
 
+  const handleRefresh = async () => {
+    if (!rsvpId) return;
+    setRefreshing(true);
+
+    try {
+      const res = await fetch(`/api/rsvp?partyId=${rsvpId}`);
+      const data = await res.json();
+
+      if (data.responses && data.responses.length > 0) {
+        const dbResponses = data.responses.map(r => ({
+          partyId: r.party_id,
+          guestName: r.guest_name,
+          email: r.email || '',
+          attending: r.attending,
+          adultCount: r.adult_count,
+          childCount: r.child_count,
+          dietary: r.dietary || [],
+          dietaryOther: r.dietary_other || '',
+          message: r.message || '',
+          submittedAt: r.created_at
+        }));
+        setResponses(dbResponses);
+      } else {
+        const stored = JSON.parse(localStorage.getItem('pp_rsvp_responses') || '[]');
+        const filtered = stored.filter(r => r.partyId === rsvpId);
+        setResponses(filtered);
+      }
+    } catch (error) {
+      console.error('Error refreshing RSVPs:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
     <div className="p-5 bg-indigo-50 rounded-2xl border-2 border-indigo-200">
-      <div className="flex items-center gap-2 mb-4">
-        <Users className="text-indigo-500" size={24} />
-        <h3 className="text-lg font-bold text-indigo-800">RSVP Manager</h3>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Users className="text-indigo-500" size={24} />
+          <h3 className="text-lg font-bold text-indigo-800">RSVP Manager</h3>
+        </div>
+        <button
+          onClick={handleRefresh}
+          disabled={refreshing}
+          className="px-3 py-1.5 bg-indigo-500 text-white rounded-lg text-sm font-semibold hover:bg-indigo-600 transition-all disabled:opacity-50 flex items-center gap-1"
+        >
+          <Share2 size={14} className={refreshing ? 'animate-spin' : ''} />
+          {refreshing ? 'Refreshing...' : 'Refresh'}
+        </button>
       </div>
 
       {/* Share Link */}
@@ -91,10 +172,18 @@ export default function RSVPManager({ partyData, rsvpId, onSetRsvpId }) {
           {responses.map((r, i) => (
             <div key={i} className={`flex items-center justify-between p-3 rounded-lg border ${r.attending ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'}`}>
               <div>
-                <span className="font-semibold text-gray-800">{r.guestName}</span>
-                {r.attending && <span className="text-xs text-gray-500 ml-2">{r.adultCount}A + {r.childCount}C</span>}
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-gray-800">{r.guestName}</span>
+                  {r.attending && <span className="text-xs text-gray-500">{r.adultCount}A + {r.childCount}C</span>}
+                </div>
+                {r.email && (
+                  <p className="text-xs text-gray-500 mt-0.5">{r.email}</p>
+                )}
                 {r.dietary && r.dietary.length > 0 && (
-                  <span className="text-xs text-orange-600 ml-2">⚠️ {r.dietary.join(', ')}</span>
+                  <span className="text-xs text-orange-600 mt-1 block">⚠️ {r.dietary.join(', ')}</span>
+                )}
+                {r.message && (
+                  <p className="text-xs text-gray-600 italic mt-1">"{r.message}"</p>
                 )}
               </div>
               <span className={`text-xs font-bold px-2 py-1 rounded-full ${r.attending ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>

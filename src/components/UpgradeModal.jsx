@@ -33,8 +33,41 @@ export default function UpgradeModal() {
   const [billingCycle, setBillingCycle] = useState('monthly'); // 'monthly' or 'yearly'
   const [isLoading, setIsLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState(null);
+  const [couponCode, setCouponCode] = useState('');
+  const [couponStatus, setCouponStatus] = useState(null); // null | 'validating' | 'valid' | 'invalid'
+  const [discount, setDiscount] = useState(null);
 
   if (!showUpgradeModal) return null;
+
+  const validateCoupon = async () => {
+    if (!couponCode.trim()) {
+      setCouponStatus(null);
+      setDiscount(null);
+      return;
+    }
+
+    setCouponStatus('validating');
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: couponCode.trim() }),
+      });
+      const data = await res.json();
+
+      if (data.valid) {
+        setCouponStatus('valid');
+        setDiscount(data.discount);
+      } else {
+        setCouponStatus('invalid');
+        setDiscount(null);
+      }
+    } catch (error) {
+      console.error('Coupon validation error:', error);
+      setCouponStatus('invalid');
+      setDiscount(null);
+    }
+  };
 
   const handleCheckout = async (tierId) => {
     console.log('🔵 Upgrade button clicked!', { tierId, billingCycle });
@@ -66,6 +99,7 @@ export default function UpgradeModal() {
           tier: tierId,
           billingInterval: billingCycle,
           priceAmount: billingCycle === 'yearly' ? tier.priceYearly : tier.price,
+          couponCode: couponStatus === 'valid' ? couponCode.trim() : undefined,
         }),
       });
 
@@ -133,6 +167,45 @@ export default function UpgradeModal() {
             </div>
           </div>
         )}
+
+        {/* Coupon Code Section */}
+        <div className="mx-6 mb-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Have a coupon code?
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={couponCode}
+              onChange={(e) => {
+                setCouponCode(e.target.value.toUpperCase());
+                setCouponStatus(null);
+                setDiscount(null);
+              }}
+              placeholder="Enter code"
+              className="flex-1 px-4 py-2 border-2 border-purple-200 rounded-lg focus:outline-none focus:border-purple-400 text-gray-800 font-semibold uppercase"
+            />
+            <button
+              onClick={validateCoupon}
+              disabled={!couponCode.trim() || couponStatus === 'validating'}
+              className="px-4 py-2 bg-purple-500 text-white rounded-lg font-semibold hover:bg-purple-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {couponStatus === 'validating' ? 'Checking...' : 'Apply'}
+            </button>
+          </div>
+          {couponStatus === 'valid' && discount && (
+            <div className="mt-2 flex items-center gap-2 text-green-600 text-sm font-semibold">
+              <Check size={16} />
+              <span>{discount.percentOff}% off applied! Save ${((billingCycle === 'yearly' ? TIERS.pro.priceYearly : TIERS.pro.price) * discount.percentOff / 100).toFixed(2)}</span>
+            </div>
+          )}
+          {couponStatus === 'invalid' && (
+            <div className="mt-2 flex items-center gap-2 text-red-600 text-sm font-semibold">
+              <X size={16} />
+              <span>Invalid or expired coupon code</span>
+            </div>
+          )}
+        </div>
 
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           {['free', 'pro'].map(tierId => {

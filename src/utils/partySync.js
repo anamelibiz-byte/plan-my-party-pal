@@ -30,6 +30,8 @@ export const savePartyToDatabase = debounce(async (email, partyData, planId) => 
     if (result.success && result.planId) {
       // Save plan ID to localStorage for future updates
       localStorage.setItem('pp_plan_id', result.planId);
+      // Sync RSVP ID with plan ID so RSVP responses are linked correctly
+      localStorage.setItem('pp_rsvp_id', JSON.stringify(result.planId));
       console.log('✅ Party saved to database:', result.planId);
     }
 

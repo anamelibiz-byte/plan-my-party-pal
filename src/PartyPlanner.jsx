@@ -119,7 +119,22 @@ export default function PartyPlanner() {
   const [excludedItems, setExcludedItems] = useState({});
   const [timeline, setTimeline] = useState([]);
   const [rsvpId, setRsvpId] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('pp_rsvp_id')); } catch { return null; }
+    // Try to get rsvpId from localStorage, fallback to planId if not set
+    try {
+      const storedRsvpId = JSON.parse(localStorage.getItem('pp_rsvp_id'));
+      if (storedRsvpId) return storedRsvpId;
+
+      // If no rsvpId, use planId as rsvpId
+      const planId = localStorage.getItem('pp_plan_id');
+      if (planId) {
+        localStorage.setItem('pp_rsvp_id', JSON.stringify(planId));
+        return planId;
+      }
+
+      return null;
+    } catch {
+      return null;
+    }
   });
   const [rsvpResponses, setRsvpResponses] = useState(() => {
     try { return JSON.parse(localStorage.getItem('pp_rsvp_responses')) || []; } catch { return []; }
@@ -143,6 +158,7 @@ export default function PartyPlanner() {
   const [openZones, setOpenZones] = useState({});
   const [showCakeOrdering, setShowCakeOrdering] = useState(false);
   const [showPartyHelp, setShowPartyHelp] = useState(false);
+  const [showRSVPManager, setShowRSVPManager] = useState(false);
 
   // ─── Show Onboarding for First-Time Users ────────────────────────────────────
   useEffect(() => {
@@ -184,8 +200,10 @@ export default function PartyPlanner() {
           // Save credentials to localStorage
           localStorage.setItem('pp_user_email', emailParam);
           localStorage.setItem('pp_plan_id', dbData.id);
+          localStorage.setItem('pp_rsvp_id', JSON.stringify(dbData.id)); // Sync RSVP ID with plan ID
           setUserEmail(emailParam);
           setGuestMode(false);
+          setRsvpId(dbData.id); // Update RSVP ID state
 
           console.log('✅ Party data restored from database');
         }
@@ -195,6 +213,11 @@ export default function PartyPlanner() {
         const dbData = await loadPartyFromDatabase(userEmail);
 
         if (dbData) {
+          // Save plan ID to localStorage for RSVP syncing
+          localStorage.setItem('pp_plan_id', dbData.id);
+          localStorage.setItem('pp_rsvp_id', JSON.stringify(dbData.id));
+          setRsvpId(dbData.id);
+
           const localData = JSON.parse(localStorage.getItem('pp_party_data') || '{}');
           const mergedData = mergePartyData(dbData, localData);
 
@@ -1474,6 +1497,46 @@ export default function PartyPlanner() {
 
                 {/* Guest Invite List — track who you're inviting */}
                 <GuestList partyData={partyData} />
+
+                {/* RSVP Manager — Pro Feature for Online RSVP Tracking */}
+                <TierGate feature="rsvpSystem">
+                  <div className="p-5 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border-2 border-indigo-300 mt-6">
+                    {/* Header with Crown icon indicating Pro feature */}
+                    <div className="flex items-center gap-2 mb-4">
+                      <Crown className="text-indigo-600" size={24} />
+                      <h3 className="text-lg font-bold text-indigo-900">Online RSVP Manager (Pro)</h3>
+                    </div>
+
+                    <p className="text-sm text-indigo-700 mb-4">
+                      Share a link for guests to RSVP online. Track responses, headcount, and dietary restrictions automatically.
+                    </p>
+
+                    {/* Collapsible Toggle */}
+                    <button
+                      onClick={() => setShowRSVPManager(!showRSVPManager)}
+                      className="w-full flex items-center justify-between p-3 bg-white rounded-xl hover:bg-indigo-50 transition-all border-2 border-indigo-200"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Users className="text-indigo-500" size={20} />
+                        <span className="font-bold text-indigo-800">
+                          {showRSVPManager ? 'Hide RSVP Responses' : 'View RSVP Responses'}
+                        </span>
+                      </div>
+                      {showRSVPManager ? <ChevronUp className="text-indigo-500" /> : <ChevronDown className="text-indigo-500" />}
+                    </button>
+
+                    {/* Collapsible Content */}
+                    {showRSVPManager && (
+                      <div className="mt-4">
+                        <RSVPManager
+                          partyData={partyData}
+                          rsvpId={localStorage.getItem('pp_plan_id') || rsvpId}
+                          onSetRsvpId={setRsvpId}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </TierGate>
 
                 {/* Food & Drink Labels — Etsy */}
                 <div className="no-print">

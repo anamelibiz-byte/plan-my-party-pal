@@ -27,7 +27,7 @@ export const TIERS = {
       budgetTrackerFull: false,
       saveExport: false,
       downloadPDF: false,
-      rsvpSystem: true, // RSVP tracking available in free
+      rsvpSystem: false, // RSVP tracking is Pro-only
       emailPartyPlan: false,
       smsPartyPlan: false,
       partyZonesPreview: true,
