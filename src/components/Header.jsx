@@ -9,10 +9,26 @@ export default function Header() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const email = localStorage.getItem('pp_user_email');
-    const guestMode = localStorage.getItem('pp_guest_mode') === 'true';
-    setUserEmail(email);
-    setIsLoggedIn(!!email && !guestMode);
+    const checkLoginStatus = () => {
+      const email = localStorage.getItem('pp_user_email');
+      const guestMode = localStorage.getItem('pp_guest_mode') === 'true';
+      setUserEmail(email);
+      setIsLoggedIn(!!email && !guestMode);
+    };
+
+    // Check on mount
+    checkLoginStatus();
+
+    // Listen for storage changes (when user enters email)
+    window.addEventListener('storage', checkLoginStatus);
+
+    // Also check periodically to catch localStorage changes in same tab
+    const interval = setInterval(checkLoginStatus, 1000);
+
+    return () => {
+      window.removeEventListener('storage', checkLoginStatus);
+      clearInterval(interval);
+    };
   }, []);
 
   const handleLogout = () => {
