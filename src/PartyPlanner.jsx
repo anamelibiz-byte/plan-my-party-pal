@@ -1,10 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Cake, MapPin, Sparkles, CheckCircle2, Circle, Users, Heart,
   ChevronRight, ChevronLeft, X, Star, Phone, ExternalLink,
   ShoppingCart, PartyPopper, Search, Download, Printer,
   UserPlus, Mail, Tag, EyeOff, Eye, FileDown, RotateCcw,
-  Crown, Lock, Gift, ChevronUp, ChevronDown, Clock,
+  Crown, Lock, Gift, ChevronUp, ChevronDown, Clock, Save, FolderOpen,
 } from 'lucide-react';
 import { themes } from './data/themes';
 import { getActivitiesForAge, getAgeGroup } from './data/activities';
@@ -27,10 +28,13 @@ import TierGate from './components/TierGate';
 import InviteCard from './components/InviteCard';
 import GuestList from './components/GuestList';
 import Header from './components/Header';
+import OnboardingTutorial from './components/OnboardingTutorial';
+import SavePartyModal from './components/SavePartyModal';
 import { useTier } from './context/TierContext';
+import { useToast } from './context/ToastContext';
 import { downloadPartyPDF, generateSamplePDF } from './utils/generatePDF';
 import { getMaxGuests } from './config/tiers';
-import { savePartyToDatabase, loadPartyFromDatabase, mergePartyData } from './utils/partySync';
+import { savePartyToDatabase, loadPartyFromDatabase, mergePartyData, saveNamedParty, generatePartyName } from './utils/partySync';
 
 // ─── Sprinkles Background ────────────────────────────────────────────────────
 const SPRINKLE_COLORS = ['#FF6B9D','#C084FC','#FCD34D','#60A5FA','#34D399','#F87171','#FB923C'];
@@ -77,6 +81,11 @@ const STEP_LABELS = ['Basics', 'Email', 'Venue', 'Theme', 'Activities', 'Checkli
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function PartyPlanner() {
+  const navigate = useNavigate();
+  const { showToast } = useToast();
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [step, setStep] = useState(1);
   const [partyData, setPartyData] = useState({
     childName: '',
@@ -130,6 +139,18 @@ export default function PartyPlanner() {
   const [openZones, setOpenZones] = useState({});
   const [showCakeOrdering, setShowCakeOrdering] = useState(false);
   const [showPartyHelp, setShowPartyHelp] = useState(false);
+
+  // ─── Show Onboarding for First-Time Users ────────────────────────────────────
+  useEffect(() => {
+    const hasSeenOnboarding = localStorage.getItem('pp_onboarding_completed');
+    if (!hasSeenOnboarding && step === 1 && !partyData.childName) {
+      // Show onboarding after a brief delay
+      const timer = setTimeout(() => {
+        setShowOnboarding(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, []); // Only run on mount
 
   // ─── Auto-Restore from Database ──────────────────────────────────────────────
   useEffect(() => {
@@ -290,6 +311,38 @@ export default function PartyPlanner() {
         ? prev.selectedActivities.filter(a => a !== name)
         : [...prev.selectedActivities, name],
     }));
+  };
+
+  // Save party with custom name
+  const handleSaveParty = async (partyName) => {
+    setIsSaving(true);
+
+    const completePartyData = {
+      ...partyData,
+      step,
+      checklist,
+      hireCharacter,
+      timeline,
+      rsvpId,
+      zoneChecks,
+    };
+
+    const result = await saveNamedParty(userEmail, completePartyData, partyName, 'archived');
+
+    if (result.requiresUpgrade) {
+      requireFeature('saveExport'); // Trigger upgrade modal
+      setIsSaving(false);
+      return result;
+    }
+
+    if (result.success) {
+      showToast(`Party "${partyName}" saved!`, 'success');
+    } else {
+      showToast('Failed to save party', 'error');
+    }
+
+    setIsSaving(false);
+    return result;
   };
 
   // ─── Filtered Data ──────────────────────────────────────────────────────────
@@ -596,6 +649,16 @@ export default function PartyPlanner() {
       <div className="min-h-screen bg-white relative overflow-hidden">
         <Sprinkles />
 
+      {/* Onboarding Tutorial */}
+      {showOnboarding && (
+        <OnboardingTutorial
+          onClose={() => setShowOnboarding(false)}
+          onComplete={() => {
+            showToast('Welcome to Plan My Party Pal! Let\'s plan your first party!', 'success');
+          }}
+        />
+      )}
+
       {/* Coming Soon Modal */}
       {comingSoonModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setComingSoonModal(null)}>
@@ -869,6 +932,32 @@ export default function PartyPlanner() {
             </React.Fragment>
           ))}
         </div>
+
+        {/* Save/Load Buttons - only show for logged-in users */}
+        {userEmail && !guestMode && (
+          <div className="max-w-6xl mx-auto px-4 mb-6">
+            <div className="flex items-center gap-3 justify-center">
+              <button
+                onClick={() => navigate('/parties')}
+                className="px-4 py-2 bg-white border-2 border-pink-300 text-pink-600 rounded-xl font-semibold hover:bg-pink-50 transition-all flex items-center gap-2 shadow-md"
+                title="View all saved parties"
+              >
+                <FolderOpen size={18} />
+                <span>My Parties</span>
+              </button>
+
+              <button
+                onClick={() => setShowSaveModal(true)}
+                disabled={!partyData.childName && !partyData.theme && !partyData.date}
+                className="px-4 py-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-md"
+                title="Save this party"
+              >
+                <Save size={18} />
+                <span>Save Party</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* ═══════ STEP 1: BASICS ═══════ */}
         {step === 1 && (
@@ -1677,6 +1766,16 @@ export default function PartyPlanner() {
 
       </div>
     </div>
+
+    {/* Save Party Modal */}
+    <SavePartyModal
+      isOpen={showSaveModal}
+      onClose={() => setShowSaveModal(false)}
+      onSave={handleSaveParty}
+      defaultName={generatePartyName(partyData)}
+      partyData={partyData}
+      isSaving={isSaving}
+    />
     </>
   );
 }

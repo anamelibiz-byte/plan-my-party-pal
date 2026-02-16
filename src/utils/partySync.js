@@ -73,3 +73,113 @@ export function mergePartyData(dbData, localData) {
     step: Math.max(localData.step || 1, dbData.party_data.step || 1)
   };
 }
+
+// Save party with explicit name and status
+export async function saveNamedParty(email, partyData, partyName, status = 'archived') {
+  if (!email || !partyData) {
+    return { success: false, error: 'Missing required data' };
+  }
+
+  try {
+    const response = await fetch('/api/party/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        partyData,
+        partyName,
+        status,
+        planId: null // Force new party creation
+      })
+    });
+
+    const result = await response.json();
+
+    if (result.error === 'FREE_TIER_LIMIT') {
+      return {
+        success: false,
+        error: result.error,
+        requiresUpgrade: true,
+        message: result.message
+      };
+    }
+
+    if (result.success && result.planId) {
+      console.log('✅ Party saved as new:', result.partyName);
+    }
+
+    return result;
+  } catch (error) {
+    console.error('Failed to save named party:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+// List all parties for a user
+export async function listUserParties(email) {
+  if (!email) return { success: false, error: 'Email required' };
+
+  try {
+    const response = await fetch(`/api/party/list?email=${encodeURIComponent(email)}`);
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Failed to list parties:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+// Delete a party
+export async function deleteParty(email, planId) {
+  if (!email || !planId) return { success: false, error: 'Missing required data' };
+
+  try {
+    const response = await fetch('/api/party/delete', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, planId })
+    });
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Failed to delete party:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+// Load specific party by ID
+export async function loadPartyById(planId) {
+  if (!planId) return null;
+
+  try {
+    const response = await fetch(`/api/party/load?planId=${planId}`);
+    const result = await response.json();
+
+    if (result.success && result.data) {
+      return result.data;
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Failed to load party by ID:', error);
+    return null;
+  }
+}
+
+// Helper: Generate party name from data
+export function generatePartyName(partyData) {
+  const { childName, age, theme, date } = partyData;
+
+  if (childName && age) return `${childName}'s ${age}th Birthday`;
+  if (childName && theme) return `${childName}'s ${theme} Party`;
+  if (theme && date) {
+    const formattedDate = new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return `${theme} Party - ${formattedDate}`;
+  }
+  if (date) {
+    const formattedDate = new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    return `Party - ${formattedDate}`;
+  }
+  return 'Untitled Party';
+}
