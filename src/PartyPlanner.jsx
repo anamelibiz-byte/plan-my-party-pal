@@ -655,6 +655,7 @@ export default function PartyPlanner() {
   const generateThemeSuggestions = async () => {
     setLoading(true);
     try {
+      console.log('🤖 Requesting AI theme suggestions...');
       const response = await fetch('/api/ai-suggestions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -664,10 +665,27 @@ export default function PartyPlanner() {
           guestCount: partyData.guestCount,
         }),
       });
+
+      console.log('🤖 Response status:', response.status);
       const data = await response.json();
+      console.log('🤖 Response data:', data);
+
+      // Parse the AI response
       const text = data.content?.find(b => b.type === 'text')?.text || '';
-      setSuggestions(JSON.parse(text.replace(/```json|```/g, '').trim()));
-    } catch { /* silent */ }
+      console.log('🤖 Extracted text:', text);
+
+      const cleanedText = text.replace(/```json|```/g, '').trim();
+      console.log('🤖 Cleaned text:', cleanedText);
+
+      const themes = JSON.parse(cleanedText);
+      console.log('🤖 Parsed themes:', themes);
+
+      setSuggestions(themes);
+      showToast('AI themes generated!', 'success');
+    } catch (error) {
+      console.error('🤖 AI suggestion error:', error);
+      showToast('Failed to generate AI themes. Please try again.', 'error');
+    }
     setLoading(false);
   };
 
