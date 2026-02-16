@@ -20,6 +20,7 @@ import EmailCapture from './components/EmailCapture';
 import SMSCapture from './components/SMSCapture';
 import EmailGate from './components/EmailGate';
 import RSVPManager from './components/RSVPManager';
+import AuthModal from './components/AuthModal';
 import TimelineBuilder from './components/TimelineBuilder';
 import DietaryTracker from './components/DietaryTracker';
 import WeatherAlert from './components/WeatherAlert';
@@ -91,6 +92,7 @@ export default function PartyPlanner() {
   const [showCollabModal, setShowCollabModal] = useState(false);
   const [showCollabList, setShowCollabList] = useState(false);
   const [collaborators, setCollaborators] = useState([]);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [step, setStep] = useState(1);
   const [partyData, setPartyData] = useState({
     childName: '',
@@ -159,6 +161,19 @@ export default function PartyPlanner() {
   const [showCakeOrdering, setShowCakeOrdering] = useState(false);
   const [showPartyHelp, setShowPartyHelp] = useState(false);
   const [showRSVPManager, setShowRSVPManager] = useState(false);
+
+  // ─── Check for Auth Required ─────────────────────────────────────────────────
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const authRequired = params.get('auth');
+
+    if (authRequired === 'required' && !userEmail) {
+      // User was redirected here because they need to log in
+      setShowAuthModal(true);
+      // Clean up URL parameter
+      window.history.replaceState({}, '', '/app');
+    }
+  }, []); // Only run on mount
 
   // ─── Show Onboarding for First-Time Users ────────────────────────────────────
   useEffect(() => {
@@ -733,12 +748,28 @@ export default function PartyPlanner() {
     'Entertainment & Hire': 'text-purple-600 bg-purple-100',
   };
 
+  // ─── Handle Auth Success ──────────────────────────────────────────────────────
+  const handleAuthSuccess = (email) => {
+    setUserEmail(email);
+    setGuestMode(false);
+    setShowAuthModal(false);
+    showToast('Successfully logged in!', 'success');
+  };
+
   // ═══════════════════════════════════════════════════════════════════════════════
   // RENDER
   // ═══════════════════════════════════════════════════════════════════════════════
   return (
     <>
       <Header />
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onSuccess={handleAuthSuccess}
+      />
+
       <div className="min-h-screen bg-white relative overflow-hidden">
         <Sprinkles />
 

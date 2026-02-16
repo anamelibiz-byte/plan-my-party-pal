@@ -88,13 +88,23 @@ export default function Header() {
       );
     } else {
       return (
-        <Link
-          to="/app"
-          className="px-6 py-2 bg-white text-pink-600 rounded-lg font-bold hover:bg-pink-50 transition-all shadow-lg"
-          onClick={() => setIsMenuOpen(false)}
-        >
-          Start Planning
-        </Link>
+        <>
+          <Link
+            to="/app?auth=required"
+            className={mobile ? linkClass : "text-white hover:text-pink-100 transition-colors font-semibold"}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            {mobile && <User className="inline mr-2" size={18} />}
+            Login
+          </Link>
+          <Link
+            to="/app"
+            className={mobile ? "block px-4 py-3 bg-white/20 hover:bg-white/30 rounded-lg font-bold transition-all" : "px-6 py-2 bg-white text-pink-600 rounded-lg font-bold hover:bg-pink-50 transition-all shadow-lg"}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Start Planning
+          </Link>
+        </>
       );
     }
   };
