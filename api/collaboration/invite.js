@@ -58,7 +58,7 @@ export default async function handler(req, res) {
     if (resendKey) {
       const inviteUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://planmypartypal.com'}/collaborate/${party_id}?invite=${data.id}`;
 
-      await fetch('https://api.resend.com/emails', {
+      const emailResponse = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${resendKey}`,
@@ -94,6 +94,21 @@ export default async function handler(req, res) {
           `,
         }),
       });
+
+      const emailResult = await emailResponse.json();
+
+      if (!emailResponse.ok) {
+        console.error('Resend API error:', emailResult);
+        // Still return success for the invite creation, but log the email failure
+        return res.status(200).json({
+          success: true,
+          message: 'Invitation created but email failed to send',
+          invite_id: data.id,
+          email_error: emailResult.message || 'Email delivery failed',
+        });
+      }
+
+      console.log('Collaboration email sent:', emailResult.id);
     }
 
     return res.status(200).json({
