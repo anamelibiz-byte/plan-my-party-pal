@@ -200,6 +200,9 @@ export default function EmailCapture({ source = 'landing', partyData, mergedZone
         <h4 className="font-bold text-gray-800">
           {source === 'checklist' ? '📧 Email Your Checklist' : 'Get Party Planning Tips!'}
         </h4>
+        {source === 'checklist' && (
+          <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-bold">PRO</span>
+        )}
       </div>
       <p className="text-sm text-gray-600 mb-3">
         {source === 'checklist'
