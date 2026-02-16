@@ -3,6 +3,7 @@ import { TierProvider } from './context/TierContext';
 import { PartyProvider } from './context/PartyContext';
 import LandingPage from './pages/LandingPage';
 import PartyPlanner from './PartyPlanner';
+import AccountPage from './pages/AccountPage';
 import RSVPPage from './pages/RSVPPage';
 import AdminPage from './pages/AdminPage';
 import UpgradeModal from './components/UpgradeModal';
@@ -16,6 +17,7 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/app" element={<PartyPlanner />} />
+            <Route path="/account" element={<AccountPage />} />
             <Route path="/rsvp/:partyId" element={<RSVPPage />} />
             <Route path="/admin" element={<AdminPage />} />
           </Routes>

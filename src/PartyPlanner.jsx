@@ -26,6 +26,7 @@ import ShareButton from './components/ShareButton';
 import TierGate from './components/TierGate';
 import InviteCard from './components/InviteCard';
 import GuestList from './components/GuestList';
+import Header from './components/Header';
 import { useTier } from './context/TierContext';
 import { downloadPartyPDF, generateSamplePDF } from './utils/generatePDF';
 import { getMaxGuests } from './config/tiers';
@@ -590,8 +591,10 @@ export default function PartyPlanner() {
   // RENDER
   // ═══════════════════════════════════════════════════════════════════════════════
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden">
-      <Sprinkles />
+    <>
+      <Header />
+      <div className="min-h-screen bg-white relative overflow-hidden">
+        <Sprinkles />
 
       {/* Coming Soon Modal */}
       {comingSoonModal && (
@@ -1699,5 +1702,7 @@ function ChecklistItem({ item, idx, toggle, showCategory, categoryColors }) {
         </a>
       )}
     </div>
+      </div>
+    </>
   );
 }
