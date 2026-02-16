@@ -1593,12 +1593,9 @@ export default function PartyPlanner() {
                           <Gift size={32} />
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-xl font-bold text-gray-800 mb-2">
+                          <h3 className="text-xl font-bold text-gray-800 mb-4">
                             🎁 Need Gift Ideas for {partyData.childName}?
                           </h3>
-                          <p className="text-gray-600 mb-4">
-                            Browse {filteredGifts.length} curated gift suggestions for age {partyData.age} - from popular toys to unique finds!
-                          </p>
                           <button
                             onClick={() => setShowGiftIdeas(true)}
                             className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-3 rounded-xl font-bold hover:shadow-lg hover:scale-[1.02] transition-all flex items-center gap-2"
