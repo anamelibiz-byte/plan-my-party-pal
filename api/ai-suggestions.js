@@ -17,8 +17,8 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-3-5-haiku-20241022',
-        max_tokens: 1000,
+        model: 'claude-3-5-sonnet-20241022',
+        max_tokens: 1024,
         messages: [{
           role: 'user',
           content: `Suggest 5 unique birthday party themes for a ${age}-year-old. Budget: $${budget}, ${guestCount} guests. Include at least 1 licensed character theme. Return ONLY a JSON array with "name", "description", "ageRange", "costTier" fields. No markdown, no explanations, just the JSON array.`,
