@@ -1676,6 +1676,7 @@ export default function PartyPlanner() {
         )}
 
       </div>
+    </div>
     </>
   );
 }
