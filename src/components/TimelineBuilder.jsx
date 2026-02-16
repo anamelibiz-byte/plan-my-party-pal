@@ -65,11 +65,11 @@ export default function TimelineBuilder({ timeline, onTimelineChange, partyData 
                   </button>
                 </div>
                 <input type="text" value={item.time} onChange={e => updateItem(idx, 'time', e.target.value)}
-                  className="w-24 sm:w-28 px-2 py-1.5 border border-gray-200 rounded-lg text-sm font-mono focus:border-sky-400 outline-none"
+                  className="w-20 sm:w-24 px-2 py-1.5 border border-gray-200 rounded-lg text-sm font-mono focus:border-sky-400 outline-none"
                   placeholder="3:00 PM" />
                 <input type="text" value={item.duration} onChange={e => updateItem(idx, 'duration', e.target.value)}
-                  className="w-20 sm:w-24 px-2 py-1.5 border border-gray-200 rounded-lg text-sm text-center focus:border-sky-400 outline-none whitespace-nowrap"
-                  placeholder="30 min" />
+                  className="w-16 sm:w-20 px-1.5 py-1.5 border border-gray-200 rounded-lg text-xs sm:text-sm text-center focus:border-sky-400 outline-none whitespace-nowrap"
+                  placeholder="30m" />
               </div>
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <input type="text" value={item.event} onChange={e => updateItem(idx, 'event', e.target.value)}
