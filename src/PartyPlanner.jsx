@@ -674,7 +674,23 @@ export default function PartyPlanner() {
       const text = data.content?.find(b => b.type === 'text')?.text || '';
       console.log('🤖 Extracted text:', text);
 
-      const cleanedText = text.replace(/```json|```/g, '').trim();
+      // Remove markdown code blocks
+      let cleanedText = text
+        .replace(/```json/g, '')
+        .replace(/```/g, '')
+        .trim();
+
+      // Extract JSON array from text (find first [ to last ])
+      const startIdx = cleanedText.indexOf('[');
+      const endIdx = cleanedText.lastIndexOf(']');
+
+      if (startIdx === -1 || endIdx === -1) {
+        console.error('🤖 No valid JSON array found in response');
+        throw new Error('No valid JSON array found in response');
+      }
+
+      // Extract only the JSON array portion
+      cleanedText = cleanedText.substring(startIdx, endIdx + 1);
       console.log('🤖 Cleaned text:', cleanedText);
 
       const themes = JSON.parse(cleanedText);
