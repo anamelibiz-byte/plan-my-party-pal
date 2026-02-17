@@ -23,9 +23,9 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${resendKey}`,
       },
       body: JSON.stringify({
-        from: 'Plan My Party Pal <hello@go.partyplann.com>',
+        from: 'Party Plann <hello@go.partyplann.com>',
         to: [email],
-        subject: subject || '🎉 Your Party Checklist from Plan My Party Pal',
+        subject: subject || '🎉 Your Party Checklist from Party Plann',
         html: html,
         text: text || '',
       }),

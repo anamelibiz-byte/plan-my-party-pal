@@ -57,14 +57,14 @@ export default function LoginModal({ isOpen, onClose }) {
     setSendingReset(true);
 
     try {
-      const res = await fetch('/api/auth/request-reset', {
+      const res = await fetch('/api/auth/request-password-reset', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
 
       if (res.ok) {
-        showToast('Check your email for a login link!', 'success');
+        showToast('Check your email for a password reset link!', 'success');
         onClose();
       } else {
         showToast('Failed to send reset email', 'error');
@@ -147,7 +147,7 @@ export default function LoginModal({ isOpen, onClose }) {
             disabled={sendingReset}
             className="text-sm text-gray-600 hover:text-pink-600 transition-colors disabled:opacity-50"
           >
-            {sendingReset ? 'Sending...' : 'Forgot password? Get a login link'}
+            {sendingReset ? 'Sending...' : 'Forgot password? Reset it here'}
           </button>
         </div>
 

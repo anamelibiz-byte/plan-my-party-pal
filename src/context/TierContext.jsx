@@ -12,13 +12,14 @@ export function TierProvider({ children}) {
   const [upgradeSuccess, setUpgradeSuccess] = useState(false);
   const [tierVerified, setTierVerified] = useState(false);
 
-  // Verify tier from database on mount
+  // Verify tier from database on mount AND whenever auth state changes
   useEffect(() => {
     const verifyTierFromDatabase = async () => {
       const email = localStorage.getItem('pp_user_email');
 
       // No email = guest mode = free tier
       if (!email) {
+        setUserTier('free');
         setTierVerified(true);
         return;
       }
@@ -32,7 +33,7 @@ export function TierProvider({ children}) {
           setUserName(data.name);
         }
 
-        if (data.tier && data.tier !== userTier) {
+        if (data.tier) {
           console.log('📊 Tier synced from database:', data.tier);
           setUserTier(data.tier);
         }
@@ -45,7 +46,11 @@ export function TierProvider({ children}) {
     };
 
     verifyTierFromDatabase();
-  }, []); // Run once on mount
+
+    // Re-verify whenever the user logs in or out within the same tab
+    window.addEventListener('pp-auth-change', verifyTierFromDatabase);
+    return () => window.removeEventListener('pp-auth-change', verifyTierFromDatabase);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Handle Stripe checkout success redirect
   // When user returns from Stripe, URL will have ?upgraded=pro&session_id=...

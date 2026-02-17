@@ -54,8 +54,8 @@ export default async function handler(req, res) {
 
     // Send reset email if Resend is configured
     if (resendKey) {
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.partyplann.com';
-      const resetUrl = `${baseUrl}/reset-password?token=${resetToken}`;
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://partyplann.com';
+      const resetUrl = `${baseUrl}/reset-password-form?token=${resetToken}`;
 
       const emailHtml = `
         <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
@@ -67,7 +67,7 @@ export default async function handler(req, res) {
             <p style="font-size: 18px; color: #374151; margin: 0 0 16px;">Hi there,</p>
 
             <p style="font-size: 16px; color: #374151; line-height: 1.6; margin: 0 0 24px;">
-              We received a request to reset your password for your Plan My Party Pal account. Click the button below to set a new password:
+              We received a request to reset your password for your Party Plann account. Click the button below to set a new password:
             </p>
 
             <div style="text-align: center; margin: 32px 0;">
@@ -89,7 +89,7 @@ export default async function handler(req, res) {
 
           <div style="padding: 24px; text-align: center; background: #F9FAFB; border-radius: 0 0 16px 16px; border-top: 1px solid #E5E7EB;">
             <p style="font-size: 12px; color: #9CA3AF; margin: 0;">
-              Plan My Party Pal | <a href="${baseUrl}" style="color: #EC4899; text-decoration: none;">partyplann.com</a>
+              Party Plann | <a href="${baseUrl}" style="color: #EC4899; text-decoration: none;">partyplann.com</a>
             </p>
           </div>
         </div>
@@ -102,9 +102,9 @@ export default async function handler(req, res) {
           'Authorization': `Bearer ${resendKey}`,
         },
         body: JSON.stringify({
-          from: 'Plan My Party Pal <hello@go.partyplann.com>',
+          from: 'Party Plann <hello@go.partyplann.com>',
           to: [user.email],
-          subject: '🔒 Reset Your Password - Plan My Party Pal',
+          subject: '🔒 Reset Your Password - Party Plann',
           html: emailHtml,
         }),
       });

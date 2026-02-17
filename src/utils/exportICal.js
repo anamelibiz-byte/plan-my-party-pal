@@ -59,7 +59,7 @@ export function exportTimelineICal(timelineEvents, partyData) {
   const icalContent = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Plan My Party Pal//Party Timeline//EN',
+    'PRODID:-//Party Plann//Party Timeline//EN',
     `X-WR-CALNAME:${partyData.childName}'s ${partyData.age}${getOrdinalSuffix(partyData.age)} Birthday Party`,
     'X-WR-TIMEZONE:America/New_York',
     'CALSCALE:GREGORIAN',
@@ -104,7 +104,7 @@ export function exportPartyDateICal(partyData) {
   const icalContent = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Plan My Party Pal//Party Event//EN',
+    'PRODID:-//Party Plann//Party Event//EN',
     'CALSCALE:GREGORIAN',
     'BEGIN:VEVENT',
     `UID:${Date.now()}@partyplann.com`,

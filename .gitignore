@@ -38,3 +38,4 @@ s.b64
 .claude/
 w.js
 write1.js
+.env*.local

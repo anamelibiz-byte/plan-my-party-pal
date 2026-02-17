@@ -60,9 +60,9 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Plan My Party Pal <hello@go.partyplann.com>',
+        from: 'Party Plann <hello@go.partyplann.com>',
         to: [email],
-        subject: '✨ Verify Your Email - Plan My Party Pal',
+        subject: '✨ Verify Your Email - Party Plann',
         html: `
           <!DOCTYPE html>
           <html>
@@ -73,8 +73,9 @@ export default async function handler(req, res) {
           <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
 
             <!-- Header -->
-            <div style="text-align: center; padding: 30px 0; background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%); border-radius: 12px; margin-bottom: 30px;">
-              <h1 style="color: white; margin: 0; font-size: 28px;">✨ Welcome to Plan My Party Pal!</h1>
+            <div style="text-align: center; padding: 30px 20px; background: white; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              <img src="${baseUrl}/logo.jpg" alt="Party Plann" style="height: 60px; margin-bottom: 15px;" />
+              <h1 style="background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 0; font-size: 28px;">✨ Welcome to Party Plann!</h1>
             </div>
 
             <!-- Content -->
@@ -82,7 +83,7 @@ export default async function handler(req, res) {
               <p style="font-size: 16px; color: #333;">Hi there!</p>
 
               <p style="font-size: 16px; color: #333;">
-                Thanks for joining Plan My Party Pal! We're excited to help you plan amazing parties.
+                Thanks for joining Party Plann! We're excited to help you plan amazing parties.
               </p>
 
               <p style="font-size: 16px; color: #333;">
@@ -108,7 +109,7 @@ export default async function handler(req, res) {
               </p>
 
               <p style="font-size: 14px; color: #666;">
-                If you didn't create an account with Plan My Party Pal, you can safely ignore this email.
+                If you didn't create an account with Party Plann, you can safely ignore this email.
               </p>
             </div>
 
@@ -116,7 +117,7 @@ export default async function handler(req, res) {
             <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center; color: #9ca3af; font-size: 13px;">
               <p>Need help? Reply to this email - we're here for you!</p>
               <p style="margin-top: 10px;">
-                Plan My Party Pal<br>
+                Party Plann<br>
                 <a href="https://partyplann.com" style="color: #ec4899; text-decoration: none;">partyplann.com</a>
               </p>
             </div>

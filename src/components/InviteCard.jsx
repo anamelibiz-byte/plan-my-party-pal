@@ -372,7 +372,7 @@ export default function InviteCard({ partyData, userTier = 'free' }) {
             </p>
           )}
           <p style={{ fontSize: '11px', marginTop: '8px', color: '#9CA3AF' }}>
-            Made with PlanMyPartyPal.com
+            Made with PartyPlann.com
           </p>
         </div>
       </div>

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Lock, Eye, EyeOff, CheckCircle, XCircle } from 'lucide-react';
 import Sprinkles from '../components/Sprinkles';
 
 export default function PasswordResetPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [token, setToken] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -15,16 +17,14 @@ export default function PasswordResetPage() {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    // Get token from URL
-    const params = new URLSearchParams(window.location.search);
-    const resetToken = params.get('token');
+    const resetToken = searchParams.get('token');
 
     if (!resetToken) {
       setError('Invalid reset link. Please request a new password reset.');
     } else {
       setToken(resetToken);
     }
-  }, []);
+  }, [searchParams]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,6 +57,24 @@ export default function PasswordResetPage() {
         throw new Error(data.error || 'Failed to reset password');
       }
 
+      // Auto-login the user after successful reset
+      if (data.email) {
+        localStorage.setItem('pp_user_email', data.email);
+        window.dispatchEvent(new Event('pp-auth-change'));
+        setUserEmail(data.email);
+
+        // Fetch and store their tier
+        try {
+          const tierRes = await fetch(`/api/users/get-tier?email=${encodeURIComponent(data.email)}`);
+          const tierData = await tierRes.json();
+          localStorage.setItem('pp_user_tier', tierData.tier || 'free');
+        } catch (_) {}
+
+        localStorage.removeItem('pp_guest_mode');
+        // Mark onboarding as done so tutorial doesn't fire
+        localStorage.setItem('pp_onboarding_completed', 'true');
+      }
+
       setSuccess(true);
 
       // Redirect to app after 3 seconds
@@ -84,10 +102,10 @@ export default function PasswordResetPage() {
               Password Reset Successful! 🎉
             </h1>
             <p className="text-gray-600 mb-6">
-              Your password has been updated successfully. You can now sign in with your new password.
+              Your password has been updated and you're now logged in{userEmail ? ` as ${userEmail}` : ''}.
             </p>
             <p className="text-sm text-gray-500">
-              Redirecting to party planner in 3 seconds...
+              Redirecting to your parties in 3 seconds...
             </p>
           </div>
         </div>

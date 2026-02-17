@@ -76,7 +76,7 @@ export default function InstallPrompt() {
         </div>
 
         <div className="flex-1">
-          <h3 className="font-bold text-gray-800 mb-2">Install Plan My Party Pal</h3>
+          <h3 className="font-bold text-gray-800 mb-2">Install Party Plann</h3>
           <p className="text-sm text-gray-600 mb-4">
             Add to your home screen for quick access and offline support!
           </p>

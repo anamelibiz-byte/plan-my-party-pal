@@ -38,6 +38,7 @@ export default function ResetPasswordPage() {
 
           // Auto-login user
           localStorage.setItem('pp_user_email', data.email);
+          window.dispatchEvent(new Event('pp-auth-change'));
 
           // Get their tier
           const tierRes = await fetch(`/api/users/get-tier?email=${encodeURIComponent(data.email)}`);

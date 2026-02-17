@@ -58,6 +58,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
 
         // Auto-login after signup
         localStorage.setItem('pp_user_email', email.toLowerCase());
+        window.dispatchEvent(new Event('pp-auth-change'));
         setSuccess('Account created successfully!');
         setTimeout(() => {
           onSuccess(email.toLowerCase());
@@ -85,6 +86,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
 
         // Save email to localStorage
         localStorage.setItem('pp_user_email', email.toLowerCase());
+        window.dispatchEvent(new Event('pp-auth-change'));
         setSuccess('Login successful!');
         setTimeout(() => {
           onSuccess(email.toLowerCase());

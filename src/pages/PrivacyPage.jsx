@@ -31,7 +31,7 @@ export default function PrivacyPage() {
             Last Updated: February 15, 2026
           </p>
           <p className="text-gray-700 mt-4 leading-relaxed">
-            At Plan My Party Pal, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our service.
+            At Party Plann, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our service.
           </p>
         </div>
 
@@ -46,7 +46,7 @@ export default function PrivacyPage() {
 
             <h3 className="text-xl font-semibold text-gray-800 mt-6 mb-3">Personal Information</h3>
             <p className="text-gray-700 leading-relaxed mb-4">
-              When you use Plan My Party Pal, we may collect the following personal information:
+              When you use Party Plann, we may collect the following personal information:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
               <li><strong>Email Address:</strong> Used for account creation, login, and service communications</li>
@@ -274,7 +274,7 @@ export default function PrivacyPage() {
             </div>
 
             <p className="text-gray-700 leading-relaxed mb-4">
-              Plan My Party Pal is not intended for use by children under the age of 13. We do not knowingly collect personal information from children under 13.
+              Party Plann is not intended for use by children under the age of 13. We do not knowingly collect personal information from children under 13.
             </p>
             <p className="text-gray-700 leading-relaxed">
               If we discover that we have collected information from a child under 13, we will delete it immediately. If you believe we have collected information from a child under 13, please contact us at hello@go.partyplann.com.
@@ -360,10 +360,10 @@ export default function PrivacyPage() {
           <div className="mt-12 pt-8 border-t border-gray-200">
             <div className="bg-gradient-to-r from-pink-100 to-purple-100 p-6 rounded-xl">
               <p className="text-gray-700 leading-relaxed mb-2">
-                <strong>Your Trust Matters:</strong> At Plan My Party Pal, protecting your privacy is our priority. We are committed to being transparent about our data practices and giving you control over your information.
+                <strong>Your Trust Matters:</strong> At Party Plann, protecting your privacy is our priority. We are committed to being transparent about our data practices and giving you control over your information.
               </p>
               <p className="text-sm text-gray-600 italic mb-0">
-                By using Plan My Party Pal, you acknowledge that you have read and understood this Privacy Policy.
+                By using Party Plann, you acknowledge that you have read and understood this Privacy Policy.
               </p>
             </div>
           </div>

@@ -37,7 +37,7 @@ export default async function handler(req, res) {
       cancel_url: `${baseUrl}/app?upgrade=canceled`,
       metadata: {
         tier,
-        app: 'plan-my-party-pal',
+        app: 'party-plann',
         billingInterval: billingInterval || 'monthly',
         priceAmount: priceAmount || '4.99',
       },

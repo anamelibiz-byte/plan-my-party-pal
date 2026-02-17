@@ -1,6 +1,6 @@
 {
-  "name": "Plan My Party Pal - Birthday Party Planner",
-  "short_name": "Party Pal",
+  "name": "Party Plann - Birthday Party Planner",
+  "short_name": "Party Plann",
   "description": "Plan stress-free, memorable birthday parties with guest lists, budgets, timelines, and more!",
   "start_url": "/",
   "display": "standalone",
@@ -8,6 +8,12 @@
   "theme_color": "#ec4899",
   "orientation": "portrait-primary",
   "icons": [
+    {
+      "src": "/logo.jpg",
+      "sizes": "1024x1024",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
     {
       "src": "/icon-192.png",
       "sizes": "192x192",

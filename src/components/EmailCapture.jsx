@@ -6,7 +6,7 @@ function buildChecklistHTML(partyData, zones, excludedItems, zoneChecks) {
   const header = `
     <div style="background: linear-gradient(135deg, #EC4899, #F43F5E); padding: 24px; border-radius: 16px 16px 0 0; text-align: center;">
       <h1 style="color: white; font-size: 24px; margin: 0;">🎉 ${partyData.childName || 'Your'}'s ${partyData.theme || 'Birthday'} Party Plan</h1>
-      <p style="color: #FBB6CE; margin: 8px 0 0;">Created with Plan My Party Pal</p>
+      <p style="color: #FBB6CE; margin: 8px 0 0;">Created with Party Plann</p>
     </div>
   `;
 
@@ -61,7 +61,7 @@ function buildChecklistHTML(partyData, zones, excludedItems, zoneChecks) {
 
   const footer = `
     <div style="padding: 20px 24px; text-align: center; background: #FDF2F8; border-radius: 0 0 16px 16px;">
-      <p style="font-size: 12px; color: #9CA3AF; margin: 0;">✨ Made with <a href="https://partyplann.com" style="color: #EC4899; text-decoration: none; font-weight: bold;">PlanMyPartyPal.com</a></p>
+      <p style="font-size: 12px; color: #9CA3AF; margin: 0;">✨ Made with <a href="https://partyplann.com" style="color: #EC4899; text-decoration: none; font-weight: bold;">PartyPlann.com</a></p>
     </div>
   `;
 
@@ -102,7 +102,7 @@ function buildChecklistText(partyData, zones, excludedItems, zoneChecks) {
   });
 
   l.push(`\n${'─'.repeat(50)}`);
-  l.push('Made with PlanMyPartyPal.com ✨');
+  l.push('Made with PartyPlann.com ✨');
   return l.join('\n');
 }
 

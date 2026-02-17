@@ -3,7 +3,7 @@ import { X, ChevronRight, ChevronLeft, Sparkles, Users, Calendar, DollarSign, Ch
 
 const TUTORIAL_STEPS = [
   {
-    title: 'Welcome to Plan My Party Pal! 🎉',
+    title: 'Welcome to Party Plann! 🎉',
     description: 'Let\'s take a quick tour of everything you can do to plan the perfect party.',
     icon: Sparkles,
     iconColor: 'text-pink-500',

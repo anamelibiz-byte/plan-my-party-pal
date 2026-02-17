@@ -6,19 +6,19 @@ export default function BusinessSocialLinks() {
     {
       name: 'Facebook',
       icon: Facebook,
-      url: 'https://www.facebook.com/planmypartypal',
+      url: 'https://www.facebook.com/PartyPlannApp',
       color: 'bg-blue-600 hover:bg-blue-700'
     },
     {
       name: 'Instagram',
       icon: Instagram,
-      url: 'https://www.instagram.com/planmypartypal',
+      url: 'https://www.instagram.com/partyplannapp',
       color: 'bg-gradient-to-br from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600'
     },
     {
       name: 'TikTok',
       icon: Music,
-      url: 'https://www.tiktok.com/@planmypartypal',
+      url: 'https://www.tiktok.com/@partyplannapp',
       color: 'bg-gray-900 hover:bg-black'
     },
     {

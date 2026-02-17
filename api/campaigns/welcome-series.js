@@ -24,13 +24,13 @@ export default async function handler(req, res) {
     // EMAIL 1: Immediate Welcome (triggered on signup)
     if (trigger === 'signup') {
       emailContent = {
-        subject: '🎉 Welcome to Plan My Party Pal!',
+        subject: '🎉 Welcome to Party Plann!',
         html: `
           <!DOCTYPE html>
           <html>
           <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="text-align: center; padding: 30px 0; background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%); border-radius: 12px; margin-bottom: 30px;">
-              <h1 style="color: white; margin: 0; font-size: 28px;">🎉 Welcome to Plan My Party Pal!</h1>
+              <h1 style="color: white; margin: 0; font-size: 28px;">🎉 Welcome to Party Plann!</h1>
             </div>
 
             <p style="font-size: 16px;">Hi there!</p>
@@ -148,7 +148,7 @@ export default async function handler(req, res) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'Plan My Party Pal <hello@go.partyplann.com>',
+          from: 'Party Plann <hello@go.partyplann.com>',
           to: [email],
           subject: emailContent.subject,
           html: emailContent.html,

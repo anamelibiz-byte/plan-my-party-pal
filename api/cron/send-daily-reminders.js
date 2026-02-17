@@ -144,7 +144,7 @@ async function sendReminderEmails(party, pendingRSVPs, supabase) {
 
     try {
       // Generate RSVP link
-      const rsvpUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.partyplann.com'}/rsvp/${party.id}`;
+      const rsvpUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://partyplann.com'}/rsvp/${party.id}`;
 
       // Get ordinal suffix for age
       const getOrdinal = (num) => {
@@ -176,9 +176,10 @@ async function sendReminderEmails(party, pendingRSVPs, supabase) {
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f9fafb;">
   <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
-    <!-- Header with gradient -->
-    <div style="background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%); padding: 40px 20px; text-align: center;">
-      <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">🎉 Party Reminder!</h1>
+    <!-- Header with logo -->
+    <div style="background: #ffffff; padding: 30px 20px; text-align: center; border-bottom: 3px solid #ec4899;">
+      <img src="${process.env.NEXT_PUBLIC_SITE_URL || 'https://partyplann.com'}/logo.jpg" alt="Party Plann" style="height: 50px; margin-bottom: 15px;" />
+      <h1 style="background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 0; font-size: 28px; font-weight: 700;">🎉 Party Reminder!</h1>
     </div>
 
     <!-- Content -->
@@ -215,10 +216,10 @@ async function sendReminderEmails(party, pendingRSVPs, supabase) {
     <!-- Footer -->
     <div style="background-color: #f9fafb; padding: 30px; text-align: center; border-top: 1px solid #e5e7eb;">
       <p style="margin: 0 0 10px 0; font-size: 12px; color: #9ca3af;">
-        Sent via <strong>Plan My Party Pal</strong> ✨
+        Sent via <strong>Party Plann</strong> ✨
       </p>
       <p style="margin: 0; font-size: 12px; color: #9ca3af;">
-        <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.partyplann.com'}" style="color: #ec4899; text-decoration: none;">PlanMyPartyPal.com</a>
+        <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://partyplann.com'}" style="color: #ec4899; text-decoration: none;">PartyPlann.com</a>
       </p>
     </div>
   </div>
@@ -233,7 +234,7 @@ async function sendReminderEmails(party, pendingRSVPs, supabase) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'Plan My Party Pal <hello@go.partyplann.com>',
+          from: 'Party Plann <hello@go.partyplann.com>',
           to: [guest.email],
           subject: `🎉 Reminder: ${childName}'s party is TOMORROW!`,
           html: emailHtml,

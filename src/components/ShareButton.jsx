@@ -18,7 +18,7 @@ export default function ShareButton({ partyData, checklist }) {
       lines.push(`${item.completed ? '✅' : '☐'} ${item.task} (${item.estimatedCost})`);
     });
     lines.push('');
-    lines.push('Made with Plan My Party Pal ✨');
+    lines.push('Made with Party Plann ✨');
     return lines.join('\n');
   };
 

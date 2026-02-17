@@ -15,7 +15,7 @@ const DISPLAY_FEATURES = [
   'maxGuests',            // Free: 15 guests, Pro: unlimited
   'allThemes',            // Both have access to all themes
   'allActivities',        // Both have access to all activities
-  'rsvpSystem',           // Both have RSVP tracking
+  'rsvpSystem',           // Pro only: RSVP tracking with email invitations & automated reminders
   'budgetTrackerFull',    // Free: basic, Pro: full with charts
   'timelineBuilder',      // Pro only
   'downloadPDF',          // Pro only

@@ -53,8 +53,8 @@ export default function ReferralProgram({ userEmail }) {
   const handleShare = () => {
     if (!referralData?.referral_url) return;
 
-    const subject = 'Plan the perfect party with Plan My Party Pal!';
-    const body = `Hey! I've been using Plan My Party Pal to plan amazing parties and thought you might like it too.\n\nUse my link to get started: ${referralData.referral_url}\n\n🎉 Happy planning!`;
+    const subject = 'Plan the perfect party with Party Plann!';
+    const body = `Hey! I've been using Party Plann to plan amazing parties and thought you might like it too.\n\nUse my link to get started: ${referralData.referral_url}\n\n🎉 Happy planning!`;
 
     window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };

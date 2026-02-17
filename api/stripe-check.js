@@ -55,9 +55,9 @@ export default async function handler(req, res) {
       payment_method_types: ['card'],
       line_items: [{ price: 'price_1T07BaIVX3wrRyGSVSqVAyVu', quantity: 1 }],
       mode: 'subscription',
-      success_url: 'https://www.partyplann.com/app?upgraded=pro',
-      cancel_url: 'https://www.partyplann.com/app',
-      metadata: { tier: 'pro', app: 'plan-my-party-pal-test' },
+      success_url: 'https://partyplann.com/app?upgraded=pro',
+      cancel_url: 'https://partyplann.com/app',
+      metadata: { tier: 'pro', app: 'party-plann-test' },
     });
     results.checks.checkoutSession = 'OK - session created: ' + session.id;
     results.checks.checkoutUrl = session.url ? 'OK - URL generated' : 'FAILED - no URL';

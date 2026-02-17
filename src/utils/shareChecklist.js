@@ -33,7 +33,7 @@ export function buildShareText(partyData, checklist, mergedZones, excludedItems,
     });
   }
 
-  lines.push('Made with Plan My Party Pal ✨');
+  lines.push('Made with Party Plann ✨');
   return lines.join('\n');
 }
 

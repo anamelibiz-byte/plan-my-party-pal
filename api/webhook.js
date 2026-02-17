@@ -98,7 +98,7 @@ export default async function handler(req, res) {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                from: 'Plan My Party Pal <hello@go.partyplann.com>',
+                from: 'Party Plann <hello@go.partyplann.com>',
                 to: [customerEmail],
                 subject: '✅ Your Pro Subscription is Confirmed!',
                 html: `
@@ -119,7 +119,7 @@ export default async function handler(req, res) {
                     <p style="font-size: 16px; color: #333;">Hi there,</p>
 
                     <p style="font-size: 16px; color: #333;">
-                      Your Plan My Party Pal <strong>Pro subscription</strong> is now active! We're thrilled to have you as a Pro member.
+                      Your Party Plann <strong>Pro subscription</strong> is now active! We're thrilled to have you as a Pro member.
                     </p>
 
                     <!-- Subscription Details Box -->
@@ -199,12 +199,12 @@ export default async function handler(req, res) {
 
                     <!-- Footer -->
                     <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center; color: #9ca3af; font-size: 13px;">
-                      <p>Thank you for choosing Plan My Party Pal!</p>
+                      <p>Thank you for choosing Party Plann!</p>
                       <p style="margin: 10px 0;">
                         Questions? Reply to this email - we're here to help!
                       </p>
                       <p style="margin-top: 20px;">
-                        Plan My Party Pal<br>
+                        Party Plann<br>
                         <a href="https://partyplann.com" style="color: #ec4899; text-decoration: none;">partyplann.com</a>
                       </p>
                     </div>

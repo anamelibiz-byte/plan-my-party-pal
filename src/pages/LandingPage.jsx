@@ -74,6 +74,15 @@ export default function LandingPage() {
         {/* Hero Section */}
         <div className="max-w-6xl mx-auto px-4 py-12">
         <div className="text-center mb-12">
+          {/* Logo */}
+          <div className="flex justify-center mb-8">
+            <img
+              src="/logo.jpg"
+              alt="Party Plann"
+              className="h-16 sm:h-20 md:h-24"
+            />
+          </div>
+
           <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-md mb-6">
             <PartyPopper className="text-pink-500" size={20} />
             <span className="text-sm font-semibold text-gray-700">
@@ -166,7 +175,7 @@ export default function LandingPage() {
         {/* Social Proof Examples */}
         <div className="bg-white rounded-3xl shadow-xl p-8 mb-16 max-w-4xl mx-auto">
           <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-            Real Parties Planned with Plan My Party Pal
+            Real Parties Planned with Party Plann
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
             {[
@@ -244,7 +253,7 @@ export default function LandingPage() {
                   "Plan 1 party at a time with up to 15 guests",
                   "Complete party checklist builder",
                   "Custom invitations (create, download, share)",
-                  "Guest list management with RSVP tracking",
+                  "Basic guest list management",
                   "80+ curated gift ideas with Amazon links",
                   "Cake ordering resources & party help hiring",
                   "Access to all 60+ party themes",
@@ -289,11 +298,12 @@ export default function LandingPage() {
                 {[
                   "Everything in Free, PLUS:",
                   "Unlimited parties with unlimited guests",
+                  "RSVP tracking with email invitations",
+                  "Automated RSVP reminders to guests",
+                  "Real-time guest attendance updates",
                   "Day-of Timeline Builder (minute-by-minute schedule)",
                   "Download party plans (PDF, TXT formats)",
-                  "Print entire party checklist",
-                  "Email party plans to yourself or co-hosts",
-                  "SMS party plans to your phone",
+                  "Email & SMS party plans",
                   "Share checklists via text/email/social",
                   "Full budget analytics with spending breakdown"
                 ].map((feature, i) => (
@@ -447,7 +457,7 @@ export default function LandingPage() {
 
               {/* Copyright - Show second on mobile */}
               <p className="text-gray-600 text-xs md:text-sm text-center order-2 md:order-1">
-                © 2026 Plan My Party Pal. All rights reserved.
+                © 2026 Party Plann. All rights reserved.
               </p>
             </div>
           </div>

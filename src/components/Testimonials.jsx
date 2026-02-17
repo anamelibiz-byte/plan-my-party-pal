@@ -7,7 +7,7 @@ const testimonials = [
     name: 'Sarah Johnson',
     location: 'Seattle, WA',
     rating: 5,
-    text: 'Plan My Party Pal made organizing my daughter\'s 6th birthday so stress-free! The timeline builder kept me on track, and the budget tracker helped me stay within my budget. Highly recommend!',
+    text: 'Party Plann made organizing my daughter\'s 6th birthday so stress-free! The timeline builder kept me on track, and the budget tracker helped me stay within my budget. Highly recommend!',
     party: 'Princess Party for Emma, age 6',
   },
   {
@@ -62,7 +62,7 @@ export default function Testimonials() {
             Loved by Parents Everywhere
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Join thousands of parents who've planned stress-free, memorable parties with Plan My Party Pal
+            Join thousands of parents who've planned stress-free, memorable parties with Party Plann
           </p>
           {/* Star Rating */}
           <div className="flex items-center justify-center gap-2 mt-6">

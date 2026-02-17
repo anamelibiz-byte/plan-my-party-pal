@@ -32,17 +32,17 @@ export default function TermsPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">1. Agreement to Terms</h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              By accessing and using Plan My Party Pal ("Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by these Terms of Use, please do not use this Service.
+              By accessing and using Party Plann ("Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by these Terms of Use, please do not use this Service.
             </p>
             <p className="text-gray-700 leading-relaxed">
-              Plan My Party Pal is operated by Plan My Party Pal ("we," "us," or "our"). We reserve the right to update these terms at any time, and your continued use of the Service constitutes acceptance of those changes.
+              Party Plann is operated by Party Plann ("we," "us," or "our"). We reserve the right to update these terms at any time, and your continued use of the Service constitutes acceptance of those changes.
             </p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">2. Use License</h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              We grant you a personal, non-transferable, non-exclusive license to use the Plan My Party Pal service for your personal party planning needs. This license is subject to these Terms of Use.
+              We grant you a personal, non-transferable, non-exclusive license to use the Party Plann service for your personal party planning needs. This license is subject to these Terms of Use.
             </p>
             <p className="text-gray-700 leading-relaxed mb-2">You may not:</p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
@@ -74,7 +74,7 @@ export default function TermsPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">4. Subscription and Billing</h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              Plan My Party Pal offers both free and paid subscription tiers:
+              Party Plann offers both free and paid subscription tiers:
             </p>
             <div className="bg-pink-50 border-l-4 border-pink-500 p-4 mb-4">
               <h3 className="font-bold text-gray-800 mb-2">Free Tier</h3>
@@ -96,7 +96,7 @@ export default function TermsPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">5. User Content</h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              You retain all rights to the content you create using Plan My Party Pal, including party details, guest lists, budgets, timelines, and other data ("User Content").
+              You retain all rights to the content you create using Party Plann, including party details, guest lists, budgets, timelines, and other data ("User Content").
             </p>
             <p className="text-gray-700 leading-relaxed mb-4">
               By using the Service, you grant us a limited license to store, process, and display your User Content solely for the purpose of providing the Service to you. We will not share, sell, or use your User Content for any other purpose without your explicit consent.
@@ -138,7 +138,7 @@ export default function TermsPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">8. Intellectual Property</h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              The Service and its original content (excluding User Content), features, and functionality are owned by Plan My Party Pal and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws.
+              The Service and its original content (excluding User Content), features, and functionality are owned by Party Plann and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws.
             </p>
             <p className="text-gray-700 leading-relaxed">
               Our trademarks, logos, and service marks displayed on the Service may not be used without our prior written consent.
@@ -164,7 +164,7 @@ export default function TermsPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">10. Limitation of Liability</h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              TO THE MAXIMUM EXTENT PERMITTED BY LAW, PLAN MY PARTY PAL SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS OR REVENUES, WHETHER INCURRED DIRECTLY OR INDIRECTLY, OR ANY LOSS OF DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES RESULTING FROM:
+              TO THE MAXIMUM EXTENT PERMITTED BY LAW, PARTY PLANN SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS OR REVENUES, WHETHER INCURRED DIRECTLY OR INDIRECTLY, OR ANY LOSS OF DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES RESULTING FROM:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
               <li>Your access to or use of or inability to access or use the Service</li>
@@ -225,7 +225,7 @@ export default function TermsPage() {
 
           <div className="mt-12 pt-8 border-t border-gray-200">
             <p className="text-sm text-gray-500 italic">
-              By using Plan My Party Pal, you acknowledge that you have read, understood, and agree to be bound by these Terms of Use.
+              By using Party Plann, you acknowledge that you have read, understood, and agree to be bound by these Terms of Use.
             </p>
           </div>
         </div>

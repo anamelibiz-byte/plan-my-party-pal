@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, Mail, CheckCircle2, Sparkles } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Mail, CheckCircle2, Sparkles } from 'lucide-react';
 import AuthModal from './AuthModal';
 
-export default function EmailGate({ partyData, onContinue, onGuestContinue }) {
+export default function EmailGate({ partyData, onContinue, onGuestContinue, onBack }) {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -110,6 +110,7 @@ export default function EmailGate({ partyData, onContinue, onGuestContinue }) {
   const handleGuestContinue = () => {
     localStorage.setItem('pp_guest_mode', 'true');
     localStorage.removeItem('pp_user_email');
+    window.dispatchEvent(new Event('pp-auth-change'));
 
     // Track guest mode selection
     if (window.gtag) {
@@ -134,6 +135,15 @@ export default function EmailGate({ partyData, onContinue, onGuestContinue }) {
       />
 
       <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl p-8 border-4 border-pink-200 relative z-10">
+      {/* Back Button */}
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="flex items-center gap-1 text-sm font-semibold text-gray-400 hover:text-gray-600 transition-colors mb-4"
+        >
+          <ChevronLeft size={18} /> Back
+        </button>
+      )}
       {/* Primary Headline */}
       <h2 className="text-2xl sm:text-3xl font-bold text-center mb-5 text-[#FF1493]">
         You're one step away from building {childName ? `${childName}'s` : 'the'} perfect party! 🎉

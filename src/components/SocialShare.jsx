@@ -32,7 +32,7 @@ export default function SocialShare({ partyData, shareUrl }) {
 
   const handleEmailShare = () => {
     const subject = encodeURIComponent(title);
-    const body = encodeURIComponent(`${description}\n\nRSVP here: ${url}\n\nPlanned with Plan My Party Pal ✨`);
+    const body = encodeURIComponent(`${description}\n\nRSVP here: ${url}\n\nPlanned with Party Plann ✨`);
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
 
@@ -102,7 +102,7 @@ export default function SocialShare({ partyData, shareUrl }) {
             Planned with
           </p>
           <p className="text-lg font-bold bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">
-            Plan My Party Pal ✨
+            Party Plann ✨
           </p>
         </div>
       </div>

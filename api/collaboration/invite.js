@@ -65,7 +65,7 @@ export default async function handler(req, res) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'Plan My Party Pal <hello@go.partyplann.com>',
+          from: 'Party Plann <hello@go.partyplann.com>',
           to: [invitee_email],
           subject: `🎉 You've been invited to help plan a party!`,
           html: `

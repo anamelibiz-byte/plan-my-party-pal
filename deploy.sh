@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🎉 Plan My Party Pal - Deployment Script"
+echo "🎉 Party Plann - Deployment Script"
 echo "========================================"
 echo ""
 
@@ -50,6 +50,6 @@ echo ""
 echo "✨ Deployment complete!"
 echo "Don't forget to:"
 echo "  1. Set up environment variables in Vercel dashboard"
-echo "  2. Configure custom domain (planmypartypal.com)"
+echo "  2. Configure custom domain (partyplann.com)"
 echo "  3. Set up Stripe products and webhooks"
 echo "  4. Test the live site!"

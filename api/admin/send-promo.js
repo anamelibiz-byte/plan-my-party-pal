@@ -71,7 +71,7 @@ export default async function handler(req, res) {
         const emailHtml = `
           <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="background: linear-gradient(135deg, #EC4899, #F43F5E); padding: 40px 24px; border-radius: 16px 16px 0 0; text-align: center;">
-              <h1 style="color: white; font-size: 28px; margin: 0;">🎉 Plan My Party Pal</h1>
+              <h1 style="color: white; font-size: 28px; margin: 0;">🎉 Party Plann</h1>
             </div>
 
             <div style="padding: 32px 24px; background: white;">
@@ -91,7 +91,7 @@ ${personalizedMessage}
 
             <div style="padding: 24px; text-align: center; background: #F9FAFB; border-radius: 0 0 16px 16px; border-top: 1px solid #E5E7EB;">
               <p style="font-size: 12px; color: #9CA3AF; margin: 0 0 8px;">
-                You're receiving this because you're a Plan My Party Pal subscriber.
+                You're receiving this because you're a Party Plann subscriber.
               </p>
               <p style="font-size: 12px; color: #9CA3AF; margin: 0;">
                 Questions? Reply to this email anytime! |
@@ -109,7 +109,7 @@ ${personalizedMessage}
 Continue planning your party: https://partyplann.com/app?email=${encodeURIComponent(subscriber.email)}
 
 ---
-You're receiving this because you're a Plan My Party Pal subscriber.
+You're receiving this because you're a Party Plann subscriber.
 Questions? Reply to this email anytime!
 Unsubscribe: https://partyplann.com/unsubscribe?email=${encodeURIComponent(subscriber.email)}
         `;
@@ -122,7 +122,7 @@ Unsubscribe: https://partyplann.com/unsubscribe?email=${encodeURIComponent(subsc
             'Authorization': `Bearer ${resendKey}`,
           },
           body: JSON.stringify({
-            from: 'Plan My Party Pal <hello@go.partyplann.com>',
+            from: 'Party Plann <hello@go.partyplann.com>',
             to: [subscriber.email],
             subject: subject,
             html: emailHtml,

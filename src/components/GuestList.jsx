@@ -48,7 +48,7 @@ export default function GuestList({ partyData }) {
     guests.forEach((g, i) => {
       text += `${i + 1}. ${g.name} — ${statusLabel[g.rsvp]}\n`;
     });
-    text += `\n────────────────────────────────────────\nMade with PlanMyPartyPal.com\n`;
+    text += `\n────────────────────────────────────────\nMade with PartyPlann.com\n`;
 
     const blob = new Blob([text], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);

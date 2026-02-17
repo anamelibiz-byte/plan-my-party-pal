@@ -93,7 +93,7 @@ export const FEATURE_LABELS = {
   budgetTrackerFull: 'Full Budget Tracker with Charts',
   saveExport: 'Save & Export Checklist',
   downloadPDF: 'Download PDF Party Kit',
-  rsvpSystem: 'RSVP Tracking',
+  rsvpSystem: 'RSVP Tracking with Email Invitations & Automated Reminders',
   emailPartyPlan: 'Email Your Party Plan',
   smsPartyPlan: 'Text Your Party Plan',
   partyZonesPreview: 'Party Zones Preview',

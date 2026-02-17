@@ -75,7 +75,7 @@ export default async function handler(req, res) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            from: 'Plan My Party Pal <hello@go.partyplann.com>',
+            from: 'Party Plann <hello@go.partyplann.com>',
             to: [guest.email],
             subject: `🎉 RSVP Reminder: ${partyData.childName}'s Party`,
             html: `
@@ -132,7 +132,7 @@ export default async function handler(req, res) {
 
                 <!-- Footer -->
                 <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center; color: #9ca3af; font-size: 13px;">
-                  <p>Sent via Plan My Party Pal</p>
+                  <p>Sent via Party Plann</p>
                   <p style="margin-top: 10px;">
                     <a href="https://partyplann.com" style="color: #ec4899; text-decoration: none;">partyplann.com</a>
                   </p>
