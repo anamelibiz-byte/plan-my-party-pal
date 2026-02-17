@@ -77,7 +77,7 @@ export default function LandingPage() {
           {/* Logo */}
           <div className="flex justify-center mb-8">
             <img
-              src="/logo.jpg"
+              src="/images/PartyPlannBanner.png"
               alt="Party Plann"
               className="h-16 sm:h-20 md:h-24"
             />
@@ -147,8 +147,8 @@ export default function LandingPage() {
           <div className="bg-white rounded-3xl shadow-2xl p-8 border-8 border-white">
             <div className="aspect-video rounded-2xl overflow-hidden">
               <img
-                src="/images/hero-party.jpg"
-                alt="Happy mom and child celebrating birthday party with cake and friends playing in backyard"
+                src="/images/PartyPlannBanner.png"
+                alt="Party Plann — Plan Unforgettable Birthday Parties"
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   e.target.style.display = 'none';
