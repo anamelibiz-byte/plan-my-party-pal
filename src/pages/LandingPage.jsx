@@ -147,9 +147,9 @@ export default function LandingPage() {
           <div className="bg-white rounded-3xl shadow-2xl p-8 border-8 border-white">
             <div className="aspect-video rounded-2xl overflow-hidden">
               <img
-                src="/logo.png"
-                alt="Party Plann — Plan Unforgettable Birthday Parties"
-                className="w-full h-full object-contain"
+                src="/images/hero-party.jpg"
+                alt="Happy mom and child celebrating birthday party with cake and friends playing in backyard"
+                className="w-full h-full object-cover"
                 onError={(e) => {
                   e.target.style.display = 'none';
                   e.target.nextElementSibling.style.display = 'flex';
