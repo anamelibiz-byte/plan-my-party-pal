@@ -187,7 +187,7 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center hover:opacity-90 transition-opacity" onClick={closeAll}>
-            <img src="/images/PartyPlannBanner.png" alt="Party Plann" className="h-10 sm:h-12" />
+            <img src="/images/party-plann-icon.png" alt="Party Plann" className="h-10 sm:h-12" />
           </Link>
 
           {/* Desktop Navigation */}
