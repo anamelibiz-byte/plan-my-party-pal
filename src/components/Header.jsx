@@ -140,7 +140,7 @@ export default function Header() {
         <>
           <Link to="/app" className={linkClass} onClick={closeAll}>
             {mobile && <Home className="inline mr-2" size={18} />}
-            My Parties
+            My Party
           </Link>
           <Link to="/vendors" className={linkClass} onClick={closeAll}>
             {mobile && <Store className="inline mr-2" size={18} />}

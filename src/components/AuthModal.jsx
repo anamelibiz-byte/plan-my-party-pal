@@ -1,8 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 
-export default function AuthModal({ isOpen, onClose, onSuccess }) {
-  const [mode, setMode] = useState('signup'); // 'login', 'signup', 'forgot' - Default to signup
+export default function AuthModal({ isOpen, onClose, onSuccess, initialMode = 'signup' }) {
+  const [mode, setMode] = useState(initialMode); // 'login', 'signup', 'forgot'
+
+  // Sync mode when initialMode prop changes (e.g., opening from auth=required vs email gate)
+  useEffect(() => {
+    if (isOpen) {
+      setMode(initialMode);
+    }
+  }, [isOpen, initialMode]);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

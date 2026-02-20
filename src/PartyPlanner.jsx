@@ -93,6 +93,7 @@ export default function PartyPlanner() {
   const [showCollabList, setShowCollabList] = useState(false);
   const [collaborators, setCollaborators] = useState([]);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState('signup'); // 'login' or 'signup'
   const [step, setStep] = useState(1);
   const [partyData, setPartyData] = useState({
     childName: '',
@@ -169,6 +170,7 @@ export default function PartyPlanner() {
 
     if (authRequired === 'required' && !userEmail) {
       // User was redirected here because they need to log in
+      setAuthModalMode('login'); // Returning users should see login, not signup
       setShowAuthModal(true);
       // Clean up URL parameter
       window.history.replaceState({}, '', '/app');
@@ -765,6 +767,7 @@ export default function PartyPlanner() {
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         onSuccess={handleAuthSuccess}
+        initialMode={authModalMode}
       />
 
       <div className="min-h-screen bg-white relative overflow-hidden">
@@ -1927,6 +1930,50 @@ export default function PartyPlanner() {
                     {totalZoneCompleted === totalZoneItems && totalZoneItems > 0 ? 'Everything\'s ready — time to celebrate!' : 'You\'re doing great!'}
                   </h3>
                   <p className="text-gray-700">{totalZoneCompleted} of {totalZoneItems} items completed. {totalZoneCompleted < totalZoneItems && 'Keep going, you\'ve got this!'}</p>
+                </div>
+
+                {/* Start Over Button */}
+                <div className="mt-6 flex justify-center no-print">
+                  <button
+                    onClick={() => {
+                      if (window.confirm('Start planning a new party? Your current party is saved automatically if you\'re logged in.')) {
+                        // Clear all state first, then set step last
+                        const freshData = {
+                          childName: '', age: '', date: '', budget: '', guestCount: '',
+                          location: '', phone: '', partyTime: '', genderCategory: '',
+                          theme: '', venueType: '', venueName: '', venueAddress: '',
+                          selectedActivities: [], selectedGifts: [],
+                        };
+                        setChecklist([]);
+                        setHireCharacter(false);
+                        setTimeline([]);
+                        setZoneChecks({});
+                        setExcludedItems({});
+                        setOpenZones({});
+                        setRsvpId(null);
+                        setLiveVenues([]);
+                        setVenueLocation('');
+                        setVenueError('');
+                        setCustomVenueSearch('');
+                        setShowRSVPManager(false);
+                        setShowTimeline(false);
+                        setShowCakeOrdering(false);
+                        setShowPartyHelp(false);
+                        setShowGiftIdeas(false);
+                        localStorage.removeItem('pp_plan_id');
+                        localStorage.removeItem('pp_rsvp_id');
+                        localStorage.removeItem('pp_party_data');
+                        setPartyData(freshData);
+                        setStep(1);
+                        // Scroll to top so user sees Step 1
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }
+                    }}
+                    className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-gray-300 text-gray-600 rounded-xl font-bold hover:border-rose-400 hover:text-rose-600 hover:shadow-lg transition-all"
+                  >
+                    <RotateCcw size={18} />
+                    Start a New Party
+                  </button>
                 </div>
               </div>
             )}
