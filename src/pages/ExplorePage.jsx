@@ -17,19 +17,37 @@ const confettiItems = [
   { top: "88%", left: "85%",  color: "#4ECDC4", size: 8,  rotate: 10  },
 ];
 
-const CATEGORIES = [
-  { emoji: "🎪", name: "Entertainment",      count: 124, slug: "entertainment" },
-  { emoji: "🏟️", name: "Venues",             count: 89,  slug: "venues"        },
-  { emoji: "🎂", name: "Cakes & Catering",   count: 73,  slug: "cakes-catering"},
-  { emoji: "📸", name: "Photography",        count: 58,  slug: "photography"   },
-  { emoji: "🎈", name: "Decorations",        count: 96,  slug: "decorations"   },
-  { emoji: "🎡", name: "Rentals",            count: 45,  slug: "rentals"       },
-  { emoji: "🦄", name: "Princess & Unicorn", count: 67,  slug: "princess"      },
-  { emoji: "🦸", name: "Superheroes",        count: 52,  slug: "superheroes"   },
-  { emoji: "🔬", name: "Science & STEM",     count: 38,  slug: "stem"          },
-  { emoji: "🤸", name: "Gymnastics",         count: 44,  slug: "gymnastics"    },
-  { emoji: "⚽", name: "Sports",             count: 61,  slug: "sports"        },
-  { emoji: "🧁", name: "Baking Parties",     count: 33,  slug: "baking"        },
+const THEMES = [
+  { emoji: "🤸", name: "Gymnastics",       slug: "gymnastics"    },
+  { emoji: "👑", name: "Princess",         slug: "princess"      },
+  { emoji: "🦸", name: "Superheroes",      slug: "superheroes"   },
+  { emoji: "🔬", name: "Science & STEM",   slug: "science"       },
+  { emoji: "⚽", name: "Sports",           slug: "sports"        },
+  { emoji: "🧜", name: "Mermaid",          slug: "mermaid"       },
+  { emoji: "🎮", name: "Gaming",           slug: "gaming"        },
+  { emoji: "🧁", name: "Baking Party",     slug: "baking"        },
+  { emoji: "🦄", name: "Unicorn",          slug: "unicorn"       },
+  { emoji: "🦕", name: "Dinosaurs",        slug: "dinosaurs"     },
+  { emoji: "🚀", name: "Space",            slug: "space"         },
+  { emoji: "🌟", name: "Glow Party",       slug: "glow-party"    },
+  { emoji: "🎨", name: "Art & Crafts",     slug: "art"           },
+  { emoji: "🥷", name: "Ninja Warrior",    slug: "ninja"         },
+  { emoji: "🏊", name: "Pool Party",       slug: "swimming"      },
+  { emoji: "🌺", name: "Luau",             slug: "luau"          },
+  { emoji: "🏴‍☠️", name: "Pirates",       slug: "pirates"       },
+  { emoji: "🏰", name: "Fairy Tale",       slug: "fairytale"     },
+  { emoji: "🎂", name: "1st Birthday",     slug: "first-birthday"},
+  { emoji: "🧸", name: "Toddler Party",    slug: "toddler"       },
+  { emoji: "🎸", name: "Teen Party",       slug: "teens"         },
+  { emoji: "🐄", name: "Farm & Animals",   slug: "farm"          },
+  { emoji: "📣", name: "Cheerleading",     slug: "cheerleading"  },
+  { emoji: "🎵", name: "Music & Dance",    slug: "music-dance"   },
+  { emoji: "👯", name: "Twins Party",      slug: "twins"         },
+  { emoji: "🪅", name: "Fiesta",           slug: "fiesta"        },
+  { emoji: "🎯", name: "Fortnite",         slug: "fortnite"      },
+  { emoji: "🥋", name: "Karate & Martial", slug: "karate-kid"    },
+  { emoji: "🚒", name: "Blaze & Trucks",   slug: "blaze"         },
+  { emoji: "⚔️", name: "Star Wars",        slug: "star-wars"     },
 ];
 
 const AGE_GROUPS = [
@@ -256,17 +274,22 @@ export default function ExplorePage() {
         {/* Browse by Theme */}
         <div className="flex justify-between items-baseline mb-5">
           <h2 className="text-2xl font-black text-gray-800">Browse by Theme</h2>
-          <span className="text-sm font-semibold text-pink-500">View all 40+ →</span>
+          <Link to="/explore/themes" className="text-sm font-semibold text-pink-500 hover:text-pink-600 transition-colors">
+            View all {THEMES.length} themes →
+          </Link>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-14">
-          {CATEGORIES.map((cat) => (
-            <div key={cat.slug}
-              className="bg-white rounded-2xl p-4 text-center border border-gray-100 hover:border-pink-300 hover:-translate-y-1 hover:shadow-md transition-all cursor-pointer">
-              <span className="text-3xl block mb-2">{cat.emoji}</span>
-              <p className="text-sm font-bold text-gray-700 leading-tight">{cat.name}</p>
-              <p className="text-xs text-gray-400 mt-1">{cat.count} ideas</p>
-            </div>
+          {THEMES.map((theme) => (
+            <Link
+              key={theme.slug}
+              to={`/explore/themes/${theme.slug}`}
+              className="bg-white rounded-2xl p-4 text-center border border-gray-100 hover:border-pink-300 hover:-translate-y-1 hover:shadow-md transition-all"
+            >
+              <span className="text-3xl block mb-2">{theme.emoji}</span>
+              <p className="text-sm font-bold text-gray-700 leading-tight">{theme.name}</p>
+              <p className="text-xs text-pink-400 mt-1 font-medium">Explore →</p>
+            </Link>
           ))}
         </div>
 
