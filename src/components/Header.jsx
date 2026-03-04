@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { PartyPopper, Menu, X, LogOut, User, Home, Store, BookOpen, Info, Mail, ChevronDown, Music } from 'lucide-react';
+import { PartyPopper, Menu, X, LogOut, User, Home, Store, BookOpen, Info, Mail, ChevronDown, Music, Compass } from 'lucide-react';
 import { useTier } from '../context/TierContext';
 
 export default function Header() {
@@ -96,6 +96,14 @@ export default function Header() {
           >
             <Store size={15} className="text-pink-400" />
             Find Vendors
+          </Link>
+          <Link
+            to="/explore"
+            onClick={() => setIsResourcesOpen(false)}
+            className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600 transition-colors"
+          >
+            <Compass size={15} className="text-pink-400" />
+            Explore
           </Link>
           <Link
             to="/blog"
@@ -259,6 +267,14 @@ export default function Header() {
                     >
                       <Store size={15} />
                       Find Vendors
+                    </Link>
+                    <Link
+                      to="/explore"
+                      onClick={closeAll}
+                      className="flex items-center gap-2 px-4 py-2.5 text-white/90 hover:bg-white/10 rounded-lg transition-colors text-sm"
+                    >
+                      <Compass size={15} />
+                      Explore
                     </Link>
                     <Link
                       to="/blog"

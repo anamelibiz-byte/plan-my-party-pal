@@ -27,6 +27,7 @@ import ContactPage from './pages/ContactPage';
 import SongPage from './pages/SongPage';
 import SongBuilderPage from './pages/SongBuilderPage';
 import SongResultPage from './pages/SongResultPage';
+import ExplorePage from './pages/ExplorePage';
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
                 <Route path="/parties" element={<PartiesPage />} />
                 <Route path="/collaborate/:partyId" element={<CollaboratePage />} />
                 <Route path="/vendors" element={<VendorMarketplace />} />
+                <Route path="/explore" element={<ExplorePage />} />
                 <Route path="/blog" element={<BlogPage />} />
                 <Route path="/blog/:slug" element={<BlogPostPage />} />
                 <Route path="/about" element={<AboutPage />} />
