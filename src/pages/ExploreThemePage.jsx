@@ -2,6 +2,101 @@ import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Header from '../components/Header';
 
+// ─── Real local vendor pool (Tampa Bay / Safety Harbor area) ─────────────────
+const VENDOR_POOL = {
+  cakes: [
+    { id:"c1", emoji:"🎂", name:"CaraMel's Bakery",           address:"1760 Turner St, Clearwater",              distance:"5.8 mi",  rating:5.0, reviews:106, open:true,  price:"Custom quote", bg:"from-pink-100 to-rose-50"     },
+    { id:"c2", emoji:"🎂", name:"Classy Cakes by Diane",      address:"1103 Sunset Point Rd, Clearwater",        distance:"6.2 mi",  rating:4.8, reviews:73,  open:true,  price:"From $65",     bg:"from-rose-100 to-pink-50"     },
+    { id:"c3", emoji:"🎂", name:"Nothing Bundt Cakes",         address:"2543-4 Countryside Blvd, Clearwater",    distance:"7.1 mi",  rating:4.7, reviews:61,  open:true,  price:"From $35",     bg:"from-amber-100 to-orange-50"  },
+    { id:"c4", emoji:"🎂", name:"Designer Cakes & Desserts",  address:"Safety Harbor area",                      distance:"2.1 mi",  rating:4.9, reviews:88,  open:false, price:"Custom quote", bg:"from-purple-100 to-pink-50"   },
+  ],
+  photography: [
+    { id:"p1", emoji:"📸", name:"Stacey Woods Photography",   address:"Clearwater, FL (mobile)",                 distance:"5.8 mi",  rating:4.9, reviews:142, open:true,  price:"From $250",    bg:"from-blue-100 to-indigo-50"   },
+    { id:"p2", emoji:"📸", name:"Sugar Snap Photography",     address:"Safety Harbor + travel",                  distance:"Local",   rating:4.8, reviews:97,  open:true,  price:"From $195",    bg:"from-yellow-100 to-amber-50"  },
+    { id:"p3", emoji:"📸", name:"Modern Newborn Photography", address:"Tampa Bay / Clearwater",                  distance:"Travels", rating:5.0, reviews:64,  open:true,  price:"From $325",    bg:"from-rose-100 to-pink-50"     },
+  ],
+  gaming: [
+    { id:"g1", emoji:"🎮", name:"Rolling Video Games Tampa",  address:"Tampa, FL (mobile)",                      distance:"Travels", rating:4.7, reviews:83,  open:true,  price:"From $449",    bg:"from-blue-100 to-indigo-50"   },
+    { id:"g2", emoji:"🎮", name:"Mobile Gaming Revolution",   address:"Tampa Bay (mobile)",                      distance:"Travels", rating:4.8, reviews:44,  open:true,  price:"From $399",    bg:"from-purple-100 to-blue-50"   },
+    { id:"g3", emoji:"🔫", name:"Laser Ops Mobile Gaming",    address:"Tampa, FL (mobile)",                      distance:"Travels", rating:4.9, reviews:61,  open:true,  price:"From $499",    bg:"from-indigo-100 to-purple-50" },
+    { id:"g4", emoji:"🎮", name:"Gamer Events Tampa",         address:"Tampa Bay (mobile)",                      distance:"Travels", rating:4.6, reviews:29,  open:false, price:"From $375",    bg:"from-slate-100 to-blue-50"    },
+  ],
+  gymnastics: [
+    { id:"gym1", emoji:"🤸", name:"Future Flipz",             address:"1701 Coachman Plaza Dr, Clearwater",      distance:"5.6 mi",  rating:4.8, reviews:24,  open:true,  price:"From $299",    bg:"from-teal-100 to-green-50"    },
+    { id:"gym2", emoji:"🤸", name:"Upward Gymnastics",        address:"40351 US Hwy 19 N, Tarpon Springs",       distance:"17.2 mi", rating:4.9, reviews:38,  open:true,  price:"From $249",    bg:"from-green-100 to-teal-50"    },
+    { id:"gym3", emoji:"🤸", name:"Bayside Sports Academy",   address:"4400 34th St N, St. Petersburg",          distance:"18.4 mi", rating:4.7, reviews:21,  open:true,  price:"From $200",    bg:"from-emerald-100 to-green-50" },
+  ],
+  pettingzoo: [
+    { id:"pz1", emoji:"🐾", name:"Petronus Petting Zoo",      address:"Tampa, FL (mobile)",                      distance:"Travels", rating:4.9, reviews:81,  open:true,  price:"From $250",    bg:"from-green-100 to-lime-50"    },
+    { id:"pz2", emoji:"🦙", name:"Lucy's Llamas",             address:"Tampa Bay area (mobile)",                 distance:"Travels", rating:4.8, reviews:57,  open:true,  price:"From $299",    bg:"from-lime-100 to-green-50"    },
+    { id:"pz3", emoji:"🐾", name:"My Petting Zoo Party Tampa",address:"Tampa Bay (mobile)",                      distance:"Travels", rating:4.7, reviews:33,  open:false, price:"From $225",    bg:"from-yellow-100 to-lime-50"   },
+  ],
+  balloons: [
+    { id:"b1", emoji:"🎈", name:"Balloonies Tampa",           address:"11775 N Dale Mabry Hwy, Tampa",           distance:"14.3 mi", rating:4.8, reviews:92,  open:true,  price:"From $99",     bg:"from-pink-100 to-fuchsia-50"  },
+    { id:"b2", emoji:"🎈", name:"The Party Pond",             address:"Pinellas area (mobile)",                  distance:"Travels", rating:5.0, reviews:47,  open:true,  price:"From $149",    bg:"from-purple-100 to-pink-50"   },
+    { id:"b3", emoji:"🎈", name:"YTE Events & Balloon Decor", address:"5008 W Linebaugh Ave, Tampa",             distance:"12.1 mi", rating:4.9, reviews:118, open:true,  price:"From $175",    bg:"from-fuchsia-100 to-purple-50"},
+    { id:"b4", emoji:"🎈", name:"Tony the Balloon Guy",       address:"Clearwater / Tampa (mobile)",             distance:"Travels", rating:4.7, reviews:64,  open:true,  price:"From $85",     bg:"from-rose-100 to-fuchsia-50"  },
+  ],
+  entertainment: [
+    { id:"e1", emoji:"🎭", name:"Wagner Events",              address:"Plant City, FL (mobile)",                 distance:"Travels", rating:4.9, reviews:89,  open:true,  price:"From $150",    bg:"from-amber-100 to-orange-50"  },
+    { id:"e2", emoji:"🌟", name:"Party Poppins",              address:"Clearwater, FL (mobile)",                 distance:"Travels", rating:4.8, reviews:56,  open:true,  price:"From $175",    bg:"from-orange-100 to-yellow-50" },
+    { id:"e3", emoji:"🎨", name:"Fancy Face Painting",        address:"Tampa Bay (mobile)",                      distance:"Travels", rating:4.7, reviews:43,  open:false, price:"From $125",    bg:"from-yellow-100 to-orange-50" },
+    { id:"e4", emoji:"🎉", name:"Let's Plan a Party",         address:"Tampa, FL (mobile)",                      distance:"Travels", rating:4.8, reviews:71,  open:true,  price:"From $200",    bg:"from-rose-100 to-red-50"      },
+  ],
+  karate: [
+    { id:"k1", emoji:"🥋", name:"Pro Karate Center",          address:"843 County Rd 1, Palm Harbor",            distance:"9.4 mi",  rating:4.9, reviews:77,  open:true,  price:"From $249",    bg:"from-red-100 to-orange-50"    },
+    { id:"k2", emoji:"🥋", name:"D3 Martial Arts",            address:"34010 US Hwy 19 N, Palm Harbor",          distance:"8.8 mi",  rating:4.8, reviews:44,  open:true,  price:"From $199",    bg:"from-orange-100 to-red-50"    },
+    { id:"k3", emoji:"🥋", name:"TOP Martial Arts Clearwater",address:"120 Main Ave N, Clearwater",              distance:"5.3 mi",  rating:4.7, reviews:31,  open:false, price:"From $175",    bg:"from-red-100 to-rose-50"      },
+  ],
+  dj: [
+    { id:"dj1", emoji:"🎧", name:"Boone's Professional Events",address:"Tampa, FL (mobile)",                    distance:"Travels", rating:4.9, reviews:203, open:true,  price:"From $350",    bg:"from-violet-100 to-purple-50" },
+    { id:"dj2", emoji:"🎧", name:"Reign Entertainment",       address:"Clearwater / Tampa Bay",                  distance:"Travels", rating:4.8, reviews:87,  open:true,  price:"From $275",    bg:"from-purple-100 to-violet-50" },
+    { id:"dj3", emoji:"🎧", name:"YTE Events (DJ & MC)",      address:"5008 W Linebaugh Ave, Tampa",             distance:"12.1 mi", rating:4.9, reviews:118, open:true,  price:"From $299",    bg:"from-fuchsia-100 to-purple-50"},
+  ],
+  rentals: [
+    { id:"r1", emoji:"🏠", name:"Gulf Coast Party & Event Rental", address:"1880 N Hercules Ave, Clearwater",   distance:"5.1 mi",  rating:5.0, reviews:8,   open:true,  price:"From $99",     bg:"from-blue-100 to-sky-50"      },
+    { id:"r2", emoji:"🏠", name:"Pinellas Party Rentals",     address:"Clearwater (serves all Pinellas)",        distance:"Travels", rating:4.8, reviews:112, open:true,  price:"From $75",     bg:"from-sky-100 to-blue-50"      },
+    { id:"r3", emoji:"🏠", name:"Elite Events & Rentals",     address:"Pinellas / Hillsborough (mobile)",        distance:"Travels", rating:4.7, reviews:64,  open:false, price:"From $89",     bg:"from-indigo-100 to-blue-50"   },
+  ],
+};
+
+function getVendorsForTheme(slug) {
+  const p = VENDOR_POOL;
+  let picks = [];
+
+  if (["gymnastics","cheerleading","sports"].includes(slug)) {
+    picks = [p.gymnastics[0], p.gymnastics[1], p.cakes[0], p.balloons[2]];
+  } else if (["gaming","fortnite"].includes(slug)) {
+    picks = [p.gaming[0], p.gaming[1], p.gaming[2], p.cakes[0]];
+  } else if (["karate-kid","ninja"].includes(slug)) {
+    picks = [p.karate[0], p.karate[1], p.karate[2], p.cakes[0]];
+  } else if (["farm","toddler"].includes(slug)) {
+    picks = [p.pettingzoo[0], p.pettingzoo[1], p.cakes[0], p.photography[1]];
+  } else if (["music-dance","glow-party","teens","fiesta"].includes(slug)) {
+    picks = [p.dj[0], p.dj[1], p.dj[2], p.cakes[0]];
+  } else if (["first-birthday","twins"].includes(slug)) {
+    picks = [p.photography[0], p.photography[1], p.photography[2], p.cakes[3]];
+  } else if (["baking"].includes(slug)) {
+    picks = [p.cakes[0], p.cakes[1], p.cakes[2], p.rentals[0]];
+  } else if (["princess","fairytale","unicorn","mermaid"].includes(slug)) {
+    picks = [p.entertainment[1], p.balloons[1], p.cakes[0], p.photography[0]];
+  } else if (["star-wars","space"].includes(slug)) {
+    picks = [p.gaming[2], p.entertainment[0], p.cakes[0], p.rentals[0]];
+  } else if (["superheroes","pirates","blaze"].includes(slug)) {
+    picks = [p.entertainment[0], p.balloons[0], p.cakes[0], p.rentals[1]];
+  } else if (["art"].includes(slug)) {
+    picks = [p.entertainment[0], p.entertainment[2], p.cakes[0], p.rentals[0]];
+  } else if (["science"].includes(slug)) {
+    picks = [p.entertainment[3], p.balloons[2], p.cakes[0], p.rentals[0]];
+  } else if (["dinosaurs","swimming","luau"].includes(slug)) {
+    picks = [p.entertainment[1], p.balloons[3], p.cakes[1], p.rentals[1]];
+  } else {
+    picks = [p.entertainment[0], p.balloons[2], p.cakes[0], p.rentals[0]];
+  }
+
+  return picks.slice(0, 4).map((v, i) => ({ ...v, id: i + 1 }));
+}
+
 // ─── All theme data ─────────────────────────────────────────────────────────
 const THEME_DATA = {
   gymnastics: {
@@ -2217,7 +2312,7 @@ export default function ExploreThemePage() {
             <Link to="/explore" className="text-sm font-semibold text-pink-500 hover:underline">See all →</Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {theme.vendors.map(v => (
+            {getVendorsForTheme(theme.slug).map(v => (
               <div key={v.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all p-5">
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex items-start gap-3">
