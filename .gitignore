@@ -39,3 +39,5 @@ s.b64
 w.js
 write1.js
 .env*.local
+
+.trigger

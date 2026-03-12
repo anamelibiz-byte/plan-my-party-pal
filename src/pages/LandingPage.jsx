@@ -75,11 +75,23 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-4 py-12">
         <div className="text-center mb-12">
           {/* Logo */}
-          <div className="flex justify-center mb-8">
+          <div className="flex justify-center mb-6">
             <img
               src="/images/party-plann-icon.png"
               alt="Party Plann"
               className="h-16 sm:h-20 md:h-24"
+            />
+          </div>
+
+          {/* Hero Video */}
+          <div className="flex justify-center mb-8">
+            <video
+              src="/images/WaterBalloon.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="rounded-2xl shadow-xl max-w-xs sm:max-w-sm md:max-w-md w-full"
             />
           </div>
 
@@ -230,6 +242,18 @@ export default function LandingPage() {
           </div>
         </div>
 
+        {/* Water Squirter Video */}
+        <div className="flex justify-center mb-16">
+          <video
+            src="/images/WaterSquirter Video.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="rounded-2xl shadow-xl max-w-xs sm:max-w-sm md:max-w-md w-full"
+          />
+        </div>
+
         {/* Pricing Tiers */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">
@@ -323,6 +347,18 @@ export default function LandingPage() {
               </button>
             </div>
           </div>
+        </div>
+
+        {/* Pinata Video */}
+        <div className="flex justify-center mb-16">
+          <video
+            src="/images/Pinata Exploding Video.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="rounded-2xl shadow-xl max-w-xs sm:max-w-sm md:max-w-md w-full"
+          />
         </div>
 
         {/* Features Grid */}
